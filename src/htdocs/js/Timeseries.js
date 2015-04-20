@@ -3,6 +3,19 @@
 var Model = require('mvc/Model'),
     Util = require('util/Util');
 
+
+/**
+ * Represents a Timeseries of data points
+ *
+ * @param options {Object}
+ * @param options.times {Array<Dates>}
+ *        times of data points.
+ * @param options.values {Array<Number>}
+ *        values of data points.
+ *        null values represents data gaps.
+ * @param options.metadata {Object}
+ *        information about Timeseries.
+ */
 var Timeseries = function (options) {
   var _this;
 
@@ -12,11 +25,17 @@ var Timeseries = function (options) {
     metadata: null
   }, options));
 
-/* Loops over values looking for null values in data. If a null value is found
- * the index for the first and last null value is saved and used to find the
- * start and end times. The times are pushed to the gaps array
-*/
 
+  /**
+   * Find data gaps.
+   *
+   * @return {Array<Object>}
+   *         objects representing gaps.
+   *         object.start {Date}
+   *                      time of first null value in gap.
+   *         object.end {Date}
+   *                    time of last null value in gap.
+   */
   _this.getGaps = function () {
     var gaps,
         gapStart,
@@ -28,14 +47,16 @@ var Timeseries = function (options) {
     gaps = [];
     times = _this.get('times');
     values = _this.get('values');
-
+    // Look for null values in data.
     gapStart = null;
     for (i = 0; i < values.length; i++) {
       if (values[i] === null) {
+        // Start gap if not already in a gap.
         if (gapStart === null) {
           gapStart = i;
         }
       } else {
+        // End of gap if currently in gap.
         if (gapStart !== null) {
           gapEnd = i - 1;
           gaps.push({
