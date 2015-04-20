@@ -2,7 +2,7 @@
 'use strict';
 
 var expect = chai.expect,
-    TimeseriesModel = require('Timeseries'),
+    Timeseries = require('Timeseries'),
     Xhr = require('util/Xhr');
 
 describe('Timeseries Test', function () {
