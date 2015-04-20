@@ -2,13 +2,13 @@
 'use strict';
 
 var expect = chai.expect,
-    TimeseriesModel = require('TimeseriesModel'),
+    TimeseriesModel = require('Timeseries'),
     Xhr = require('util/Xhr');
 
-describe('TimeseriesModel Test', function () {
+describe('Timeseries Test', function () {
   describe('constructor', function () {
     it('is defined', function () {
-      expect(TimeseriesModel).to.not.equal(null);
+      expect(Timeseries).to.not.equal(null);
     });
   });
 
@@ -19,7 +19,7 @@ describe('TimeseriesModel Test', function () {
       Xhr.ajax({
         url: 'observatory_data.json',
         success: function (data) {
-          response = TimeseriesModel({
+          response = Timeseries({
             times: data.times,
             values: data.data[4].values.H
           });

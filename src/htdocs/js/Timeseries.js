@@ -3,7 +3,7 @@
 var Model = require('mvc/Model'),
     Util = require('util/Util');
 
-var TimeseriesModel = function (options) {
+var Timeseries = function (options) {
   var _this;
 
   _this = Model(Util.extend({
@@ -53,4 +53,4 @@ var TimeseriesModel = function (options) {
   return _this;
 };
 
-module.exports = TimeseriesModel;
+module.exports = Timeseries;
