@@ -1,6 +1,8 @@
 'use strict';
 
-var Model = require('mvc/Model');
+var Model = require('mvc/Model'),
+    Timeseries = require('Timeseries');
+
 
 /**
  * Wrapper for Timeseries webservice response.
@@ -32,8 +34,7 @@ var TimeseriesResponse = function (options) {
 
       for (channel in obs.values) {
         timeseries.push(
-          // TODO replace Model with Timeseries when complete.
-          Model({
+          Timeseries({
             times: times,
             values: obs.values[channel],
             metadata: {
