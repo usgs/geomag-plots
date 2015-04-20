@@ -146,16 +146,24 @@ var D3TimeseriesView = function (options) {
    * Get x axis extent.
    */
   _this.getXExtent = function () {
-    _data = _this.model.get('data').get();
-    return d3.extent(_data.times);
+    var xExtent = _this.model.get('xExtent');
+    if (xExtent === null) {
+      _data = _this.model.get('data').get();
+      xExtent = d3.extent(_data.times);
+    }
+    return xExtent;
   };
 
   /**
    * Get y axis extent.
    */
   _this.getYExtent = function () {
-    _data = _this.model.get('data').get();
-    return d3.extent(_data.values);
+    var yExtent = _this.model.get('yExtent');
+    if (yExtent === null) {
+      _data = _this.model.get('data').get();
+      yExtent = d3.extent(_data.values);
+    }
+    return yExtent;
   };
 
   /**
