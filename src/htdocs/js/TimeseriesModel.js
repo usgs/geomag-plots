@@ -30,7 +30,7 @@ var TimeseriesModel = function (options) {
     values = _this.get('values');
 
     gapStart = null;
-    for (i = 0; values < i; i++) {
+    for (i = 0; i < values.length; i++) {
       if (values[i] === null) {
         if (gapStart === null) {
           gapStart = i;
