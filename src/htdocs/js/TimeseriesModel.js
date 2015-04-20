@@ -1,11 +1,10 @@
-'use strict'
+'use strict';
 
 var Model = require('mvc/Model'),
     Util = require('util/Util');
 
-var TimeseriesModel = function () {
-  var _this,
-      _getGaps;
+var TimeseriesModel = function (options) {
+  var _this;
 
   _this = Model(Util.extend({
     times: null,
@@ -24,7 +23,6 @@ var TimeseriesModel = function () {
         gapEnd,
         i,
         times,
-        value,
         values;
 
     gaps = [];
