@@ -30,7 +30,11 @@ describe('TimeseriesResponse Test', function () {
     );
 
     it('Return correct number of Timeseries objects', function () {
-      expect(response.getTimeseries().length).to.equal(1);
+      expect(response.getTimeseries().length).to.equal(14);
+    });
+
+    it('Converts times to date objects', function () {
+      expect(response.getTimeseries()[0].get('times')[0]).to.be.an.instanceof(Date);
     });
   });
 
