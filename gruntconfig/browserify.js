@@ -50,7 +50,9 @@ var browerify = {
     browserifyOptions: {
       debug: true,
       paths: [
-        process.cwd() + '/' + config.src + '/htdocs/js'
+        CWD + '/' + config.src + '/htdocs/js',
+        NODE_MODULES + '/d3',
+        NODE_MODULES + '/hazdev-webutils/src'
       ]
     }
   },
