@@ -34,6 +34,16 @@ var watch = {
     ]
   },
 
+  tests: {
+    files: [
+      config.test + '/**/*.js'
+    ],
+    tasks: [
+      'jshint:test',
+      'browserify:test'
+    ]
+  },
+
   gruntfile: {
     files: [
       'Gruntfile.js',
