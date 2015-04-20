@@ -61,7 +61,7 @@ var D3TimeseriesView = function (options) {
    *         true if value is not null, false otherwise.
    */
   _defined = function (d) {
-    return _data.y[d] !== null;
+    return _data.values[d] !== null;
   };
 
   /**
@@ -73,7 +73,7 @@ var D3TimeseriesView = function (options) {
    *         pixel x value.
    */
   _getX = function (d) {
-    return _x(_data.x[d]);
+    return _x(_data.times[d]);
   };
 
   /**
@@ -85,7 +85,7 @@ var D3TimeseriesView = function (options) {
    *         pixel y value.
    */
   _getY = function (d) {
-    return _y(_data.y[d]);
+    return _y(_data.values[d]);
   };
 
   /**
@@ -93,7 +93,6 @@ var D3TimeseriesView = function (options) {
    */
   _onMouseMove = function () {
     var coords,
-        x0,
         i,
         x,
         y;
@@ -101,11 +100,10 @@ var D3TimeseriesView = function (options) {
     // determine mouse coordinates in svg coordinates.
     coords = d3.mouse(this);
     // find date closest to mouse position
-    x0 = _x.invert(coords[0]);
-    i = _bisectDate(_data.x, x0, 1);
+    i = _bisectDate(_data.times, _x.invert(coords[0]), 1);
     // data point closest to x mouse position
-    x = _data.x[i];
-    y = _data.y[i];
+    x = _data.times[i];
+    y = _data.values[i];
 
     if (!x || !y) {
       // gap or out of plot, hide tooltip
@@ -148,16 +146,16 @@ var D3TimeseriesView = function (options) {
    * Get x axis extent.
    */
   _this.getXExtent = function () {
-    _data = _this.model.get('data');
-    return d3.extent(_data.x);
+    _data = _this.model.get('data').get();
+    return d3.extent(_data.times);
   };
 
   /**
    * Get y axis extent.
    */
   _this.getYExtent = function () {
-    _data = _this.model.get('data');
-    return d3.extent(_data.y);
+    _data = _this.model.get('data').get();
+    return d3.extent(_data.values);
   };
 
   /**
@@ -177,11 +175,11 @@ var D3TimeseriesView = function (options) {
           .attr('class', 'point');
     }
     // update references used by _line function callbacks
-    _data = _this.model.get('data');
+    _data = _this.model.get('data').get();
     _x = _this.model.get('xAxisScale');
     _y = _this.model.get('yAxisScale');
     // plot timeseries
-    _timeseries.attr('d', _line(d3.range(_data.x.length)));
+    _timeseries.attr('d', _line(d3.range(_data.times.length)));
   };
 
 
