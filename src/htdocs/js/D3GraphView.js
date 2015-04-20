@@ -372,7 +372,7 @@ var D3GraphView = function (options) {
     x = options.xAxisScale(coords[0]);
     y = options.yAxisScale(coords[1]);
     // box rendering inside
-    bbox = _dataEl.getBBox();
+    bbox = _innerFrame.getBBox();
     // box being rendered
     tooltipBbox = _tooltip.getBBox();
     // keep tooltip in graph area
