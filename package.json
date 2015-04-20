@@ -2,7 +2,10 @@
   "name": "geomag-plots",
   "version": "0.0.0",
   "description": "Plots of timeseries data for geomagnetic observatories",
-	"repository": {"type":"git","url":"https://github.com/usgs/geomag-plots.git"},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/usgs/geomag-plots.git"
+  },
   "keywords": [
     "usgs"
   ],
@@ -13,6 +16,7 @@
   "dependencies": {},
   "devDependencies": {
     "chai": "^2.0.0",
+    "d3": "^3.5.5",
     "gateway": "^1.0.0",
     "grunt": "^0.4.5",
     "grunt-browserify": "^3.3.0",
@@ -29,6 +33,7 @@
     "grunt-contrib-watch": "^0.6.1",
     "grunt-mocha-phantomjs": "^0.6.0",
     "hazdev-template": "usgs/hazdev-template",
+    "hazdev-webutils": "git://github.com/usgs/hazdev-webutils.git",
     "http-rewrite-middleware": "^0.1.6",
     "ini": "^1.3.3",
     "mocha": "^2.1.0",
