@@ -177,7 +177,8 @@ var D3TimeseriesView = function (options) {
       // first plot, create elements
       el = d3.select(el);
       _timeseries = el.append('path')
-          .attr('class', 'timeseries');
+          .attr('class', 'timeseries')
+          .attr('clip-path', 'url(#plotAreaClip)');
       _point = el.append('circle')
           .attr('r', 2)
           .attr('class', 'point');
