@@ -2,13 +2,48 @@
 
 var config = require('./config');
 
+var CWD = process.cwd(),
+    EXPORTS = [],
+    NODE_MODULES = CWD + '/node_modules';
+
+
+/**
+ * Utility function for managing EXPORTS array.
+ *
+ * @param basedir {String}
+ *        export base directory, relative to project root.
+ * @param files {Array<String>}
+ *        array of files to add to export.
+ */
+var addExports = function (basedir, files) {
+  files.forEach(function (f) {
+    EXPORTS.push(CWD + '/' + basedir + '/' + f + '.js:' + f);
+  });
+};
+
 // List individual modules here. Each listed module will be aliased in the
-// "bundle", and will be set as an external in the "test".
-var EXPORTS = [
-  // config.src + '/htdocs/js/package/Class.js:package/Class'
-];
+// "bundle", and will be set as an external in "test"s and "example"s.
+
+EXPORTS.push(NODE_MODULES + '/d3/d3.js:d3');
+
+// hazdev-webutils exports
+addExports('node_modules/hazdev-webutils/src', [
+  'mvc/Collection',
+  'mvc/Model',
+  'mvc/View',
+  'util/Util',
+  'util/Xhr'
+]);
+
+// project exports
+addExports(config.src + '/htdocs/js', [
+  'D3GraphView',
+  'D3TimeseriesView'
+]);
+
 // Subsequent source files can then require "Class" with:
 // var Class = require('package/Class');
+
 
 var browerify = {
   options: {
