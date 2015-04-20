@@ -1,4 +1,4 @@
-!/usr/bin/env bash
+#! /usr/bin/env bash
 
 pushd `dirname $0` > /dev/null 2>&1;
 
