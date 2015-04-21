@@ -22,7 +22,7 @@ var Observatory = function (options) {
 
   options = null;
   return _this;
-
 };
+
 
 module.exports = Observatory;
