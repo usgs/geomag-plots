@@ -41,8 +41,8 @@ if (!Function.prototype.bind) {
   // Add each test class here as they are implemented
   require('./spec/TestTest');
   require('./spec/TimeseriesTest');
-  require('./spec/TimeseriesResponseTest');
   require('./spec/TimeseriesFactoryTest');
+  require('./spec/TimeseriesResponseTest');
 
   if (window.mochaPhantomJS) {
       window.mochaPhantomJS.run();
