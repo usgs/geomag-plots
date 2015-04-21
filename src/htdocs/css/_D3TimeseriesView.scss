@@ -1,7 +1,6 @@
 
 .tick > text {
   fill: #000;
-  font-size: .8em;
   stroke: none;
 }
 
@@ -18,10 +17,15 @@
 
   &.visible {
     stroke: #000;
-    stroke-width: 1;
+    stroke-width: 3;
   }
 }
 
 .tooltip {
   pointer-events: none;
+
+  text {
+    fill: #000;
+    stroke: none;
+  }
 }
