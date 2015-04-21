@@ -1,7 +1,20 @@
 .meta-view {
+  width: 14%;
+  display: inline-block;
 
+  vertical-align: top;
+  text-align: center;
+
+  border: 1px blue solid;
 }
 
 .trace-view {
+  width: 85%;
+  display: inline-block;
 
+  border: 1px green solid;
+}
+
+#example {
+  border: 1px red solid;
 }
