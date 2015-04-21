@@ -39,6 +39,7 @@ addExports('node_modules/hazdev-webutils/src', [
 addExports(config.src + '/htdocs/js', [
   'D3GraphView',
   'D3TimeseriesView',
+  'TimeseriesCollectionView',
   'TimeseriesFactory',
   'TimeseriesResponse',
   'TimeseriesView'
