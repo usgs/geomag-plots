@@ -40,11 +40,11 @@ var d3 = require('d3'),
  * @param options.marginTop {Number}
  *        default 0.
  * @param options.paddingBottom {Number}
- *        default 50.
+ *        default 75.
  * @param options.paddingLeft {Number}
  *        default 100.
  * @param options.paddingRight {Number}
- *        default 100.
+ *        default 5.
  * @param options.paddingTop {Number}
  *        default 50.
  * @param options.title {String}
@@ -58,14 +58,26 @@ var d3 = require('d3'),
  * @param options.width {Number}
  *        default 960.
  *        width of svg viewBox.
+ * @param options.xAxisFormat {Function}
+ *        default null.
+ *        x axis tickFormat.
  * @param options.xAxisLabel {String}
  *        label for x axis.
  * @param options.xAxisScale {d3.scale}
  *        default d3.scale.linear().
+ * @param options.xAxisTicks {Array<Number>}
+ *        default null.
+ *        x axis tick values.
+ * @param options.yAxisFormat {String}
+ *        default null.
+ *        y axis tickFormat.
  * @param options.yAxisLabel {String}
  *        label for y axis.
  * @param options.yAxisScale {d3.scale}
  *        default d3.scale.linear().
+ * @param options.yAxisTicks {Array<Number>}
+ *        default null.
+ *        y axis tick values.
  */
 var D3GraphView = function (options) {
   var _this,
@@ -100,20 +112,24 @@ var D3GraphView = function (options) {
       marginLeft: 0,
       marginRight: 0,
       marginTop: 0,
-      paddingBottom: 50,
+      paddingBottom: 75,
       paddingLeft: 100,
-      paddingRight: 100,
+      paddingRight: 5,
       paddingTop: 50,
       pointRadius: 3,
       title: '',
       tooltipOffset: 10,
       tooltipPadding: 5,
       width: 960,
+      xAxisFormat: null,
       xAxisLabel: '',
       xAxisScale: d3.scale.linear(),
+      xAxisTicks: null,
       xExtent: null,
+      yAxisFormat: null,
       yAxisLabel: '',
       yAxisScale: d3.scale.linear(),
+      yAxisTicks: null,
       yExtent: null
     }, options));
 
@@ -222,6 +238,9 @@ var D3GraphView = function (options) {
     options = _this.model.get();
     xAxisScale = options.xAxisScale;
     yAxisScale = options.yAxisScale;
+    // these are used for label positioning
+    paddingBottom = options.paddingBottom;
+    paddingLeft = options.paddingLeft;
 
     if (changed.hasOwnProperty('title')) {
       _plotTitle.textContent = options.title;
@@ -249,8 +268,6 @@ var D3GraphView = function (options) {
       marginLeft = options.marginLeft;
       marginRight = options.marginRight;
       marginTop = options.marginTop;
-      paddingBottom = options.paddingBottom;
-      paddingLeft = options.paddingLeft;
       paddingRight = options.paddingRight;
       paddingTop = options.paddingTop;
       // adjust based on margin/padding
@@ -289,14 +306,19 @@ var D3GraphView = function (options) {
 
     // redraw axes
     _xAxis.scale(xAxisScale);
+    _xAxis.tickFormat(options.xAxisFormat);
+    _yAxis.tickValues(options.yAxisTicks);
+
     _yAxis.scale(yAxisScale);
+    _yAxis.tickFormat(options.yAxisFormat);
+    _yAxis.tickValues(options.yAxisTicks);
+
     d3.select(_xAxisEl).call(_xAxis);
     d3.select(_yAxisEl).call(_yAxis);
 
     // update label positions based on axes size
-    _xAxisLabel.setAttribute('y',
-        _xAxisEl.getBBox().height + _xAxisLabel.getBBox().height);
-    _yAxisLabel.setAttribute('y', -_yAxisEl.getBBox().width - 10);
+    _xAxisLabel.setAttribute('y', paddingBottom - _xAxisLabel.getBBox().height);
+    _yAxisLabel.setAttribute('y', _yAxisLabel.getBBox().height - paddingLeft);
 
     // ask subclass to (re)render
     _this.plot(originalChanged);

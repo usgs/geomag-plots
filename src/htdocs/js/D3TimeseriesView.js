@@ -11,6 +11,16 @@ var __bisectDate = d3.bisector(function (d) {
   return d;
 }).left;
 
+var __dateFormat = d3.time.format.utc.multi([
+  [':%S', function(d) { return d.getUTCSeconds(); }],
+  [':%M', function(d) { return d.getUTCMinutes(); }],
+  ['%H:00', function(d) { return d.getUTCHours(); }],
+  ['%a %e', function(d) { return d.getUTCDay() && d.getUTCDate() !== 1; }],
+  ['%b %e', function(d) { return d.getUTCDate() !== 1; }],
+  ['%b', function(d) { return d.getUTCMonth(); }],
+  ['%Y', function() { return true; }]
+]);
+
 
 /**
  * Display a Timeseries model.
@@ -39,7 +49,10 @@ var D3TimeseriesView = function (options) {
       _onMouseMove,
       _onMouseOut;
 
-  _this = D3GraphView(options);
+  _this = D3GraphView(Util.extend({
+    xAxisFormat: __dateFormat,
+    xAxisScale: d3.time.scale.utc()
+  }, options));
 
   _initialize = function () {
     var el = d3.select(_this.dataEl);
