@@ -67,6 +67,8 @@ var D3TimeseriesView = function (options) {
       _onMouseOut;
 
   _this = D3GraphView(Util.extend({
+    height: 300,
+    width: 960,
     xAxisFormat: __dateFormat,
     xAxisScale: d3.time.scale.utc()
   }, options));
