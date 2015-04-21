@@ -21,6 +21,20 @@ var __dateFormat = d3.time.format.utc.multi([
   ['%Y', function() { return true; }]
 ]);
 
+/**
+ * Format a date for display in tooltip.
+ *
+ * @param d {Date}
+ *        date to format.
+ * @return {String}
+ *         formatted date.
+ */
+var __formatTooltipDate = function (d) {
+  d = d.toISOString();
+  d = d.replace(/^.*T/, '');
+  d = d.replace('.000Z' ,'');
+  return d;
+};
 
 /**
  * Display a Timeseries model.
@@ -216,9 +230,7 @@ var D3TimeseriesView = function (options) {
         },
         {
           class: 'time',
-          text: x.toISOString()
-              .replace('T', ' ')
-              .replace('.000Z' ,' UTC')
+          text: __formatTooltipDate(x)
         }
       ]
     );
