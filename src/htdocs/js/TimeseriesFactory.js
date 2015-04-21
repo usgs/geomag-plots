@@ -2,29 +2,37 @@
 
 
 var Util = require('util/Util'),
-    Xhr = require('util/Xhr');
+    Xhr = require('util/Xhr'),
+
+    TimeseriesResponse = require('TimeseriesResponse');
 
 var _DEFAULTS = {
-  url: null
+  url: 'http://geomag.usgs.gov/map/observatories_data.json.php'
 };
 
 /**
  * TimeseriesFactory uses ajax to retrieve Timeseries
- * @params params {Object}
- *    params.url URL for get_geomag_data web service.
+ *
+ * @params options {Object}
+ *    options.url: URL for get_geomag_data web service.
  */
 var TimeseriesFactory = function (options) {
   var _this,
       _initialize,
 
-      _options;
+      _options,
+      _url;
 
-_this = {};
+  _this = {};
 
   _initialize = function (options) {
     _options = Util.extend({}, _DEFAULTS, options);
+    _url = _options.url;
   };
 
+  /**
+   * Makes certain everything is destroyed upon exit.
+   */
   _this.destroy = function () {
     _options = null;
 
@@ -32,24 +40,29 @@ _this = {};
   };
 
   /**
+   * getTimeseries from webservice.
+   *
    * @param options {Object}
-   *  observatory: string
+   *  options.observatory: {string}
    *      default: null
    *      observatory to request or null for all
-   *  channel: string
+   *  options.channel: {string}
    *      default: null
    *      channel to request or null for all
-   *  starttime: Date
+   *  options.starttime: {Date}
    *      first requested sample
-   *  endtime: Date
+   *  options.endtime: {Date}
    *      last requested sample
-   *  callback: function(TimesereisResponse)
+   *  options.callback: function(TimeseriesResponse)
    *      called after data is succesfully loaded
-   *  errback: function(Xhr)
+   *  options.errback: function(status,Xhr)
    *      called if there are Errors
-   *  seconds: boolean
+   *  options.seconds: {boolean}
    *      default: false
    *      whether to load seconds data (true) or minutes data (false)
+   *
+   * @return {TimerseriesResponse}
+   *      Response from webservice, in a TimeseriesResponse object
    */
   _this.getTimeseries = function(options) {
     var starttime = options.starttime || new Date(),
@@ -87,14 +100,12 @@ _this = {};
     }
 
     Xhr.ajax({
-      url: _options.url,
+      url: _url,
       data: data,
       success: function (response) {
-        callback(response);
+        callback(TimeseriesResponse(response));
       },
-      error: function () {
-        errback();
-      }
+      error: errback(status, Xhr)
     });
   };
 

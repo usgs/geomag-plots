@@ -11,9 +11,11 @@ timeseriesFactory.getTimeseries({
   starttime: new Date(1429459810000),
   endtime: new Date(1429546200000),
   callback: function (response) {
-    var el = document.getElementById('example');
-    el.innerHTML = response.data[0].id;
-    console.log(response);
+    var el = document.getElementById('example'),
+        data = response.getTimeseries();
+
+    el.innerHTML = data[0].get('metadata').observatory;
+    console.log(data[0].get('values'));
    }
 });
 
