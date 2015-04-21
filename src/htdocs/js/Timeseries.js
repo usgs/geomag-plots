@@ -67,6 +67,13 @@ var Timeseries = function (options) {
         }
       }
     }
+    if (gapStart !== null) {
+      // end is a gap
+      gaps.push({
+        start: times[gapStart],
+        end: times[times.length - 1]
+      });
+    }
     return gaps;
   };
 
