@@ -58,24 +58,24 @@ var d3 = require('d3'),
  * @param options.width {Number}
  *        default 960.
  *        width of svg viewBox.
- * @param options.xAxisFormat {Function}
+ * @param options.xAxisFormat {Function|String}
  *        default null.
  *        x axis tickFormat.
  * @param options.xAxisLabel {String}
  *        label for x axis.
  * @param options.xAxisScale {d3.scale}
  *        default d3.scale.linear().
- * @param options.xAxisTicks {Array<Number>}
+ * @param options.xAxisTicks {Function(extent)|Array<Number>}
  *        default null.
  *        x axis tick values.
- * @param options.yAxisFormat {String}
+ * @param options.yAxisFormat {Function|String}
  *        default null.
  *        y axis tickFormat.
  * @param options.yAxisLabel {String}
  *        label for y axis.
  * @param options.yAxisScale {d3.scale}
  *        default d3.scale.linear().
- * @param options.yAxisTicks {Array<Number>}
+ * @param options.yAxisTicks {Function(extent)|Array<Number>}
  *        default null.
  *        y axis tick values.
  */
@@ -288,8 +288,10 @@ var D3GraphView = function (options) {
         paddingTop,
         width,
         xAxisScale,
+        xAxisTicks,
         xExtent,
         yAxisScale,
+        yAxisTicks,
         yExtent;
 
     // changed options,
@@ -377,11 +379,19 @@ var D3GraphView = function (options) {
     // redraw axes
     _xAxis.scale(xAxisScale);
     _xAxis.tickFormat(options.xAxisFormat);
-    _yAxis.tickValues(options.yAxisTicks);
+    xAxisTicks = options.xAxisTicks;
+    if (typeof xAxisTickValues === 'function') {
+      xAxisTicks = xAxisTicks(xExtent);
+    }
+    _xAxis.tickValues(xAxisTicks);
 
     _yAxis.scale(yAxisScale);
     _yAxis.tickFormat(options.yAxisFormat);
-    _yAxis.tickValues(options.yAxisTicks);
+    yAxisTicks = options.yAxisTicks;
+    if (typeof yAxisTicks === 'function') {
+      yAxisTicks = yAxisTicks(yExtent);
+    }
+    _yAxis.tickValues(yAxisTicks);
 
     d3.select(_xAxisEl).call(_xAxis);
     d3.select(_yAxisEl).call(_yAxis);
