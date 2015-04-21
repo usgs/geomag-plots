@@ -12,8 +12,9 @@
 
 
 .point {
-  stroke: none;
   fill: none;
+  pointer-events: none;
+  stroke: none;
 
   &.visible {
     stroke: #000;
