@@ -427,7 +427,7 @@ var D3GraphView = function (options) {
     bbox = tooltip.node().getBBox();
     outline.attr('width', bbox.width + 2 * padding)
         .attr('height', bbox.height + 2 * padding);
-    content.attr('transform', 'translate(' + padding + ',' + padding + ')');
+    content.attr('transform', 'translate(' + padding + ',0)');
 
     // position tooltip on graph
     // center of point

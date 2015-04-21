@@ -12,8 +12,9 @@
 
 
 .point {
-  stroke: none;
   fill: none;
+  pointer-events: none;
+  stroke: none;
 
   &.visible {
     stroke: #000;
@@ -28,4 +29,10 @@
     fill: #000;
     stroke: none;
   }
+}
+
+
+.gap {
+  fill: #ddd;
+  stroke:none;
 }

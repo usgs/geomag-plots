@@ -17,12 +17,8 @@ Xhr.ajax({
       D3TimeseriesView({
         el: el.appendChild(document.createElement('div')),
         data: timeseries,
-        height: 300,
-        width: 960,
         xAxisLabel: 'Time (UTC)',
-        xAxisScale: d3.time.scale.utc(),
         yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)',
-        yAxisScale: d3.scale.linear()
       }).render();
     });
   }
