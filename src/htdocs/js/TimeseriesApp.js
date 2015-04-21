@@ -7,6 +7,7 @@ var Collection = require('mvc/Collection'),
     Util = require('util/Util'),
 
     TimeseriesCollectionView = require('TimeseriesCollectionView'),
+    TimeseriesFactory = require('TimeseriesFactory'),
     TimeseriesSelectView = require('TimeseriesSelectView');
 
 
@@ -57,15 +58,13 @@ var TimeseriesApp = function (options) {
       endtime: null,
       observatory: null,
       starttime: null,
-      timemode: 'realtime'
+      timemode: 'pasthour'
     }, options.config));
     _config.on('change', _onConfigChange);
 
     _timeseries = options.timeseries || Collection();
 
-    _timeseriesFactory = {
-      getTimeseries: function () {}
-    };
+    _timeseriesFactory = TimeseriesFactory();
 
     _configView = TimeseriesSelectView({
       el: configEl,
@@ -76,6 +75,7 @@ var TimeseriesApp = function (options) {
       el: timeseriesEl,
       collection: _timeseries
     });
+    _onConfigChange();
   };
 
   /**
