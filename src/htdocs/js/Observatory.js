@@ -17,10 +17,7 @@ var Observatory = function (options) {
     id: null,
     name: null,
     latitude: null,
-    longitude: null,
-    startDate: null,
-    endDate: null,
-    pictures: null
+    longitude: null
   }, options));
 
   options = null;
