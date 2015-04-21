@@ -1,6 +1,7 @@
 'use strict';
 
-var Util = require('util/Util'),
+var Collection = require('mvc/Collection'),
+    Util = require('util/Util'),
     View = require('mvc/View'),
 
     D3TimeseriesView = require('D3TimeseriesView');
@@ -17,16 +18,78 @@ var Util = require('util/Util'),
 var TimeseriesCollectionView = function (options) {
   var _this,
       _initialize,
-      _collection;
+
+      _collection,
+      _list,
+      _views,
+
+      _createView,
+      _onTimeseriesReset,
+
+      _tempView; //TODO delete when TimeseriesView is ready.
 
   _this = View(options);
 
   _initialize = function (options) {
-    _this.el.innerHTML = '<p>I am a TimeseriesCollectionView</p>';
+    if (_this.el.nodeName.toUpperCase() === 'OL' ||
+        _this.el.nodeName.toUpperCase() === 'UL') {
+      _list = _this.el;
+    } else {
+      _list = _this.el.appendChild(document.createElement('ol'));
+    }
+    _list.classList.add('analysis-collection-list');
+    _list.classList.add('no-style');
+
+    _views = Collection([]);
+
 
     _collection = options.collection;
     // TODO: bind to other collection events.
     _collection.on('reset', _this.render);
+
+    _onTimeseriesReset();
+  };
+
+  _createView = function (timeseries) {
+    var li,
+        view;
+
+    li = document.createElement('li');
+    li.classList.add('timeseries-view');
+    view = _tempView({timeseries:timeseries, el:li});
+
+    return view;
+  };
+
+  _tempView = function (options) {
+    var el = options.el,
+        timeseries = options.timeseries,
+        meta = timeseries.get('metadata'),
+        view;
+
+    view = D3TimeseriesView({
+      el: el.appendChild(document.createElement('div')),
+      data: timeseries,
+      xAxisLabel: 'Time (UTC)',
+      yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+    });
+
+    view.render();
+
+    return view;
+  };
+
+  _onTimeseriesReset = function () {
+    _views.data().forEach(function (view) {
+      _views.remove(view);
+      view.destroy();
+    });
+
+    _collection.getTimeseries().forEach(function (timeseries) {
+      _views.add(_createView(timeseries));
+    });
+
+    _this.render();
   };
 
   /**
@@ -39,16 +102,8 @@ var TimeseriesCollectionView = function (options) {
   }, _this.destroy);
 
   _this.render = function () {
-    // TODO: clean this up
-    _this.el.innerHTML = '';
-    _collection.data().forEach(function (timeseries) {
-      var meta = timeseries.get('metadata');
-      D3TimeseriesView({
-        el: _this.el.appendChild(document.createElement('div')),
-        data: timeseries,
-        xAxisLabel: 'Time (UTC)',
-        yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
-      }).render();
+    _views.data().forEach(function (view) {
+      _list.appendChild(view.el);
     });
   };
 
