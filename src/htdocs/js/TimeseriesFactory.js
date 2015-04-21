@@ -1,42 +1,40 @@
 'use strict';
 
-
 var Util = require('util/Util'),
     Xhr = require('util/Xhr'),
 
     TimeseriesResponse = require('TimeseriesResponse');
 
+
 var _DEFAULTS = {
   url: 'http://geomag.usgs.gov/map/observatories_data.json.php'
 };
+
 
 /**
  * TimeseriesFactory uses ajax to retrieve Timeseries
  *
  * @params options {Object}
- * @params options.url: {URL}
+ * @params options.url {String}
  *      get_geomag_data web service.
  */
 var TimeseriesFactory = function (options) {
   var _this,
       _initialize,
 
-      _options,
       _url;
 
   _this = {};
 
   _initialize = function (options) {
-    _options = Util.extend({}, _DEFAULTS, options);
-    _url = _options.url;
+    options = Util.extend({}, _DEFAULTS, options);
+    _url = options.url;
   };
 
   /**
    * Makes certain everything is destroyed upon exit.
    */
   _this.destroy = function () {
-    _options = null;
-
     _this = null;
   };
 
@@ -44,22 +42,22 @@ var TimeseriesFactory = function (options) {
    * getTimeseries from webservice.
    *
    * @param options {Object}
-   * @param options.observatory: {string}
-   *      default: null
+   * @param options.observatory {String}
+   *      default null
    *      observatory to request or null for all
-   * @param options.channel: {string}
-   *      default: null
+   * @param options.channel {String}
+   *      default null
    *      channel to request or null for all
-   * @param options.starttime: {Date}
+   * @param options.starttime {Date}
    *      first requested sample
-   * @param options.endtime: {Date}
+   * @param options.endtime {Date}
    *      last requested sample
-   * @param options.callback: function(TimeseriesResponse)
+   * @param options.callback {Function(TimeseriesResponse)}
    *      called after data is succesfully loaded
-   * @param options.errback: function(status,Xhr)
+   * @param options.errback {Function(status,Xhr)}
    *      called if there are Errors
-   * @param options.seconds: {boolean}
-   *      default: false
+   * @param options.seconds {Boolean}
+   *      default false
    *      whether to load seconds data (true) or minutes data (false)
    *
    * @return {TimerseriesResponse}
@@ -106,13 +104,14 @@ var TimeseriesFactory = function (options) {
       success: function (response) {
         callback(TimeseriesResponse(response));
       },
-      error: errback(status, Xhr)
+      error: errback
     });
   };
 
-_initialize(options);
-options = null;
-return _this;
+  _initialize(options);
+  options = null;
+  return _this;
 };
+
 
 module.exports = TimeseriesFactory;
