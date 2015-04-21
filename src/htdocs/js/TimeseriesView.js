@@ -13,8 +13,6 @@ var Util = require('util/Util'),
  *        all options are passed to View.
  */
 var TimeseriesView = function (options) {
-  // bind the D3TimeseriesView
-  // make the metaview
   var _this,
       _initialize,
 
@@ -27,8 +25,6 @@ var TimeseriesView = function (options) {
   _this = View(options);
 
   _initialize = function (options) {
-    _this.el.innerHTML = '<p>Timeseries View is here.</p>';
-
     _height = options.height || 240;
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
@@ -45,16 +41,27 @@ var TimeseriesView = function (options) {
   }, _this.destroy);
 
   _this.render = function () {
-    var meta = _timeseries.get('metadata');
+    var meta = _timeseries.get('metadata'),
+        metaView,
+        traceView;
+
+    metaView = document.createElement('div');
+    metaView.className = 'meta-view';
+
+    metaView.innerHTML = meta.observatory + ' ' + meta.channel + ' (nT)';
+    _this.el.appendChild(metaView);
+
+    traceView = document.createElement('div');
+    traceView.className = 'trace-view';
 
     _trace = D3TimeseriesView({
-      el: _this.el.appendChild(document.createElement('div')),
+      el: _this.el.appendChild(traceView),
       data: _timeseries,
       // title: meta.observatory,
       height: _height,
       width: _width,
       xAxisLabel: 'Time (UTC)',
-      yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+      // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
     }).render();
   };
 
