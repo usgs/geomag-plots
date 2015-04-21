@@ -2,7 +2,14 @@
 
 
 var d3 = require('d3'),
-    D3GraphView = require('D3GraphView');
+    D3GraphView = require('D3GraphView'),
+    Util = require('util/Util');
+
+
+// used to find closest date based on current mouse position
+var __bisectDate = d3.bisector(function (d) {
+  return d;
+}).left;
 
 
 /**
@@ -35,22 +42,45 @@ var D3TimeseriesView = function (options) {
   _this = D3GraphView(options);
 
   _initialize = function () {
+    var el = d3.select(_this.dataEl);
     // data line
-    _timeseries = null;
+    _timeseries = el.append('path')
+        .attr('class', 'timeseries')
+        .attr('clip-path', 'url(#plotAreaClip)');
+    // hovered data point
+    _point = el.append('circle')
+        .attr('class', 'point');
     // used to plot _timeseries
     _line = d3.svg.line()
         .x(_getX)
         .y(_getY)
         .defined(_defined);
-    // used to find closest date based on current mouse position
-    _bisectDate = d3.bisector(function (d) {
-      return d;
-    }).left;
     // mouse tracking event handlers
     _el = d3.select(_this.el.querySelector('.inner-frame'));
     _el.on('mousemove', _onMouseMove);
     _el.on('mouseout', _onMouseOut);
   };
+
+  _this.destroy = Util.compose(function () {
+    // unbind listeners
+    _el.on('mousemove', null);
+    _el.on('mouseout', null);
+    // free references
+    _el = null;
+    _timeseries = null;
+    _point = null;
+    _line = null;
+    _bisectDate = null;
+    _data = null;
+    _x = null;
+    _y = null;
+    _defined = null;
+    _getX = null;
+    _getY = null;
+    _onMouseMove = null;
+    _onMouseOut = null;
+    _this = null;
+  }, _this.destroy);
 
   /**
    * Check whether value is defined at the given point.
@@ -100,7 +130,7 @@ var D3TimeseriesView = function (options) {
     // determine mouse coordinates in svg coordinates.
     coords = d3.mouse(this);
     // find date closest to mouse position
-    i = _bisectDate(_data.times, _x.invert(coords[0]), 1);
+    i = __bisectDate(_data.times, _x.invert(coords[0]), 1);
     // data point closest to x mouse position
     x = _data.times[i];
     y = _data.values[i];
@@ -112,9 +142,8 @@ var D3TimeseriesView = function (options) {
     }
 
     // show data point on line
-    _point.attr('class', 'point visible')
-        .attr('transform',
-            'translate(' + _getX(i) + ',' + _getY(i) + ')');
+    _point.attr('transform', 'translate(' + _getX(i) + ',' + _getY(i) + ')')
+        .classed({'visible': true});
     // show tooltip of current point
     _this.showTooltip([x, y],
       [
@@ -137,7 +166,7 @@ var D3TimeseriesView = function (options) {
    */
   _onMouseOut = function () {
     // hide point
-    _point.attr('class', 'point');
+    _point.classed({'visible': false});
     // hide tooltip
     _this.showTooltip(null);
   };
@@ -169,24 +198,25 @@ var D3TimeseriesView = function (options) {
   /**
    * Update the timeseries that is displayed.
    *
-   * @param el {SVGElement}
-   *        element where data should be plotted.
+   * @param changed {Object}
+   *        options that changed.
+   *        when undefined, render everything.
    */
-  _this.plot = function (el) {
-    if (_timeseries === null) {
-      // first plot, create elements
-      el = d3.select(el);
-      _timeseries = el.append('path')
-          .attr('class', 'timeseries')
-          .attr('clip-path', 'url(#plotAreaClip)');
-      _point = el.append('circle')
-          .attr('r', 2)
-          .attr('class', 'point');
+  _this.plot = function (changed) {
+    var options;
+
+    changed = changed || _this.model.get();
+    options = _this.model.get();
+
+    if (changed.hasOwnProperty('pointRadius')) {
+      // update point radius
+      _point.attr('r', options.pointRadius);
     }
+
     // update references used by _line function callbacks
-    _data = _this.model.get('data').get();
-    _x = _this.model.get('xAxisScale');
-    _y = _this.model.get('yAxisScale');
+    _data = options.data.get();
+    _x = options.xAxisScale;
+    _y = options.yAxisScale;
     // plot timeseries
     _timeseries.attr('d', _line(d3.range(_data.times.length)));
   };
