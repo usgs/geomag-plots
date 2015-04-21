@@ -14,7 +14,8 @@ var _DEFAULTS = {
  * TimeseriesFactory uses ajax to retrieve Timeseries
  *
  * @params options {Object}
- *    options.url: URL for get_geomag_data web service.
+ * @params options.url: {URL}
+ *      get_geomag_data web service.
  */
 var TimeseriesFactory = function (options) {
   var _this,
@@ -43,21 +44,21 @@ var TimeseriesFactory = function (options) {
    * getTimeseries from webservice.
    *
    * @param options {Object}
-   *  options.observatory: {string}
+   * @param options.observatory: {string}
    *      default: null
    *      observatory to request or null for all
-   *  options.channel: {string}
+   * @param options.channel: {string}
    *      default: null
    *      channel to request or null for all
-   *  options.starttime: {Date}
+   * @param options.starttime: {Date}
    *      first requested sample
-   *  options.endtime: {Date}
+   * @param options.endtime: {Date}
    *      last requested sample
-   *  options.callback: function(TimeseriesResponse)
+   * @param options.callback: function(TimeseriesResponse)
    *      called after data is succesfully loaded
-   *  options.errback: function(status,Xhr)
+   * @param options.errback: function(status,Xhr)
    *      called if there are Errors
-   *  options.seconds: {boolean}
+   * @param options.seconds: {boolean}
    *      default: false
    *      whether to load seconds data (true) or minutes data (false)
    *
