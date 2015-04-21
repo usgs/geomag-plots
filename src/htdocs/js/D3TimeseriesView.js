@@ -77,7 +77,8 @@ var D3TimeseriesView = function (options) {
     var el = d3.select(_this.dataEl);
     // data gaps
     _gaps = el.append('g')
-        .attr('class', 'gaps');
+        .attr('class', 'gaps')
+        .attr('clip-path', 'url(#plotAreaClip)');
     // data line
     _timeseries = el.append('path')
         .attr('class', 'timeseries')
@@ -262,12 +263,25 @@ var D3TimeseriesView = function (options) {
 
   /**
    * Get y axis extent.
+   *
+   * @param xExtent {Array<Number>}
+   *        current x extent.
+   * @return {Array<Number>}
+   *         y extent.
    */
-  _this.getYExtent = function () {
-    var yExtent = _this.model.get('yExtent');
+  _this.getYExtent = function (xExtent) {
+    var yExtent = _this.model.get('yExtent'),
+        minXIndex,
+        maxXIndex;
     if (yExtent === null) {
       _data = _this.model.get('data').get();
-      yExtent = d3.extent(_data.values);
+      if (xExtent) {
+        minXIndex = d3.bisectLeft(_data.times, xExtent[0]);
+        maxXIndex = d3.bisectLeft(_data.times, xExtent[1]);
+        yExtent = d3.extent(_data.values.slice(minXIndex, maxXIndex + 1));
+      } else {
+        yExtent = d3.extent(_data.values);
+      }
     }
     return yExtent;
   };
