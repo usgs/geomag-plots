@@ -13,7 +13,6 @@ var Util = require('util/Util'),
  *        all options are passed to View.
  */
 var TimeseriesView = function (options) {
-  // defaults for width & height
   // bind the D3TimeseriesView
   // make the metaview
   var _this,
@@ -21,7 +20,9 @@ var TimeseriesView = function (options) {
 
       _height,
       _timeseries,
-      _width;
+      _width,
+
+      _trace;
 
   _this = View(options);
 
@@ -40,13 +41,13 @@ var TimeseriesView = function (options) {
    */
   _this.destroy = Util.compose(function () {
     _this = null;
+    _trace.destroy();
   }, _this.destroy);
 
   _this.render = function () {
     var meta = _timeseries.get('metadata');
-    console.log(_height);
-    console.log(_width);
-    D3TimeseriesView({
+
+    _trace = D3TimeseriesView({
       el: _this.el.appendChild(document.createElement('div')),
       data: _timeseries,
       // title: meta.observatory,
