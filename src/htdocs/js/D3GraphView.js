@@ -98,7 +98,10 @@ var D3GraphView = function (options) {
       _yAxis,
       _yAxisEl,
       _yAxisLabel,
-      _yEl;
+      _yEl,
+      _zoom,
+      // methods
+      _onZoom;
 
   _this = View(options);
 
@@ -183,12 +186,32 @@ var D3GraphView = function (options) {
     _xAxis = d3.svg.axis().orient('bottom');
     _yAxis = d3.svg.axis().orient('left');
 
+    _zoom = d3.behavior.zoom()
+        .scaleExtent([1, 50])
+        .on('zoom', _onZoom);
+    _zoom.el = d3.select(_innerFrame);
+    _zoom.el.call(_zoom);
+
     _this.model.on('change', _this.render);
   };
 
+  /**
+   * Destroy this view.
+   */
   _this.destroy = Util.compose(function () {
     _this.model.off('change', _this.render);
     _this.model = null;
+
+    _zoom.on('zoom', null);
+    _zoom.el.on('mousedown.zoom', null);
+    _zoom.el.on('mousemove.zoom', null);
+    _zoom.el.on('dblclick.zoom', null);
+    _zoom.el.on('touchstart.zoom', null);
+    _zoom.el.on('wheel.zoom', null);
+    _zoom.el.on('mousewheel.zoom', null);
+    _zoom.el.on('MozMousePixelScroll.zoom', null);
+    _zoom.el = null;
+    _zoom = null;
 
     _svg = null;
     _plotAreaClip = null;
@@ -209,7 +232,45 @@ var D3GraphView = function (options) {
     _this = null;
   }, _this.destroy);
 
-  _this.render = function (changed) {
+  /**
+   * Zoom event handler.
+   */
+  _onZoom = function () {
+    var options,
+        t = _zoom.translate(),
+        tx = t[0],
+        ty = t[1],
+        width,
+        xAxisScale,
+        xExtent,
+        xSpan;
+
+    // restrict x panning to extent
+    options = _this.model.get();
+    width = options.width -
+        options.marginLeft - options.marginRight -
+        options.paddingLeft - options.paddingRight;
+    xAxisScale = _xAxis.scale();
+    xExtent = _this.getXExtent();
+    xSpan = xAxisScale(xExtent[1]) - xAxisScale(xExtent[0]);
+    tx = Math.min(tx, 0);
+    tx = Math.max(tx, width - xSpan);
+    _zoom.translate([tx, ty]);
+    // update lines
+    _this.render({}, true);
+  };
+
+  /**
+   * Render the graph.
+   *
+   * @param changed {Object}
+   *        default is _this.model.get.
+   *        list of properties that have changed.
+   * @param zooming {Boolean}
+   *        default false.
+   *        whether this render is being triggered by a zoom event.
+   */
+  _this.render = function (changed, zooming) {
     var height,
         innerWidth,
         innerHeight,
@@ -299,10 +360,19 @@ var D3GraphView = function (options) {
     }
 
     // update axes extent
-    xExtent = _this.getXExtent();
+    if (zooming) {
+      // when zooming, xExtent has already been updated
+      xExtent = xAxisScale.domain();
+    } else {
+      // otherwise, show full extent
+      xExtent = _this.getXExtent();
+    }
+    yExtent = _this.getYExtent(xExtent);
     xAxisScale.domain(xExtent);
-    yExtent = _this.getYExtent();
     yAxisScale.domain(yExtent);
+    if (changed.hasOwnProperty('xAxisScale')) {
+      _zoom.x(xAxisScale);
+    }
 
     // redraw axes
     _xAxis.scale(xAxisScale);
