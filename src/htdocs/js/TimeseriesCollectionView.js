@@ -25,6 +25,7 @@ var TimeseriesCollectionView = function (options) {
 
       _createView,
       _onTimeseriesReset,
+      _onTimeseriesRemove,
 
       _tempView; //TODO delete when TimeseriesView is ready.
 
@@ -45,7 +46,8 @@ var TimeseriesCollectionView = function (options) {
 
     _collection = options.collection;
     // TODO: bind to other collection events.
-    _collection.on('reset', _this.render);
+    _collection.on('remove', _this._onTimeseriesRemove);
+    _collection.on('reset', _this._onTimeseriesReset);
 
     _onTimeseriesReset();
   };
@@ -77,6 +79,12 @@ var TimeseriesCollectionView = function (options) {
     view.render();
 
     return view;
+  };
+
+  _onTimeseriesRemove = function (timeseriesCollection) {
+    timeseriesCollection.forEach(function (timeseries) {
+      _views.
+    });
   };
 
   _onTimeseriesReset = function () {
