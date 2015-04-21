@@ -36,6 +36,7 @@ var D3TimeseriesView = function (options) {
       // variables
       _data,
       _el,
+      _gaps,
       _line,
       _point,
       _timeseries,
@@ -46,6 +47,8 @@ var D3TimeseriesView = function (options) {
       _defined,
       _getX,
       _getY,
+      _onGapOver,
+      _onGapOut,
       _onMouseMove,
       _onMouseOut;
 
@@ -56,6 +59,9 @@ var D3TimeseriesView = function (options) {
 
   _initialize = function () {
     var el = d3.select(_this.dataEl);
+    // data gaps
+    _gaps = el.append('g')
+        .attr('class', 'gaps');
     // data line
     _timeseries = el.append('path')
         .attr('class', 'timeseries')
@@ -129,6 +135,50 @@ var D3TimeseriesView = function (options) {
    */
   _getY = function (d) {
     return _y(_data.values[d]);
+  };
+
+  /**
+   * Gap mouse over event handler.
+   *
+   * @param gap {Object}
+   *        gap.start {Date} start of gap
+   *        gap.end {Date} end of gap.
+   */
+  _onGapOver = function (gap) {
+    var centerX,
+        centerY,
+        yExtent;
+    yExtent = _y.domain();
+    centerX = new Date((gap.end.getTime() + gap.start.getTime()) / 2);
+    centerY = (yExtent[0] + yExtent[1]) / 2;
+
+    // show data point on line
+    _point.classed({'visible': true})
+        .attr('transform',
+            'translate(' + _x(centerX) + ',' + _y(centerY) + ')');
+    _this.showTooltip([centerX, centerY],
+      [
+        {
+          class: 'value',
+          text: 'NO DATA'
+        },
+        {
+          class: 'time',
+          text: __formatTooltipDate(gap.start) +
+              ' - ' + __formatTooltipDate(gap.end)
+        }
+      ]
+    );
+  };
+
+  /**
+   * Gap mouse out event handler.
+   */
+  _onGapOut = function () {
+    // hide point
+    _point.classed({'visible': false});
+    // hide tooltip
+    _this.showTooltip(null);
   };
 
   /**
@@ -216,7 +266,9 @@ var D3TimeseriesView = function (options) {
    *        when undefined, render everything.
    */
   _this.plot = function (changed) {
-    var options;
+    var gaps,
+        options,
+        yExtent;
 
     changed = changed || _this.model.get();
     options = _this.model.get();
@@ -232,6 +284,24 @@ var D3TimeseriesView = function (options) {
     _y = options.yAxisScale;
     // plot timeseries
     _timeseries.attr('d', _line(d3.range(_data.times.length)));
+
+    // plot gaps
+    yExtent = _y.domain();
+    gaps = _gaps.selectAll('rect').data(options.data.getGaps());
+    gaps.enter()
+        .append('rect')
+        .attr('class', 'gap')
+        .on('mouseover', _onGapOver)
+        .on('mouseout', _onGapOut);
+    gaps.attr('x', function (g) { return _x(g.start); })
+        .attr('width', function (g) { return _x(g.end) - _x(g.start); })
+        .attr('y', function () { return _y(yExtent[1]); })
+        .attr('height', function () {
+            return _y(yExtent[0]) - _y(yExtent[1]); });
+    gaps.exit()
+        .on('mouseover', null)
+        .on('mouseout', null)
+        .remove();
   };
 
 
