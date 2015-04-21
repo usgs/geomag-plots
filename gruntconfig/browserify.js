@@ -40,7 +40,8 @@ addExports(config.src + '/htdocs/js', [
   'D3GraphView',
   'D3TimeseriesView',
   'TimeseriesFactory',
-  'TimeseriesResponse'
+  'TimeseriesResponse',
+  'TimeseriesView'
 ]);
 
 // Subsequent source files can then require "Class" with:
