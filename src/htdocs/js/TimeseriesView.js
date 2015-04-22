@@ -18,9 +18,13 @@ var TimeseriesView = function (options) {
 
       _height,
       _timeseries,
+      _trace,
       _width,
+      _yExtent,
 
-      _trace;
+      _yAxisFormat,
+      _yAxisTicks;
+
 
   _this = View(options);
 
@@ -32,6 +36,48 @@ var TimeseriesView = function (options) {
     _this.el.classList.add('timeseries-view');
 
     _this.render();
+  };
+
+  /**
+   * Format ticks shown on y axis.
+   *
+   * @param y {Number}
+   *        value where tick is shown.
+   * @return {String}
+   *         formatted tick.
+   *         this function displays actual value at min/max,
+   *         or the size of the value range at the average.
+   * @see yAxisTicks
+   */
+  _yAxisFormat = function (y) {
+    var range;
+    if (y === _yExtent[0] || y === _yExtent[1]) {
+      // display min/max
+      return y;
+    } else {
+      // display range in middle
+      range = _yExtent[1] - _yExtent[0];
+      return '(' + range.toFixed(1) + ' nT)';
+    }
+  };
+
+  /**
+   * Generate ticks to show on y axis.
+   *
+   * @param extent {Array<Number>}
+   *        array containing current y extent [min, max].
+   * @return {Array<Number>}
+   *         values where ticks should be displayed.
+   *         this function generates ticks at min, average, and max.
+   * @see yAxisFormat
+   */
+  _yAxisTicks = function (extent) {
+    var average;
+    // save extent for calls to yAxisFormat
+    _yExtent = extent;
+    // create tick at min/max and average
+    average = (_yExtent[0] + _yExtent[1]) / 2;
+    return [_yExtent[1], average, _yExtent[0]];
   };
 
   /**
@@ -63,7 +109,9 @@ var TimeseriesView = function (options) {
       height: _height,
       width: _width,
       xAxisLabel: 'Time (UTC)',
+      yAxisFormat: _yAxisFormat,
       // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+      yAxisTicks: _yAxisTicks
     }).render();
   };
 
