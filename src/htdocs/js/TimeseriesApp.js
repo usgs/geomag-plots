@@ -12,18 +12,6 @@ var Collection = require('mvc/Collection'),
     TimeseriesSelectView = require('TimeseriesSelectView');
 
 
-var __getTime = function (age) {
-  var now = new Date(),
-      then;
-  then = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate()
-  ) - age);
-  return then;
-};
-
-
 /**
  * Timeseries application.
  *
@@ -68,9 +56,9 @@ var TimeseriesApp = function (options) {
 
     _config = Model(Util.extend({
       channel: 'H',
-      endtime: __getTime(0),
+      endtime: null,
       observatory: null,
-      starttime: __getTime(86400000),
+      starttime: null,
       timemode: 'pasthour'
     }, options.config));
     _config.on('change', _onConfigChange);
