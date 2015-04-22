@@ -116,6 +116,9 @@ var TimeseriesApp = function (options) {
     } else if (timemode === 'pasthour') {
       endtime = new Date();
       starttime = new Date(endtime.getTime() - 3600000);
+    } else if (timemode === 'pastday') {
+      endtime = new Date();
+      starttime = new Date(endtime.getTime() - 86400000);
     } else {
       endtime = _config.get('endtime');
       starttime = _config.get('starttime');

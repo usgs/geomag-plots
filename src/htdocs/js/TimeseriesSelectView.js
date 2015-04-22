@@ -57,6 +57,7 @@ var TimeseriesSelectView = function (options) {
       _startTime,
       _timeCustom,
       _timeEl,
+      _timePastday,
       _timePasthour,
       _timeRealtime,
       _timeUpdate,
@@ -87,15 +88,19 @@ var TimeseriesSelectView = function (options) {
         '<h2>Time</h2>' +
         '<div class="time vertical">' +
           '<label for="time-realtime">' +
-            '<input type="radio" name="time" id="time-realtime"/>' +
+            '<input type="radio" name="timemode" id="time-realtime"/>' +
             'Realtime' +
           '</label>' +
           '<label for="time-pasthour">' +
-            '<input type="radio" name="time" id="time-pasthour"/>' +
+            '<input type="radio" name="timemode" id="time-pasthour"/>' +
             'Past Hour' +
           '</label>' +
+          '<label for="time-pastday">' +
+            '<input type="radio" name="timemode" id="time-pastday"/>' +
+            'Past Day' +
+          '</label>' +
           '<label for="time-custom">' +
-            '<input type="radio" name="time" id="time-custom"/>' +
+            '<input type="radio" name="timemode" id="time-custom"/>' +
             'Custom' +
           '</label>' +
           '<div class="time-input">' +
@@ -112,6 +117,7 @@ var TimeseriesSelectView = function (options) {
     _timeEl = el.querySelector('.time');
     _timeRealtime = el.querySelector('#time-realtime');
     _timePasthour = el.querySelector('#time-pasthour');
+    _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
     _startTime = el.querySelector('#time-starttime');
     _endTime = el.querySelector('#time-endtime');
@@ -122,6 +128,7 @@ var TimeseriesSelectView = function (options) {
     _observatoryEl.addEventListener('click', _onObservatoryClick);
     _timeRealtime.addEventListener('change', _onTimeChange);
     _timePasthour.addEventListener('change', _onTimeChange);
+    _timePastday.addEventListener('change', _onTimeChange);
     _timeCustom.addEventListener('change', _onTimeChange);
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
@@ -204,6 +211,10 @@ var TimeseriesSelectView = function (options) {
         _config.set({
           timemode: 'pasthour'
         });
+      } else if (_timePastday.checked) {
+        _config.set({
+          timemode: 'pastday'
+        });
       }
     }
   };
@@ -230,7 +241,27 @@ var TimeseriesSelectView = function (options) {
    */
   _this.destroy = Util.compose(function () {
     _config.off('change', _this.render);
+    _channelEl.removeEventListener('click', _onChannelClick);
+    _observatoryEl.removeEventListener('click', _onObservatoryClick);
+    _timeRealtime.removeEventListener('change', _onTimeChange);
+    _timePasthour.removeEventListener('change', _onTimeChange);
+    _timePastday.removeEventListener('change', _onTimeChange);
+    _timeCustom.removeEventListener('change', _onTimeChange);
+    _startTime.removeEventListener('change', _onTimeChange);
+    _endTime.removeEventListener('change', _onTimeChange);
+    _timeUpdate.removeEventListener('click', _onTimeChange);
+
     _config = null;
+    _channelEl = null;
+    _observatoryEl = null;
+    _timeRealtime = null;
+    _timePasthour = null;
+    _timePastday = null;
+    _timeCustom = null;
+    _startTime = null;
+    _endTime = null;
+    _timeUpdate = null;
+
     _this = null;
   }, _this.destroy);
 
@@ -264,6 +295,8 @@ var TimeseriesSelectView = function (options) {
       _timeRealtime.checked = true;
     } else if (timeMode === 'pasthour') {
       _timePasthour.checked = true;
+    } else if (timeMode === 'pastday') {
+      _timePastday.checked = true;
     } else {
       _timeCustom.checked = true;
     }
