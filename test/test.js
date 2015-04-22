@@ -41,6 +41,7 @@ if (!Function.prototype.bind) {
   // Add each test class here as they are implemented
   require('./spec/ObservatoryFactoryTest');
   require('./spec/TestTest');
+  require('./spec/TimeseriesCollectionViewTest');
   require('./spec/TimeseriesFactoryTest');
   require('./spec/TimeseriesResponseTest');
   require('./spec/TimeseriesSelectViewTest');
