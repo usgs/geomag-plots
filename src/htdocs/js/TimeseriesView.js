@@ -29,6 +29,8 @@ var TimeseriesView = function (options) {
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
 
+    _this.el.classList.add('timeseries-view');
+
     _this.render();
   };
 
