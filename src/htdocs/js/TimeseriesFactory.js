@@ -60,7 +60,7 @@ var TimeseriesFactory = function (options) {
    *      default false
    *      whether to load seconds data (true) or minutes data (false)
    *
-   * @return {TimerseriesResponse}
+   * @return {TimeseriesResponse}
    *      Response from webservice, in a TimeseriesResponse object
    */
   _this.getTimeseries = function(options) {
