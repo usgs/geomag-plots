@@ -35,6 +35,9 @@ var TimeseriesView = function (options) {
 
     _this.el.classList.add('timeseries-view');
 
+    _this.el.innerHTML =
+        '<div class="meta-view"></div><div class="trace-view"></div>';
+
     _this.render();
   };
 
@@ -93,17 +96,13 @@ var TimeseriesView = function (options) {
         metaView,
         traceView;
 
-    metaView = document.createElement('div');
-    metaView.className = 'meta-view';
+    metaView = _this.el.querySelector('.meta-view');
+    traceView = _this.el.querySelector('.trace-view');
 
     metaView.innerHTML = meta.observatory + ' ' + meta.channel + ' (nT)';
-    _this.el.appendChild(metaView);
-
-    traceView = document.createElement('div');
-    traceView.className = 'trace-view';
 
     _trace = D3TimeseriesView({
-      el: _this.el.appendChild(traceView),
+      el: traceView,
       data: _timeseries,
       // title: meta.observatory,
       height: _height,
