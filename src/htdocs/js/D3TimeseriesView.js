@@ -291,7 +291,19 @@ var D3TimeseriesView = function (options) {
       if (xExtent) {
         minXIndex = d3.bisectLeft(_data.times, xExtent[0]);
         maxXIndex = d3.bisectLeft(_data.times, xExtent[1]);
-        yExtent = d3.extent(_data.values.slice(minXIndex, maxXIndex + 1));
+        yExtent = d3.extent(_data.values.slice(
+            // include points just outside range
+            Math.max(0, minXIndex - 1),
+            Math.min(_data.values.length, maxXIndex + 2)
+            ));
+        if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
+          // if undefined over current x range, try entire range
+          yExtent = d3.extent(_data.values);
+        }
+        if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
+          // if still undefined use arbitrary scale
+          return [0, 1];
+        }
       } else {
         yExtent = d3.extent(_data.values);
       }
