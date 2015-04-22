@@ -17,6 +17,7 @@ var TimeseriesView = function (options) {
       _initialize,
 
       _height,
+      _metaView,
       _timeseries,
       _trace,
       _width,
@@ -25,18 +26,36 @@ var TimeseriesView = function (options) {
       _yAxisFormat,
       _yAxisTicks;
 
-
   _this = View(options);
 
   _initialize = function (options) {
+    var el,
+        traceView;
+
     _height = options.height || 240;
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
 
-    _this.el.classList.add('timeseries-view');
+    el = _this.el;
+    el.classList.add('timeseries-view');
 
-    _this.el.innerHTML =
+    el.innerHTML =
         '<div class="meta-view"></div><div class="trace-view"></div>';
+
+    _metaView = el.querySelector('.meta-view');
+    traceView = el.querySelector('.trace-view');
+
+    _trace = D3TimeseriesView({
+      el: traceView,
+      data: _timeseries,
+      // title: meta.observatory,
+      height: _height,
+      width: _width,
+      xAxisLabel: 'Time (UTC)',
+      yAxisFormat: _yAxisFormat,
+      // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+      yAxisTicks: _yAxisTicks
+    });
 
     _this.render();
   };
@@ -92,26 +111,11 @@ var TimeseriesView = function (options) {
   }, _this.destroy);
 
   _this.render = function () {
-    var meta = _timeseries.get('metadata'),
-        metaView,
-        traceView;
+    var meta = _timeseries.get('metadata');
 
-    metaView = _this.el.querySelector('.meta-view');
-    traceView = _this.el.querySelector('.trace-view');
+    _metaView.innerHTML = meta.observatory + ' ' + meta.channel + ' (nT)';
 
-    metaView.innerHTML = meta.observatory + ' ' + meta.channel + ' (nT)';
-
-    _trace = D3TimeseriesView({
-      el: traceView,
-      data: _timeseries,
-      // title: meta.observatory,
-      height: _height,
-      width: _width,
-      xAxisLabel: 'Time (UTC)',
-      yAxisFormat: _yAxisFormat,
-      // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
-      yAxisTicks: _yAxisTicks
-    }).render();
+    _trace.render();
   };
 
   _initialize(options);
