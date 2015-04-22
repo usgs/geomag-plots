@@ -11,6 +11,14 @@ var Util = require('util/Util'),
  *
  * @param options {Object}
  *        all options are passed to View.
+ * @param options.el {DOMElement}
+ *        parent element to attach the TimeseriesView elements to.
+ * @param options.height {Integer}
+ *        optional, initial height of the plotted data trace.
+ * @param options.timeseries {Array<Timeseries>}
+ *        timeseries to display.
+ * @param options.width {Integer}
+ *        optional, initial width of the plotted data trace.
  */
 var TimeseriesView = function (options) {
   var _this,
@@ -40,7 +48,8 @@ var TimeseriesView = function (options) {
     el.classList.add('timeseries-view');
 
     el.innerHTML =
-        '<div class="meta-view"></div><div class="trace-view"></div>';
+        '<div class="meta-view"></div>' +
+        '<div class="trace-view"></div>';
 
     _metaView = el.querySelector('.meta-view');
     traceView = el.querySelector('.trace-view');
