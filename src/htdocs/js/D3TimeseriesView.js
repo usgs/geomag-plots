@@ -6,14 +6,9 @@ var d3 = require('d3'),
     Util = require('util/Util');
 
 
-// used to find closest date based on current mouse position
-var __bisectDate = d3.bisector(function (d) {
-  return d;
-}).left;
-
 var __dateFormat = d3.time.format.utc.multi([
   [':%S', function(d) { return d.getUTCSeconds(); }],
-  [':%M', function(d) { return d.getUTCMinutes(); }],
+  ['%H:%M', function(d) { return d.getUTCMinutes(); }],
   ['%H:00', function(d) { return d.getUTCHours(); }],
   ['%a %e', function(d) { return d.getUTCDay() && d.getUTCDate() !== 1; }],
   ['%b %e', function(d) { return d.getUTCDate() !== 1; }],
@@ -204,25 +199,43 @@ var D3TimeseriesView = function (options) {
   _onMouseMove = function () {
     var coords,
         i,
+        i0,
+        t,
+        t0,
         x,
         y;
 
     // determine mouse coordinates in svg coordinates.
     coords = d3.mouse(this);
+    x = _x.invert(coords[0]);
+    if (!x) {
+      _onMouseOut();
+      return;
+    }
+
     // find date closest to mouse position
-    i = __bisectDate(_data.times, _x.invert(coords[0]), 1);
+    i = d3.bisectLeft(_data.times, x, 1);
     // data point closest to x mouse position
+    i0 = Math.max(0, i - 1);
+    t = _data.times[i].getTime();
+    t0 = _data.times[i0].getTime();
+    x = x.getTime();
+
+    if (x - t0 < t - x) {
+      i = i0;
+    }
+
     x = _data.times[i];
     y = _data.values[i];
 
-    if (!x || !y) {
+    if (!y) {
       // gap or out of plot, hide tooltip
       _onMouseOut();
       return;
     }
 
     // show data point on line
-    _point.attr('transform', 'translate(' + _getX(i) + ',' + _getY(i) + ')')
+    _point.attr('transform', 'translate(' + _x(x) + ',' + _y(y) + ')')
         .classed({'visible': true});
     // show tooltip of current point
     _this.showTooltip([x, y],
@@ -310,11 +323,13 @@ var D3TimeseriesView = function (options) {
     _data = options.data.get();
     _x = options.xAxisScale;
     _y = options.yAxisScale;
-    // plot timeseries
-    _timeseries.attr('d', _line(d3.range(_data.times.length)));
 
     // plot gaps
     yExtent = _y.domain();
+    if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
+      return;
+    }
+
     gaps = _gaps.selectAll('rect').data(options.data.getGaps());
     gaps.enter()
         .append('rect')
@@ -330,6 +345,9 @@ var D3TimeseriesView = function (options) {
         .on('mouseover', null)
         .on('mouseout', null)
         .remove();
+
+    // plot timeseries
+    _timeseries.attr('d', _line(d3.range(_data.times.length)));
   };
 
 

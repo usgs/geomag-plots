@@ -1,3 +1,4 @@
+/* global OffCanvas */
 'use strict';
 
 
@@ -9,6 +10,18 @@ var Collection = require('mvc/Collection'),
     TimeseriesCollectionView = require('TimeseriesCollectionView'),
     TimeseriesFactory = require('TimeseriesFactory'),
     TimeseriesSelectView = require('TimeseriesSelectView');
+
+
+var __getTime = function (age) {
+  var now = new Date(),
+      then;
+  then = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate()
+  ) - age);
+  return then;
+};
 
 
 /**
@@ -55,9 +68,9 @@ var TimeseriesApp = function (options) {
 
     _config = Model(Util.extend({
       channel: 'H',
-      endtime: null,
+      endtime: __getTime(0),
       observatory: null,
-      starttime: null,
+      starttime: __getTime(86400000),
       timemode: 'pasthour'
     }, options.config));
     _config.on('change', _onConfigChange);
@@ -89,6 +102,11 @@ var TimeseriesApp = function (options) {
         starttime,
         timemode;
 
+    if (typeof OffCanvas === 'object') {
+      // hide offcanvas
+      OffCanvas.getOffCanvas().hide();
+    }
+
     channel = _config.get('channel');
     observatory = _config.get('observatory');
     timemode = _config.get('timemode');
@@ -98,6 +116,9 @@ var TimeseriesApp = function (options) {
     } else if (timemode === 'pasthour') {
       endtime = new Date();
       starttime = new Date(endtime.getTime() - 3600000);
+    } else if (timemode === 'pastday') {
+      endtime = new Date();
+      starttime = new Date(endtime.getTime() - 86400000);
     } else {
       endtime = _config.get('endtime');
       starttime = _config.get('starttime');

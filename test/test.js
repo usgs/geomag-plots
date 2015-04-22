@@ -43,6 +43,7 @@ if (!Function.prototype.bind) {
   require('./spec/TimeseriesTest');
   require('./spec/TimeseriesFactoryTest');
   require('./spec/TimeseriesResponseTest');
+  require('./spec/TimeseriesSelectViewTest');
 
   if (window.mochaPhantomJS) {
       window.mochaPhantomJS.run();
