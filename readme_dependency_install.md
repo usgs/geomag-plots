@@ -71,15 +71,22 @@ Readme dependencies
 
 3. Use homebrew to install node, git and ruby
    ```brew install node```
+
    ```brew install git```
+
    ```brew install ruby```
 
 4. Update paths as needed in your `~/.bash_profile`:
    ```# brew installed binaries```
+
    ```export PATH=$PATH:/usr/local/bin```
+
    ```# npm installed binaries```
+
    ```export PATH=$PATH:/usr/local/share/npm/bin```
+
    ```# gem installed binaries```
+
    ```export PATH=$PATH:/usr/local/opt/ruby/bin```
 
 5. Close and re-open your terminal so that your new PATH is loaded.
