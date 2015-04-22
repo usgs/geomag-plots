@@ -5,29 +5,7 @@ var Collection = require('mvc/Collection'),
     Util = require('util/Util'),
     View = require('mvc/View'),
 
-    D3TimeseriesView = require('D3TimeseriesView'),
-    TimeseriesView;
-
-// TODO remove when TimeseriesView is ready.
-// Assuming Eddie ever finishes it.
-TimeseriesView = function (options) {
-  var el = options.el,
-      timeseries = options.timeseries,
-      meta = timeseries.get('metadata'),
-      view;
-
-  view = D3TimeseriesView({
-    title: timeseries.id,
-    el: el,
-    data: timeseries,
-    xAxisLabel: 'Time (UTC)',
-    yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
-  });
-
-  view.render();
-
-  return view;
-  };
+    TimeseriesView = require('TimeseriesView');
 
 
 /**

@@ -10,7 +10,10 @@ var expect = chai.expect,
 describe('TimeseriesCollectionView test suite.', function () {
   describe('Constructor', function () {
     it('can be created and destroyed', function () {
-      var view = TimeseriesCollectionView();
+      var view = TimeseriesCollectionView({
+          el:document.createElement('div'),
+          collection: Collection()
+        });
       view.destroy();
     });
   });
