@@ -53,22 +53,20 @@ var TimeseriesCollectionView = function (options) {
   /**
    * Add timeseries to the view.
    *
-   * @params timeseries {Collection<Timeseries>}
-   *    The timeseries Collection to be added.
+   * @params added {Array<Timeseries>}
+   *    The timeseries being added.
    */
-  _onTimeseriesAdd = function (timeseriesCollection) {
+  _onTimeseriesAdd = function (added) {
     var li,
         view;
 
-    timeseriesCollection.forEach( function(timeseries) {
-      li = document.createElement('li');
-      _list.appendChild(li);
+    added.forEach(function(timeseries) {
+      li = _list.appendChild(document.createElement('li'));
       view = TimeseriesView({
-        el:li,
-        timeseries:timeseries
+        el: li,
+        timeseries: timeseries
       });
       view.id = timeseries.id;
-
       _views.add(view);
     });
   };
@@ -76,15 +74,14 @@ var TimeseriesCollectionView = function (options) {
   /**
    * Remove timeseries from the view.
    *
-   * @params timeseries {Collection<Timeseries>}
-   *    The timeseries Collection to be removed.
+   * @params removed {Array<Timeseries>}
+   *    The timeseries being removed.
    */
-  _onTimeseriesRemove = function (timeseriesCollection) {
+  _onTimeseriesRemove = function (removed) {
     var view;
 
-    timeseriesCollection.forEach( function (timeseries) {
+    removed.forEach(function (timeseries) {
       view = _views.get(timeseries.id);
-
       _views.remove(view);
       Util.detach(view.el);
       view.destroy();
@@ -113,8 +110,15 @@ var TimeseriesCollectionView = function (options) {
     _collection.off('reset', _onTimeseriesReset);
     _collection = null;
 
+    // destroy child views
+    _views.data().forEach(function (view) {
+      Util.detach(view.el);
+      view.destroy();
+    });
     _views.destroy();
+    _views = null;
 
+    _list = null;
     _this = null;
   }, _this.destroy);
 
