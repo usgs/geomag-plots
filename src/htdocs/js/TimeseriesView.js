@@ -106,8 +106,10 @@ var TimeseriesView = function (options) {
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
-    _this = null;
     _trace.destroy();
+
+    _trace = null;
+    _this = null;
   }, _this.destroy);
 
   _this.render = function () {
