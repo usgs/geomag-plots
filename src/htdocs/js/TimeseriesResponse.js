@@ -3,6 +3,8 @@
 var Model = require('mvc/Model'),
     Timeseries = require('Timeseries');
 
+var ID_SEQUENCE = 0;
+
 
 /**
  * Wrapper for Timeseries webservice response.
@@ -35,6 +37,7 @@ var TimeseriesResponse = function (options) {
       for (channel in obs.values) {
         timeseries.push(
           Timeseries({
+            id: ID_SEQUENCE++,
             times: times,
             values: obs.values[channel],
             metadata: {
