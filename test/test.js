@@ -39,11 +39,13 @@ if (!Function.prototype.bind) {
   mocha.reporter('html');
 
   // Add each test class here as they are implemented
+  require('./spec/ObservatoryFactoryTest');
   require('./spec/TestTest');
-  require('./spec/TimeseriesTest');
   require('./spec/TimeseriesFactoryTest');
   require('./spec/TimeseriesResponseTest');
   require('./spec/TimeseriesSelectViewTest');
+  require('./spec/TimeseriesTest');
+
 
   if (window.mochaPhantomJS) {
       window.mochaPhantomJS.run();
