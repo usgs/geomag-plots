@@ -64,12 +64,15 @@ Readme dependencies
 ### Mac ###
 
 1. install xcode
+
    ```https://developer.apple.com/xcode/```
 
 2. install homebrew
+
    ```http://mxcl.github.io/homebrew/```
 
 3. Use homebrew to install node, git and ruby
+
    ```brew install node```
 
    ```brew install git```
@@ -77,6 +80,7 @@ Readme dependencies
    ```brew install ruby```
 
 4. Update paths as needed in your `~/.bash_profile`:
+
    ```# brew installed binaries```
 
    ```export PATH=$PATH:/usr/local/bin```
