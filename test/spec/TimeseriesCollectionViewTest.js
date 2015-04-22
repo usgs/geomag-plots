@@ -1,9 +1,7 @@
-/* global chai, describe, it */
+/* global describe, it */
 'use strict';
 
 var TimeseriesCollectionView = require('TimeseriesCollectionView');
-
-// var expect = chai.expect;
 
 describe('TimeseriesCollectionView test suite.', function () {
   describe('Constructor', function () {
