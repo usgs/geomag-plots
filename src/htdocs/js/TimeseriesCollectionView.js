@@ -1,10 +1,33 @@
 'use strict';
 
+
 var Collection = require('mvc/Collection'),
     Util = require('util/Util'),
     View = require('mvc/View'),
 
-    D3TimeseriesView = require('D3TimeseriesView');
+    D3TimeseriesView = require('D3TimeseriesView'),
+    TimeseriesView;
+
+// TODO remove when TimeseriesView is ready.
+// Assuming Eddie ever finishes it.
+TimeseriesView = function (options) {
+  var el = options.el,
+      timeseries = options.timeseries,
+      meta = timeseries.get('metadata'),
+      view;
+
+  view = D3TimeseriesView({
+    title: timeseries.id,
+    el: el,
+    data: timeseries,
+    xAxisLabel: 'Time (UTC)',
+    yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+  });
+
+  view.render();
+
+  return view;
+  };
 
 
 /**
@@ -23,11 +46,9 @@ var TimeseriesCollectionView = function (options) {
       _list,
       _views,
 
-      _createView,
+      _onTimeseriesAdd,
       _onTimeseriesReset,
-      _onTimeseriesRemove,
-
-      _tempView; //TODO delete when TimeseriesView is ready.
+      _onTimeseriesRemove;
 
   _this = View(options);
 
@@ -38,82 +59,87 @@ var TimeseriesCollectionView = function (options) {
     } else {
       _list = _this.el.appendChild(document.createElement('ol'));
     }
-    _list.classList.add('analysis-collection-list');
+    _list.classList.add('timeseries-collection-list');
     _list.classList.add('no-style');
 
     _views = Collection([]);
 
-
     _collection = options.collection;
-    // TODO: bind to other collection events.
-    _collection.on('remove', _this._onTimeseriesRemove);
-    _collection.on('reset', _this._onTimeseriesReset);
+    _collection.on('add', _onTimeseriesAdd);
+    _collection.on('remove', _onTimeseriesRemove);
+    _collection.on('reset', _onTimeseriesReset);
 
     _onTimeseriesReset();
   };
 
-  _createView = function (timeseries) {
+  /**
+   * Add timeseries to the view.
+   *
+   * @params timeseries {Collection<Timeseries>}
+   *    The timeseries Collection to be added.
+   */
+  _onTimeseriesAdd = function (timeseriesCollection) {
     var li,
         view;
 
-    li = document.createElement('li');
-    li.classList.add('timeseries-view');
-    view = _tempView({timeseries:timeseries, el:li});
+    timeseriesCollection.forEach( function(timeseries) {
+      li = document.createElement('li');
+      _list.appendChild(li);
+      view = TimeseriesView({
+        el:li,
+        timeseries:timeseries
+      });
+      view.id = timeseries.id;
 
-    return view;
-  };
-
-  _tempView = function (options) {
-    var el = options.el,
-        timeseries = options.timeseries,
-        meta = timeseries.get('metadata'),
-        view;
-
-    view = D3TimeseriesView({
-      el: el.appendChild(document.createElement('div')),
-      data: timeseries,
-      xAxisLabel: 'Time (UTC)',
-      yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
+      _views.add(view);
     });
-
-    view.render();
-
-    return view;
   };
 
+  /**
+   * Remove timeseries from the view.
+   *
+   * @params timeseries {Collection<Timeseries>}
+   *    The timeseries Collection to be removed.
+   */
   _onTimeseriesRemove = function (timeseriesCollection) {
-    timeseriesCollection.forEach(function (timeseries) {
-      _views.
-    });
-  };
+    var view;
 
-  _onTimeseriesReset = function () {
-    _views.data().forEach(function (view) {
+    timeseriesCollection.forEach( function (timeseries) {
+      view = _views.get(timeseries.id);
+
       _views.remove(view);
+      Util.detach(view.el);
       view.destroy();
     });
+  };
 
-    _collection.getTimeseries().forEach(function (timeseries) {
-      _views.add(_createView(timeseries));
+  /**
+   * Remove old views, and replace with new ones.
+   */
+  _onTimeseriesReset = function () {
+    _views.data().forEach(function (view) {
+      Util.detach(view.el);
+      view.destroy();
     });
+    _views.reset([]);
 
-    _this.render();
+    _onTimeseriesAdd(_collection.data());
   };
 
   /**
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
-    _collection.off('reset', _this.render);
+    _collection.off('add', _onTimeseriesAdd);
+    _collection.off('remove', _onTimeseriesRemove);
+    _collection.off('reset', _onTimeseriesReset);
     _collection = null;
+
+    _views.destroy();
+
     _this = null;
   }, _this.destroy);
 
-  _this.render = function () {
-    _views.data().forEach(function (view) {
-      _list.appendChild(view.el);
-    });
-  };
 
   _initialize(options);
   options = null;
