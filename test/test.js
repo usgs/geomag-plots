@@ -45,7 +45,7 @@ if (!Function.prototype.bind) {
   require('./spec/TimeseriesResponseTest');
   require('./spec/TimeseriesSelectViewTest');
   require('./spec/TimeseriesTest');
-
+  require('./spec/TimeseriesViewTest');
 
   if (window.mochaPhantomJS) {
       window.mochaPhantomJS.run();
