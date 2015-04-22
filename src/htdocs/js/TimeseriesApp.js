@@ -135,7 +135,8 @@ var TimeseriesApp = function (options) {
       endtime: endtime,
       starttime: starttime,
       callback: _onTimeseriesLoad,
-      errback: _onTimeseriesError
+      errback: _onTimeseriesError,
+      seconds: seconds
     });
   };
 
