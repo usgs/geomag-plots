@@ -13,6 +13,7 @@ var _DEFAULTS = {
 
 /**
  * ObservatoryFactory factory uses ajax to retrieve observatory data.
+ *
  * @params options {object}
  *         all options are passed through factory.
  */
@@ -42,6 +43,7 @@ var ObservatoryFactory = function (options) {
 
   /**
    * Gets observatory data
+   *
    * @param options {Object}
    * @param options.callback {Function(Array<Observatory>)}
    *        called after observatories are loaded.
@@ -65,12 +67,10 @@ var ObservatoryFactory = function (options) {
   /**
    * Creates array of parsed observatories.
    *
-   * @param feature {Object}
+   * @param features {Object}
    *        parsed features from GeoJSON feed.
-   * @param observatories {Array<observatory>}
-   *        parsed observatory added to observatories array.
-   * @return {observatories}
-   *         parsed observatories
+   * @return {Array<Observatory>}
+   *         parsed observatory added to observatories array.
    */
   _parse = function (features) {
     var i,
