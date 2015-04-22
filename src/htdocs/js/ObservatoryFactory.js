@@ -14,7 +14,7 @@ var _DEFAULTS = {
 /**
  * ObservatoryFactory factory uses ajax to retrieve observatory data.
  * @params options {object}
- *         all options are passed factory
+ *         all options are passed through factory.
  */
 var ObservatoryFactory = function (options) {
   var _this,
@@ -26,13 +26,28 @@ var ObservatoryFactory = function (options) {
 
   _this = {};
 
-  // Sets up url for ajax call
+
+  /**
+   * Extends options
+   *
+   * @param options {Object}
+   * @param options.url {string}
+   *        url for ajax call.
+   */
   _initialize = function (options) {
     options = Util.extend({}, _DEFAULTS, options);
     _url = options.url;
   };
 
-  // ajax call gets observatory data
+
+  /**
+   * Gets observatory data
+   * @param options {Object}
+   * @param options.callback {Function(Array<Observatory>)}
+   *        called after observatories are loaded.
+   * @param options.errback {Function(Status, Xhr)}
+   *        called when observatories don't load.
+   */
   _this.getObservatories = function (options) {
     var callback = options.callback,
         errback = options.errback;
@@ -46,7 +61,17 @@ var ObservatoryFactory = function (options) {
     });
   };
 
-  // adds observatory data to the observatories array
+
+  /**
+   * Creates array of parsed observatories.
+   *
+   * @param feature {Object}
+   *        parsed features from GeoJSON feed.
+   * @param observatories {Array<observatory>}
+   *        parsed observatory added to observatories array.
+   * @return {observatories}
+   *         parsed observatories
+   */
   _parse = function (features) {
     var i,
         observatories = [];
@@ -58,7 +83,15 @@ var ObservatoryFactory = function (options) {
     return observatories;
   };
 
-  // parses observatory data using observatory model
+
+  /**
+   * Parse one observatory feature.
+   *
+   * @param feature {Object}
+   *        feature from GeoJSON feed.
+   * @return {Observatory}
+   *         parsed Observatory model.
+   */
   _this.parseObservatory = function (features) {
     var observatory,
         p = features.properties;
