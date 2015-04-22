@@ -1,20 +1,22 @@
-.meta-view {
-  width: 14%;
-  display: inline-block;
+.timeseries-view {
+  > .meta-view {
+    display: block;
+    float: left;
+    width: 20%;
 
-  vertical-align: top;
-  text-align: center;
+    text-align: center;
+    padding-top: 1em;
+  }
 
-  border: 1px blue solid;
-}
+  > .trace-view {
+    display: block;
+    float: left;
+    width: 80%;
+  }
 
-.trace-view {
-  width: 85%;
-  display: inline-block;
-
-  border: 1px green solid;
-}
-
-#example {
-  border: 1px red solid;
+  &:after {
+    content: ' ';
+    display: block;
+    clear: left;
+  }
 }
