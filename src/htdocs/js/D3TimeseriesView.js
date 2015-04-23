@@ -169,20 +169,20 @@ var D3TimeseriesView = function (options) {
    * @param gap {Object}
    *        gap.start {Date} start of gap
    *        gap.end {Date} end of gap.
+   * @param x {Date}
+   *        date closest to current mouse position.
    */
-  _onGapOver = function (gap) {
-    var centerX,
-        centerY,
+  _onGapOver = function (gap, x) {
+    var centerY,
         yExtent;
     yExtent = _y.domain();
-    centerX = new Date((gap.end.getTime() + gap.start.getTime()) / 2);
     centerY = (yExtent[0] + yExtent[1]) / 2;
 
     // show data point on line
     _point.classed({'visible': true})
         .attr('transform',
-            'translate(' + _x(centerX) + ',' + _y(centerY) + ')');
-    _this.showTooltip([centerX, centerY],
+            'translate(' + _x(x) + ',' + _y(centerY) + ')');
+    _this.showTooltip([x, centerY],
       [
         {
           class: 'value',
@@ -237,7 +237,7 @@ var D3TimeseriesView = function (options) {
       i = d3.bisector(_gapStart).left(_gaps, x) - 1;
       if (i >= 0) {
         // found gap
-        _onGapOver(_gaps[i]);
+        _onGapOver(_gaps[i], x);
       } else {
         _onMouseOut();
       }
