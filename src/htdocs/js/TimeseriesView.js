@@ -60,6 +60,11 @@ var TimeseriesView = function (options) {
       // title: meta.observatory,
       height: _height,
       width: _width,
+      paddingBottom: 25,
+      paddingLeft: 75,
+      paddingRight: 5,
+      paddingTop: 0,
+      xAxisLabel: '',
       yAxisFormat: _yAxisFormat,
       // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
       yAxisTicks: _yAxisTicks
