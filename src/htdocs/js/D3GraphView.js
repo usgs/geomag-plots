@@ -112,9 +112,9 @@ var D3GraphView = function (options) {
         right,
         top;
 
-    bottom = options.paddingBottom || 75,
-    left = options.paddingLeft || 100,
-    right = options.paddingRight || 5,
+    bottom = options.paddingBottom || 75;
+    left = options.paddingLeft || 100;
+    right = options.paddingRight || 5;
     top = options.paddingTop || 50;
 
     _this.model = Model(Util.extend({
