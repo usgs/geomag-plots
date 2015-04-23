@@ -147,9 +147,8 @@ var TimeseriesApp = function (options) {
       seconds = false;
     }
 
-    if (!_timeseriesEl.classList.contains('loading')) {
-      _timeseriesEl.classList.toggle('loading');
-    }
+    _timeseriesEl.classList.add('loading');
+
     _timeseriesFactory.getTimeseries({
       channel: channel,
       observatory: observatory,
@@ -165,9 +164,7 @@ var TimeseriesApp = function (options) {
    * Errback for TimeseriesFactory.
    */
   _onTimeseriesError = function () {
-    if (_timeseriesEl.classList.contains('loading')) {
-        _timeseriesEl.classList.toggle('loading');
-    }
+    _timeseriesEl.classList.remove('loading');
     _timeseries.reset([]);
   };
 
@@ -178,9 +175,7 @@ var TimeseriesApp = function (options) {
    *        timeseries webservice response.
    */
   _onTimeseriesLoad = function (response) {
-    if (_timeseriesEl.classList.contains('loading')) {
-        _timeseriesEl.classList.toggle('loading');
-    }
+    _timeseriesEl.classList.remove('loading');
     _timeseries.reset(response.getTimeseries());
   };
 
