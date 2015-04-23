@@ -133,6 +133,7 @@ var D3GraphView = function (options) {
       yAxisLabel: '',
       yAxisScale: d3.scale.linear(),
       yAxisTicks: null,
+      yDomainPadding: 0.1,
       yExtent: null
     }, options));
 
@@ -183,8 +184,8 @@ var D3GraphView = function (options) {
 
     _this.dataEl = _padding.querySelector('.data');
 
-    _xAxis = d3.svg.axis().orient('bottom');
-    _yAxis = d3.svg.axis().orient('left');
+    _xAxis = d3.svg.axis().orient('bottom').outerTickSize(0);
+    _yAxis = d3.svg.axis().orient('left').outerTickSize(0);
 
     _zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
@@ -292,6 +293,8 @@ var D3GraphView = function (options) {
         xExtent,
         yAxisScale,
         yAxisTicks,
+        yDomain,
+        yDomainPadding,
         yExtent;
 
     // changed options,
@@ -371,7 +374,9 @@ var D3GraphView = function (options) {
     }
     yExtent = _this.getYExtent(xExtent);
     xAxisScale.domain(xExtent);
-    yAxisScale.domain(yExtent);
+    yDomainPadding = (yExtent[1] - yExtent[0]) * options.yDomainPadding;
+    yDomain = [yExtent[0] - yDomainPadding, yExtent[1] + yDomainPadding];
+    yAxisScale.domain(yDomain);
     if (changed.hasOwnProperty('xAxisScale')) {
       _zoom.x(xAxisScale);
     }

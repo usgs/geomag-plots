@@ -46,18 +46,18 @@ var D3TimeseriesView = function (options) {
       _data,
       _el,
       _gaps,
+      _gapsEl,
       _line,
       _point,
       _timeseries,
       _x,
       _y,
       // methods
-      _bisectDate,
       _defined,
+      _gapStart,
       _getX,
       _getY,
       _onGapOver,
-      _onGapOut,
       _onMouseMove,
       _onMouseOut;
 
@@ -71,7 +71,7 @@ var D3TimeseriesView = function (options) {
   _initialize = function () {
     var el = d3.select(_this.dataEl);
     // data gaps
-    _gaps = el.append('g')
+    _gapsEl = el.append('g')
         .attr('class', 'gaps')
         .attr('clip-path', 'url(#plotAreaClip)');
     // data line
@@ -97,15 +97,17 @@ var D3TimeseriesView = function (options) {
     _el.on('mousemove', null);
     _el.on('mouseout', null);
     // free references
-    _el = null;
-    _timeseries = null;
-    _point = null;
-    _line = null;
-    _bisectDate = null;
     _data = null;
+    _el = null;
+    _gaps = null;
+    _gapsEl = null;
+    _line = null;
+    _point = null;
+    _timeseries = null;
     _x = null;
     _y = null;
     _defined = null;
+    _gapStart = null;
     _getX = null;
     _getY = null;
     _onMouseMove = null;
@@ -123,6 +125,18 @@ var D3TimeseriesView = function (options) {
    */
   _defined = function (d) {
     return _data.values[d] !== null;
+  };
+
+  /**
+   * Get the start of a gap object.
+   *
+   * @param g {Object}
+   *        gap object.
+   * @return {Date}
+   *         start of gap.
+   */
+  _gapStart = function (g) {
+    return g.start;
   };
 
   /**
@@ -155,20 +169,20 @@ var D3TimeseriesView = function (options) {
    * @param gap {Object}
    *        gap.start {Date} start of gap
    *        gap.end {Date} end of gap.
+   * @param x {Date}
+   *        date closest to current mouse position.
    */
-  _onGapOver = function (gap) {
-    var centerX,
-        centerY,
+  _onGapOver = function (gap, x) {
+    var centerY,
         yExtent;
     yExtent = _y.domain();
-    centerX = new Date((gap.end.getTime() + gap.start.getTime()) / 2);
     centerY = (yExtent[0] + yExtent[1]) / 2;
 
     // show data point on line
     _point.classed({'visible': true})
         .attr('transform',
-            'translate(' + _x(centerX) + ',' + _y(centerY) + ')');
-    _this.showTooltip([centerX, centerY],
+            'translate(' + _x(x) + ',' + _y(centerY) + ')');
+    _this.showTooltip([x, centerY],
       [
         {
           class: 'value',
@@ -181,16 +195,6 @@ var D3TimeseriesView = function (options) {
         }
       ]
     );
-  };
-
-  /**
-   * Gap mouse out event handler.
-   */
-  _onGapOut = function () {
-    // hide point
-    _point.classed({'visible': false});
-    // hide tooltip
-    _this.showTooltip(null);
   };
 
   /**
@@ -229,8 +233,14 @@ var D3TimeseriesView = function (options) {
     y = _data.values[i];
 
     if (!y) {
-      // gap or out of plot, hide tooltip
-      _onMouseOut();
+      // gap or out of plot
+      i = d3.bisector(_gapStart).left(_gaps, x) - 1;
+      if (i >= 0) {
+        // found gap
+        _onGapOver(_gaps[i], x);
+      } else {
+        _onMouseOut();
+      }
       return;
     }
 
@@ -291,7 +301,19 @@ var D3TimeseriesView = function (options) {
       if (xExtent) {
         minXIndex = d3.bisectLeft(_data.times, xExtent[0]);
         maxXIndex = d3.bisectLeft(_data.times, xExtent[1]);
-        yExtent = d3.extent(_data.values.slice(minXIndex, maxXIndex + 1));
+        yExtent = d3.extent(_data.values.slice(
+            // include points just outside range
+            Math.max(0, minXIndex - 1),
+            Math.min(_data.values.length, maxXIndex + 2)
+            ));
+        if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
+          // if undefined over current x range, try entire range
+          yExtent = d3.extent(_data.values);
+        }
+        if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
+          // if still undefined use arbitrary scale
+          return [0, 1];
+        }
       } else {
         yExtent = d3.extent(_data.values);
       }
@@ -308,6 +330,7 @@ var D3TimeseriesView = function (options) {
    */
   _this.plot = function (changed) {
     var gaps,
+        gapCache,
         options,
         yExtent;
 
@@ -321,29 +344,39 @@ var D3TimeseriesView = function (options) {
 
     // update references used by _line function callbacks
     _data = options.data.get();
+    _gaps = options.data.getGaps();
     _x = options.xAxisScale;
     _y = options.yAxisScale;
 
-    // plot gaps
+    // compute gap extents once
+    // eliminates repeated calculations for left/top
     yExtent = _y.domain();
-    if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
-      return;
-    }
+    gapCache = {};
+    gapCache.top = _y(yExtent[1]);
+    gapCache.bottom = _y(yExtent[0]);
+    gapCache.height = gapCache.bottom - gapCache.top;
+    _gaps.forEach(function (gap) {
+      var g = {},
+          xMin,
+          xMax;
+      xMin = Math.max(0, gap.startIndex - 1);
+      xMax = Math.min(_data.values.length - 1, gap.endIndex + 1);
+      g.left = _getX(xMin);
+      g.right = _getX(xMax);
+      g.width = g.right - g.left;
+      gapCache[gap.startIndex] = g;
+    });
 
-    gaps = _gaps.selectAll('rect').data(options.data.getGaps());
+    // plot gaps
+    gaps = _gapsEl.selectAll('rect').data(_gaps);
     gaps.enter()
         .append('rect')
-        .attr('class', 'gap')
-        .on('mouseover', _onGapOver)
-        .on('mouseout', _onGapOut);
-    gaps.attr('x', function (g) { return _x(g.start); })
-        .attr('width', function (g) { return _x(g.end) - _x(g.start); })
-        .attr('y', function () { return _y(yExtent[1]); })
-        .attr('height', function () {
-            return _y(yExtent[0]) - _y(yExtent[1]); });
+        .attr('class', 'gap');
+    gaps.attr('x', function (g) { return gapCache[g.startIndex].left; })
+        .attr('width', function (g) { return gapCache[g.startIndex].width; })
+        .attr('y', function () { return gapCache.top; })
+        .attr('height', function () { return gapCache.height; });
     gaps.exit()
-        .on('mouseover', null)
-        .on('mouseout', null)
         .remove();
 
     // plot timeseries

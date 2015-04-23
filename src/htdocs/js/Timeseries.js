@@ -61,7 +61,9 @@ var Timeseries = function (options) {
           gapEnd = i - 1;
           gaps.push({
             start: times[gapStart],
-            end: times[gapEnd]
+            startIndex: gapStart,
+            end: times[gapEnd],
+            endIndex: gapEnd
           });
           gapStart = null;
         }
@@ -69,9 +71,12 @@ var Timeseries = function (options) {
     }
     if (gapStart !== null) {
       // end is a gap
+      gapEnd = times.length - 1;
       gaps.push({
         start: times[gapStart],
-        end: times[times.length - 1]
+        startIndex: gapStart,
+        end: times[gapEnd],
+        endIndex: gapEnd
       });
     }
     return gaps;

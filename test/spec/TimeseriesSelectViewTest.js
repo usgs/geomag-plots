@@ -126,10 +126,10 @@ describe('TimeSeriesSelectView', function () {
       radio = view.el.querySelector('#time-realtime');
       _fireClickEvent(radio);
       expect(config.get('timemode')).to.equal('realtime');
-      // past hour
-      radio = view.el.querySelector('#time-pasthour');
+      // past day
+      radio = view.el.querySelector('#time-pastday');
       _fireClickEvent(radio);
-      expect(config.get('timemode')).to.equal('pasthour');
+      expect(config.get('timemode')).to.equal('pastday');
       // custom
       radio = view.el.querySelector('#time-custom');
       _fireClickEvent(radio);
