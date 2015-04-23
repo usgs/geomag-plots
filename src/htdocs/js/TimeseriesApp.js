@@ -13,6 +13,33 @@ var Collection = require('mvc/Collection'),
 
 
 /**
+ * Round a date up to the next N minute interval.
+ *
+ * @param dt {Date}
+ *        date to round.
+ * @param n {Integer}
+ *        default 5.
+ *        number of minutes to round to.
+ *        e.g. 1: round up to nearest minute.
+ *             5: round up to nearest 5 minutes.
+ * @return {Date} rounded date.
+ *         If dt is on a 5 minute interval, the return value is 5 minutes later.
+ */
+var __roundUpToNearestNMinutes = function (dt, n) {
+  var y = dt.getUTCFullYear(),
+      m = dt.getUTCMonth(),
+      d = dt.getUTCDate(),
+      h = dt.getUTCHours(),
+      i = dt.getUTCMinutes();
+
+  n = n || 5;
+  // round i
+  i = n * Math.floor((i + n) / n);
+  return new Date(Date.UTC(y, m, d, h, i));
+};
+
+
+/**
  * Timeseries application.
  *
  * @param options {Object}
@@ -99,10 +126,11 @@ var TimeseriesApp = function (options) {
     observatory = _config.get('observatory');
     timemode = _config.get('timemode');
     if (timemode === 'realtime') {
-      endtime = new Date();
+      // 15 minutes
+      endtime = __roundUpToNearestNMinutes(new Date(), 1);
       starttime = new Date(endtime.getTime() - 900000);
     } else if (timemode === 'pastday') {
-      endtime = new Date();
+      endtime = __roundUpToNearestNMinutes(new Date(), 5);
       starttime = new Date(endtime.getTime() - 86400000);
     } else {
       endtime = _config.get('endtime');
