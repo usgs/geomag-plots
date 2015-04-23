@@ -60,7 +60,6 @@ var TimeseriesView = function (options) {
       // title: meta.observatory,
       height: _height,
       width: _width,
-      xAxisLabel: 'Time (UTC)',
       yAxisFormat: _yAxisFormat,
       // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
       yAxisTicks: _yAxisTicks
