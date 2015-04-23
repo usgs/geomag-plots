@@ -1,11 +1,14 @@
-.load {
-  display:none;
+.timeseries {
+  > .load {
+  display: none;
+  }
 }
 
 .timeseries.loading {
   position: relative;
 
   > .load {
+    display: inline;
     z-index: 1000;
     position: absolute;
     top: 0;
@@ -16,9 +19,16 @@
     text-align: center;
     color: #7fae00;
     font-size: larger;
-    opacity: 0.6;
-
+    opacity: 0.8;
   }
 
 }
 
+.timezone {
+color: #494949;
+font-size: 11px;
+}
+
+.timespan {
+  font-size: 11px;
+}
