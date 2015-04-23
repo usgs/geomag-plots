@@ -58,6 +58,7 @@ var TimeseriesApp = function (options) {
       // variables
       _config,
       _configView,
+      _timeseriesEl,
       _timeseries,
       _timeseriesFactory,
       _timeseriesView,
@@ -70,16 +71,19 @@ var TimeseriesApp = function (options) {
 
   _initialize = function (options) {
     var configEl = options.configEl,
-        timeseriesEl = _this.el;
+        viewEl = _this.el,
+        timeseriesDiv = '<div class="timeseries">'+
+            '<div class="view"></div>' +
+            '<div class="load">LOADING</div>' +
+            '</div>';
 
     if (!configEl) {
-      timeseriesEl.innerHTML = '<div class="config"></div>' +
-          '<div class="timeseries"></div>';
-      configEl = timeseriesEl.querySelector('.config');
+      viewEl.innerHTML = '<div class="config"></div>' + timeseriesDiv;
+      configEl = viewEl.querySelector('.config');
     } else {
-      timeseriesEl.innerHTML = '<div class="timeseries"></div>';
+      viewEl.innerHTML = timeseriesDiv;
     }
-    timeseriesEl = timeseriesEl.querySelector('.timeseries');
+    viewEl = viewEl.querySelector('.view');
 
     _config = Model(Util.extend({
       channel: 'H',
@@ -100,9 +104,10 @@ var TimeseriesApp = function (options) {
     });
 
     _timeseriesView = TimeseriesCollectionView({
-      el: timeseriesEl,
+      el: viewEl,
       collection: _timeseries
     });
+    _timeseriesEl = _this.el.querySelector('.timeseries');
     _onConfigChange();
   };
 
@@ -142,6 +147,9 @@ var TimeseriesApp = function (options) {
       seconds = false;
     }
 
+    if (!_timeseriesEl.classList.contains('loading')) {
+      _timeseriesEl.classList.toggle('loading');
+    }
     _timeseriesFactory.getTimeseries({
       channel: channel,
       observatory: observatory,
@@ -157,6 +165,9 @@ var TimeseriesApp = function (options) {
    * Errback for TimeseriesFactory.
    */
   _onTimeseriesError = function () {
+    if (_timeseriesEl.classList.contains('loading')) {
+        _timeseriesEl.classList.toggle('loading');
+    }
     _timeseries.reset([]);
   };
 
@@ -167,6 +178,9 @@ var TimeseriesApp = function (options) {
    *        timeseries webservice response.
    */
   _onTimeseriesLoad = function (response) {
+    if (_timeseriesEl.classList.contains('loading')) {
+        _timeseriesEl.classList.toggle('loading');
+    }
     _timeseries.reset(response.getTimeseries());
   };
 

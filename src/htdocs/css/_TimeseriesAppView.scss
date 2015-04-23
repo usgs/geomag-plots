@@ -1,0 +1,22 @@
+
+
+.timeseries.loading {
+  position: relative;
+
+  > .load {
+    z-index: 1000;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: #FFF;
+    text-align: center;
+    color: #7fae00;
+    font-size: larger;
+    opacity: 0.6;
+
+  }
+
+}
+
