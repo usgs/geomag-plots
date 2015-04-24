@@ -103,16 +103,7 @@ var D3GraphView = function (options) {
   _this = View(options);
 
   _initialize = function (options) {
-    var bottom,
-        el,
-        left,
-        right,
-        top;
-
-    bottom = options.paddingBottom || 75;
-    left = options.paddingLeft || 100;
-    right = options.paddingRight || 5;
-    top = options.paddingTop || 50;
+    var el;
 
     _this.model.set(Util.extend({
       data: null,
@@ -121,10 +112,10 @@ var D3GraphView = function (options) {
       marginLeft: 0,
       marginRight: 0,
       marginTop: 0,
-      paddingBottom: bottom,
-      paddingLeft: left,
-      paddingRight: right,
-      paddingTop: top,
+      paddingBottom: 75,
+      paddingLeft: 100,
+      paddingRight: 5,
+      paddingTop: 50,
       pointRadius: 3,
       title: '',
       tooltipOffset: 10,
