@@ -57,6 +57,7 @@ var TimeseriesSelectView = function (options) {
       _startTime,
       _timeCustom,
       _timeEl,
+      _timeError,
       _timePastday,
       _timeRealtime,
       _timeUpdate,
@@ -67,6 +68,7 @@ var TimeseriesSelectView = function (options) {
       _onTimeChange,
       _orderTimes,
       _parseDate,
+      _validateRange,
       _validateTime;
 
   _this = View(options);
@@ -105,6 +107,8 @@ var TimeseriesSelectView = function (options) {
             '<input type="text" id="time-starttime"/>' +
             '<label for="time-endtime">End Time (UTC)</label>' +
             '<input type="text" id="time-endtime"/>' +
+            '<div id="time-error">' +
+            '</div>' +
             '<button>Update</button>' +
           '</div>' +
         '</div>';
@@ -118,6 +122,7 @@ var TimeseriesSelectView = function (options) {
     _startTime = el.querySelector('#time-starttime');
     _endTime = el.querySelector('#time-endtime');
     _timeUpdate = el.querySelector('.time-input > button');
+    _timeError = el.querySelector('#time-error');
 
     _config.on('change', _this.render);
     _channelEl.addEventListener('click', _onChannelClick);
@@ -195,6 +200,8 @@ var TimeseriesSelectView = function (options) {
       time = _orderTimes(startTime, endTime);
       startTime = time[0];
       endTime = time[1];
+
+      _validateRange(startTime, endTime);
 
       _config.set({
         endtime: endTime,
@@ -276,6 +283,24 @@ var TimeseriesSelectView = function (options) {
       time = new Date();
     }
     return time;
+  };
+
+  /**
+   * Ensure that the time range isn't greater than 1 month.
+   *
+   * @param start {Date}
+   *        time entered in start field.
+   * @param end {Date}
+   *        time entered in end field.
+   */
+  _validateRange = function (start, end) {
+    if ((end-start) > 2678400000) {
+      _timeError.innerHTML = "Please select less than 1 month of data.";
+      _timeError.classList.add('error');
+    } else {
+      _timeError.innerHTML = "";
+      _timeError.classList.remove('error');
+    }
   };
 
   /**
