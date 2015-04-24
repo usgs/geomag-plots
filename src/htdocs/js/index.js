@@ -32,6 +32,13 @@ configEl = document.querySelector('#site-sectionnav');
 el = document.querySelector('#geomag-plots');
 
 app = TimeseriesApp({
+  channels: [
+    'H',
+    'E',
+    'Z',
+    'F',
+    'Dist'
+  ],
   config: {
     channel: 'H',
     endtime: __getTime(0),

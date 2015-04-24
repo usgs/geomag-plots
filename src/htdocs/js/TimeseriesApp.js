@@ -7,6 +7,7 @@ var Collection = require('mvc/Collection'),
     View = require('mvc/View'),
     Util = require('util/Util'),
 
+    ObservatoryFactory = require('ObservatoryFactory'),
     TimeseriesCollectionView = require('TimeseriesCollectionView'),
     TimeseriesFactory = require('TimeseriesFactory'),
     TimeseriesSelectView = require('TimeseriesSelectView');
@@ -38,17 +39,39 @@ var __roundUpToNearestNMinutes = function (dt, n) {
   return new Date(Date.UTC(y, m, d, h, i));
 };
 
+/**
+ * Format a date object.
+ *
+ * @param d {Date}
+ *        date to format.
+ */
+var __formatDate = function (d) {
+  if (!d || typeof d.toISOString !== 'function') {
+    return '';
+  }
+  return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
+};
+
 
 /**
  * Timeseries application.
  *
  * @param options {Object}
  *        all options are passed to View.
+ * @param options.channels {Array}
+ *        channels to display, passed to ChannelSelectView.
  * @param options.config {Model}
  *        configuration options.
  * @param options.configEl {DOMElement}
  *        optional, new element is inserted into options.el by default.
  *        element for TimeseriesSelectView.
+ * @param observatories {Collection}
+ *        default Collection().
+ *        collection of observatories for reference.
+ * @param observatoryFactory {ObservatoryFactory}
+ *        default ObservatoryFactory().
+ *        observatory factory used to populate observatories collection,
+ *        if collection is not configured.
  * @param options.timeseries {Array<Timeseries>}
  *        timeseries to display.
  */
@@ -58,6 +81,8 @@ var TimeseriesApp = function (options) {
       // variables
       _config,
       _configView,
+      _descriptionEl,
+      _observatories,
       _timeseriesEl,
       _timeseries,
       _timeseriesFactory,
@@ -65,27 +90,32 @@ var TimeseriesApp = function (options) {
       // methods
       _onConfigChange,
       _onTimeseriesError,
-      _onTimeseriesLoad;
+      _onTimeseriesLoad,
+      _updateDescription;
 
   _this = View(options);
 
   _initialize = function (options) {
     var configEl = options.configEl,
-        viewEl = _this.el,
-        timeseriesDiv = '<div class="timeseries-app">'+
-            '<div class="view"></div>' +
-            '<div class="load">' +
-              '<span class="loading-text">LOADING</span>' +
-            '</div>' +
-            '</div>';
+        el = _this.el,
+        observatoryFactory,
+        viewEl;
+
+    el.classList.add('timeseries-app');
+    el.innerHTML =
+        '<div class="description"></div>' +
+        '<div class="view"></div>' +
+        '<div class="load">' +
+          '<span class="loading-text">LOADING</span>' +
+        '</div>';
 
     if (!configEl) {
-      viewEl.innerHTML = '<div class="config"></div>' + timeseriesDiv;
-      configEl = viewEl.querySelector('.config');
-    } else {
-      viewEl.innerHTML = timeseriesDiv;
+      el.insertAdjacentHTML('<div class="config"></div>', 'afterbegin');
+      configEl = el.querySelector('.config');
     }
-    viewEl = viewEl.querySelector('.view');
+
+    _descriptionEl = el.querySelector('.description');
+    viewEl = el.querySelector('.view');
 
     _config = Model(Util.extend({
       channel: 'H',
@@ -96,17 +126,27 @@ var TimeseriesApp = function (options) {
     }, options.config));
     _config.on('change', _onConfigChange);
 
+    _observatories = options.observatories || null;
+    if (_observatories === null) {
+      _observatories = Collection();
+      observatoryFactory = options.observatoryFactory || ObservatoryFactory();
+      observatoryFactory.getObservatories({
+        callback: function (observatories) {
+          _observatories.reset(observatories);
+        }
+      });
+    }
+    _observatories.on('reset', _updateDescription);
+
     _timeseries = options.timeseries || Collection();
 
-    _timeseriesFactory = TimeseriesFactory();
+    _timeseriesFactory = TimeseriesFactory({
+      observatories: _observatories
+    });
 
     _configView = TimeseriesSelectView({
       el: configEl,
-      channels: [
-        // Add delta-F here when it is available in Edge.
-        // Other channels should be added here when they are no longer beta.
-        'H', 'E', 'Z', 'F'
-      ],
+      channels: options.channels || ['H', 'E', 'Z', 'F'],
       config: _config
     });
 
@@ -114,7 +154,7 @@ var TimeseriesApp = function (options) {
       el: viewEl,
       collection: _timeseries
     });
-    _timeseriesEl = _this.el.querySelector('.timeseries-app');
+    _timeseriesEl = el;
     _onConfigChange();
   };
 
@@ -182,8 +222,86 @@ var TimeseriesApp = function (options) {
    *        timeseries webservice response.
    */
   _onTimeseriesLoad = function (response) {
+    var timeseries = response.getTimeseries();
+    // copy metadata from observatory to timeseries
+    timeseries.forEach(function (t) {
+      var metadata = t.get('metadata'),
+          observatory = _observatories.get(metadata.observatory);
+      if (observatory !== null) {
+        Util.extend(metadata, {
+          name: observatory.get('name'),
+          latitude: observatory.get('latitude'),
+          longitude: observatory.get('longitude')
+        });
+      }
+    });
+    // sort by latitude
+    timeseries.sort(function (a, b) {
+      var aMeta = a.get('metadata'),
+          bMeta = b.get('metadata'),
+          aKey,
+          bKey;
+      // sort by latitude if available
+      aKey = aMeta.latitude;
+      bKey = bMeta.latitude;
+      if (aKey && bKey) {
+        return bKey - aKey;
+      }
+      // otherwise observatory code
+      aKey = aMeta.observatory;
+      bKey = bMeta.observatory;
+      if (aKey < bKey) {
+        return -1;
+      } else if (bKey < aKey) {
+        return 1;
+      }
+      return 0;
+    });
+    // update collection
+    _timeseries.reset(timeseries);
+    _updateDescription();
+    // done loading
     _timeseriesEl.classList.remove('loading');
-    _timeseries.reset(response.getTimeseries());
+  };
+
+  /**
+   * Update description of data being shown.
+   */
+  _updateDescription = function () {
+    var channel = _config.get('channel'),
+        description,
+        endtime = _config.get('endtime'),
+        obs,
+        observatory = _config.get('observatory'),
+        starttime = _config.get('starttime'),
+        timeDescription,
+        timemode = _config.get('timemode'),
+        title;
+
+    if (observatory !== null) {
+      title = observatory;
+      description = 'all observatory channels';
+      // try to load observatory name, collection may not be loaded yet
+      obs = _observatories.get(observatory);
+      if (obs !== null) {
+        title = title + ' ' + obs.get('name');
+      }
+      title = title + ' Observatory';
+    } else if (channel !== null) {
+      title = channel + ' Channel';
+      description = 'all observatories with this channel.';
+    }
+
+    if (timemode === 'realtime') {
+      timeDescription = 'Past 15 Minutes';
+    } else if (timemode === 'pastday') {
+      timeDescription = 'Past day';
+    } else { // custom
+      timeDescription = __formatDate(starttime) + ' - ' + __formatDate(endtime);
+    }
+
+    _descriptionEl.innerHTML = '<h2>' + title + '</h2>' +
+        '<p>' + timeDescription + ', ' + description + '</p>';
   };
 
   /**
@@ -194,8 +312,12 @@ var TimeseriesApp = function (options) {
     _configView.destroy();
     _timeseriesView.destroy();
 
+    _observatories.off('reset', _updateDescription);
+
     _config = null;
     _configView = null;
+    _descriptionEl = null;
+    _observatories = null;
     _timeseries = null;
     _timeseriesEl = null;
     _timeseriesFactory = null;
