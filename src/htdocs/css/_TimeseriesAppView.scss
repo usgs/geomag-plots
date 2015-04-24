@@ -1,32 +1,43 @@
-.timeseries {
+
+.timeseries-app {
+  min-height: 3em;
+
   > .load {
-  display: none;
+    display: none;
+  }
+
+  &.loading {
+    position: relative;
+
+    > .load {
+      background-color: #FFF;
+      bottom: 0;
+      color: #7fae00;
+      display: block;
+      font-size: larger;
+      left: 0;
+      opacity: 0.8;
+      position: absolute;
+      right: 0;
+      text-align: center;
+      top: 0;
+      z-index: 1000;
+    }
   }
 }
 
-.timeseries.loading {
-  position: relative;
-
-  > .load {
-    display: inline;
-    z-index: 1000;
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    background-color: #FFF;
-    text-align: center;
-    color: #7fae00;
-    font-size: larger;
-    opacity: 0.8;
-  }
-
+.loading-text {
+  display: block;
+  position: fixed;
+  left: 0;
+  right:0;
+  text-align: center;
+  top: 50%;
 }
 
 .timezone {
-color: #494949;
-font-size: 11px;
+  color: #494949;
+  font-size: 11px;
 }
 
 .timespan {

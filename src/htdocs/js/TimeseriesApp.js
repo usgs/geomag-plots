@@ -72,9 +72,11 @@ var TimeseriesApp = function (options) {
   _initialize = function (options) {
     var configEl = options.configEl,
         viewEl = _this.el,
-        timeseriesDiv = '<div class="timeseries">'+
+        timeseriesDiv = '<div class="timeseries-app">'+
             '<div class="view"></div>' +
-            '<div class="load">LOADING</div>' +
+            '<div class="load">' +
+              '<span class="loading-text">LOADING</span>' +
+            '</div>' +
             '</div>';
 
     if (!configEl) {
@@ -107,7 +109,7 @@ var TimeseriesApp = function (options) {
       el: viewEl,
       collection: _timeseries
     });
-    _timeseriesEl = _this.el.querySelector('.timeseries');
+    _timeseriesEl = _this.el.querySelector('.timeseries-app');
     _onConfigChange();
   };
 
@@ -190,6 +192,7 @@ var TimeseriesApp = function (options) {
     _config = null;
     _configView = null;
     _timeseries = null;
+    _timeseriesEl = null;
     _timeseriesFactory = null;
     _timeseriesView = null;
   }, _this.destroy);
