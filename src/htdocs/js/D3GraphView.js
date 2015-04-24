@@ -388,6 +388,7 @@ var D3GraphView = function (options) {
     if (typeof xAxisTickValues === 'function') {
       xAxisTicks = xAxisTicks(xExtent);
     }
+    _xAxis.ticks(5);
     _xAxis.tickValues(xAxisTicks);
 
     _yAxis.scale(yAxisScale);
