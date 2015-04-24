@@ -272,7 +272,7 @@ var TimeseriesSelectView = function (options) {
    *         true if time is a valid date time.
    */
   _validateTime = function (time) {
-    if (time === null || !(time instanceof Date) || isNaN(time.valueOf())) {
+    if (time === null || !(time instanceof Date) || isNaN(+time)) {
       _timeError.innerHTML = 'Please enter a valid time.';
       _timeError.classList.add('error');
       return false;

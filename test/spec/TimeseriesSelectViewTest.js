@@ -134,8 +134,9 @@ describe('TimeSeriesSelectView', function () {
       radio = view.el.querySelector('#time-custom');
       _fireClickEvent(radio);
       // custom waits for start/end time to be entered
-      view.el.querySelector('#time-starttime').value = '2015-01-01';
-      view.el.querySelector('#time-endtime').value = '2015-01-02';
+      // phantomjs doesn't handle ISO dates, browsers do
+      view.el.querySelector('#time-starttime').value = '2015/01/01';
+      view.el.querySelector('#time-endtime').value = '2015/01/02';
       _fireClickEvent(view.el.querySelector('.time-input > button'));
       expect(config.get('timemode')).to.equal('custom');
     });
