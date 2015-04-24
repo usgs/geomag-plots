@@ -7,6 +7,7 @@ var Collection = require('mvc/Collection'),
     View = require('mvc/View'),
     Util = require('util/Util'),
 
+    ObservatoryFactory = require('ObservatoryFactory'),
     TimeseriesCollectionView = require('TimeseriesCollectionView'),
     TimeseriesFactory = require('TimeseriesFactory'),
     TimeseriesSelectView = require('TimeseriesSelectView');
@@ -58,6 +59,8 @@ var TimeseriesApp = function (options) {
       // variables
       _config,
       _configView,
+      _formatDate,
+      _titleEl,
       _timeseriesEl,
       _timeseries,
       _timeseriesFactory,
@@ -72,17 +75,20 @@ var TimeseriesApp = function (options) {
   _initialize = function (options) {
     var configEl = options.configEl,
         viewEl = _this.el,
+        titleDiv = '<div class="title"></div>',
         timeseriesDiv = '<div class="timeseries">'+
             '<div class="view"></div>' +
             '<div class="load">LOADING</div>' +
             '</div>';
 
     if (!configEl) {
-      viewEl.innerHTML = '<div class="config"></div>' + timeseriesDiv;
+      viewEl.innerHTML = '<div class="config"></div>' +
+          titleDiv + timeseriesDiv;
       configEl = viewEl.querySelector('.config');
     } else {
-      viewEl.innerHTML = timeseriesDiv;
+      viewEl.innerHTML = titleDiv + timeseriesDiv;
     }
+    _titleEl = viewEl.querySelector('.title');
     viewEl = viewEl.querySelector('.view');
 
     _config = Model(Util.extend({
@@ -107,8 +113,23 @@ var TimeseriesApp = function (options) {
       el: viewEl,
       collection: _timeseries
     });
+
     _timeseriesEl = _this.el.querySelector('.timeseries');
-    _onConfigChange();
+    ObservatoryFactory().getObservatories({
+      callback: function (observatories) {
+        _this.observatories = observatories;
+        _onConfigChange();
+      },
+      errback: function () { console.log('ObservatoryFactory Error');}
+    });
+
+  };
+
+  _formatDate = function (d) {
+    if (!d || typeof d.toISOString !== 'function') {
+      return '';
+    }
+    return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
   };
 
   /**
@@ -117,10 +138,14 @@ var TimeseriesApp = function (options) {
   _onConfigChange = function () {
     var channel,
         endtime,
-        seconds,
-        observatory,
         starttime,
-        timemode;
+        name,
+        observatory,
+        observatoryObject,
+        seconds,
+        timemode,
+        timeTitle,
+        title;
 
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
@@ -129,23 +154,52 @@ var TimeseriesApp = function (options) {
 
     channel = _config.get('channel');
     observatory = _config.get('observatory');
-    timemode = _config.get('timemode');
+    timeTitle = timemode = _config.get('timemode');
     if (timemode === 'realtime') {
       // 15 minutes
       endtime = __roundUpToNearestNMinutes(new Date(), 1);
       starttime = new Date(endtime.getTime() - 900000);
+      timeTitle = '<span class="timespan"> Past 15 minutes </span>';
     } else if (timemode === 'pastday') {
       endtime = __roundUpToNearestNMinutes(new Date(), 5);
       starttime = new Date(endtime.getTime() - 86400000);
+      timeTitle = '<span class="timespan"> Past Day </span>';
     } else {
       endtime = _config.get('endtime');
       starttime = _config.get('starttime');
+      timeTitle = '<span class="timespan"> Times Range: ' +
+          _formatDate(starttime) + ' to ' + _formatDate(endtime) +
+          '</span>';
     }
+
     if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
       seconds = true;
     } else {
       seconds = false;
     }
+
+    // Get Observatory Name.
+    if (observatory && _this.observatories !== undefined) {
+      _this.observatories.forEach(function(obs) {
+        if (observatory === obs.id) {
+          observatoryObject = obs;
+        }
+      });
+     name = '<span .title3> ' + observatoryObject.get('name') + '</span></br>';
+    }
+    else {
+      name = '';
+    }
+
+    title = observatory || channel;
+    if (channel) {
+      title = channel + ' for all observatories.';
+    }
+    else {
+      title = observatory;
+    }
+    _titleEl.innerHTML = '<h2>' + title + '</h2> ' + name +
+        timeTitle + '<br> <span class="timezone">All times are in UTC<span>';
 
     _timeseriesEl.classList.add('loading');
 
