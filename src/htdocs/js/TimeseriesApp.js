@@ -140,7 +140,9 @@ var TimeseriesApp = function (options) {
 
     _timeseries = options.timeseries || Collection();
 
-    _timeseriesFactory = TimeseriesFactory();
+    _timeseriesFactory = TimeseriesFactory({
+      observatories: _observatories
+    });
 
     _configView = TimeseriesSelectView({
       el: configEl,
@@ -220,9 +222,46 @@ var TimeseriesApp = function (options) {
    *        timeseries webservice response.
    */
   _onTimeseriesLoad = function (response) {
-    _timeseriesEl.classList.remove('loading');
-    _timeseries.reset(response.getTimeseries());
+    var timeseries = response.getTimeseries();
+    // copy metadata from observatory to timeseries
+    timeseries.forEach(function (t) {
+      var metadata = t.get('metadata'),
+          observatory = _observatories.get(metadata.observatory);
+      if (observatory !== null) {
+        Util.extend(metadata, {
+          name: observatory.get('name'),
+          latitude: observatory.get('latitude'),
+          longitude: observatory.get('longitude')
+        });
+      }
+    });
+    // sort by latitude
+    timeseries.sort(function (a, b) {
+      var aMeta = a.get('metadata'),
+          bMeta = b.get('metadata'),
+          aKey,
+          bKey;
+      // sort by latitude if available
+      aKey = aMeta.latitude;
+      bKey = bMeta.latitude;
+      if (aKey && bKey) {
+        return bKey - aKey;
+      }
+      // otherwise observatory code
+      aKey = aMeta.observatory;
+      bKey = bMeta.observatory;
+      if (aKey < bKey) {
+        return -1;
+      } else if (bKey < aKey) {
+        return 1;
+      }
+      return 0;
+    });
+    // update collection
+    _timeseries.reset(timeseries);
     _updateDescription();
+    // done loading
+    _timeseriesEl.classList.remove('loading');
   };
 
   /**
