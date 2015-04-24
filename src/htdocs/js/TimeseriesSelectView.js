@@ -65,7 +65,9 @@ var TimeseriesSelectView = function (options) {
       _onChannelClick,
       _onObservatoryClick,
       _onTimeChange,
-      _parseDate;
+      _orderTimes,
+      _parseDate,
+      _validateTime;
 
   _this = View(options);
 
@@ -177,23 +179,29 @@ var TimeseriesSelectView = function (options) {
    */
   _onTimeChange = function (e) {
     var endTime,
-        startTime;
+        startTime,
+        time;
+
     if (_timeCustom.checked) {
       _timeEl.classList.add('custom');
       if (e.target === _timeCustom) {
         // user selected custom, allow to edit times
         return;
       }
-      // TODO: validate input
-      endTime = _parseDate(_endTime.value);
-      startTime = _parseDate(_startTime.value);
-      if (endTime !== null && startTime !== null) {
-        _config.set({
-          endtime: endTime,
-          starttime: startTime,
-          timemode: 'custom'
-        });
-      }
+
+      endTime = _validateTime(_parseDate(_endTime.value));
+      startTime = _validateTime(_parseDate(_startTime.value));
+
+      time = _orderTimes(startTime, endTime);
+      startTime = time[0];
+      endTime = time[1];
+
+      _config.set({
+        endtime: endTime,
+        starttime: startTime,
+        timemode: 'custom'
+      });
+      // }
     } else {
       _timeEl.classList.remove('custom');
       if (_timeRealtime.checked) {
@@ -206,6 +214,36 @@ var TimeseriesSelectView = function (options) {
         });
       }
     }
+  };
+
+  /**
+   * Ensure that start time comes before end time. Swap them if needed.
+   * If start and end are identical (within 10 seconds), make the range
+   * between them 3 days.
+   *
+   * @param start {Date}
+   *        time entered in start field.
+   * @param end {Date}
+   *        time entered in end field.
+   * @return [{Date}, {Date}]
+   *         start time and end time in proper order.
+   */
+  _orderTimes = function(start, end) {
+    var temp;
+
+    if (start > end) {
+      temp = start;
+      start = end;
+      end = temp;
+    }
+
+    // Less than 10 seconds of data doesn't show much.
+    if (end-start < 10000) {
+      // Go back 3 days.
+      start.setDate(start.getDate() - 3);
+    }
+
+    return [start, end];
   };
 
   /**
@@ -223,6 +261,21 @@ var TimeseriesSelectView = function (options) {
     }
     dt = new Date(s.replace(' ', 'T').replace('Z', '') + 'Z');
     return dt;
+  };
+
+  /**
+   * Validate a date-time string, or create a valid date-time.
+   *
+   * @param time {String}
+   *        string that needs to be a valid date-time.
+   * @return {Date}
+   *         a valid date-time, current date and time if input was invalid.
+   */
+  _validateTime = function (time) {
+    if (time === null || !(time instanceof Date) || isNaN(time.valueOf())) {
+      time = new Date();
+    }
+    return time;
   };
 
   /**
