@@ -87,7 +87,10 @@ var TimeseriesApp = function (options) {
       _timeseries,
       _timeseriesFactory,
       _timeseriesView,
+      _timeoutId,
+      _timeoutTime,
       // methods
+      _onAutoUpdate,
       _onConfigChange,
       _onTimeseriesError,
       _onTimeseriesLoad,
@@ -158,6 +161,12 @@ var TimeseriesApp = function (options) {
     _onConfigChange();
   };
 
+  _onAutoUpdate = function () {
+    clearTimeout(_timeoutId);
+    _timeoutId = undefined;
+    _onConfigChange();
+  };
+
   /**
    * Configuration model "change" listener.
    */
@@ -181,12 +190,15 @@ var TimeseriesApp = function (options) {
       // 15 minutes
       endtime = __roundUpToNearestNMinutes(new Date(), 1);
       starttime = new Date(endtime.getTime() - 900000);
+      _timeoutTime = 300000;
     } else if (timemode === 'pastday') {
       endtime = __roundUpToNearestNMinutes(new Date(), 5);
       starttime = new Date(endtime.getTime() - 86400000);
+      _timeoutTime = 300000;
     } else {
       endtime = _config.get('endtime');
       starttime = _config.get('starttime');
+      _timeoutTime = undefined;
     }
     if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
       seconds = true;
@@ -195,6 +207,15 @@ var TimeseriesApp = function (options) {
     }
 
     _timeseriesEl.classList.add('loading');
+
+    if (_timeoutId) {
+      clearTimeout(_timeoutId);
+      _timeoutId = undefined;
+    }
+
+    if (_timeoutTime) {
+        _timeoutId = setTimeout(_onAutoUpdate, _timeoutTime);
+    }
 
     _timeseriesFactory.getTimeseries({
       channel: channel,
