@@ -96,6 +96,11 @@ var TimeseriesApp = function (options) {
 
     _configView = TimeseriesSelectView({
       el: configEl,
+      channels: [
+        // Add delta-F here when it is available in Edge.
+        // Other channels should be added here when they are no longer beta.
+        'H', 'E', 'Z', 'F'
+      ],
       config: _config
     });
 
