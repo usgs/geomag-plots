@@ -61,9 +61,9 @@ var TimeseriesView = function (options) {
       height: _height,
       width: _width,
       paddingBottom: 25,
-      paddingLeft: 75,
-      paddingRight: 5,
-      paddingTop: 0,
+      paddingLeft: 80,
+      paddingRight: 1,
+      paddingTop: 1,
       xAxisLabel: '',
       yAxisFormat: _yAxisFormat,
       // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
@@ -128,7 +128,11 @@ var TimeseriesView = function (options) {
   _this.render = function () {
     var meta = _timeseries.get('metadata');
 
-    _metaView.innerHTML = meta.observatory + ' ' + meta.channel + ' (nT)';
+    _metaView.innerHTML =
+        '<span class="observatory">' + meta.observatory + '</span>' +
+        '<span class="channel">' + meta.channel +
+          '<span class="units">(nT)</span>' +
+        '</span>';
 
     _trace.render();
   };

@@ -57,14 +57,25 @@ var TimeseriesCollectionView = function (options) {
    *    The timeseries being added.
    */
   _onTimeseriesAdd = function (added) {
-    var li,
-        view;
+    var height,
+        li,
+        view,
+        width;
+
+    height = 150;
+    width = 960;
+    if (window.innerWidth < 768) {
+      height = 200;
+      width = 480;
+    }
 
     added.forEach(function(timeseries) {
       li = _list.appendChild(document.createElement('li'));
       view = TimeseriesView({
         el: li,
-        timeseries: timeseries
+        height: height,
+        timeseries: timeseries,
+        width: width
       });
       view.id = timeseries.id;
       _views.add(view);
