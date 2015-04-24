@@ -224,7 +224,7 @@ var TimeseriesApp = function (options) {
     });
 
     // schedule auto update
-    if (autoUpdateTime) {
+    if (autoUpdateTime !== null) {
       _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
     }
   };
