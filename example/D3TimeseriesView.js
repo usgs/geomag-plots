@@ -64,6 +64,7 @@ Xhr.ajax({
       D3TimeseriesView({
         el: el.appendChild(document.createElement('div')),
         data: timeseries,
+        xAxisLabel: 'Time (UTC)',
         yAxisFormat: yAxisFormat,
         yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)',
         yAxisTicks: yAxisTicks
