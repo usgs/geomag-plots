@@ -58,6 +58,7 @@ var TimeseriesApp = function (options) {
       // variables
       _config,
       _configView,
+      _timeseriesEl,
       _timeseries,
       _timeseriesFactory,
       _timeseriesView,
@@ -70,16 +71,21 @@ var TimeseriesApp = function (options) {
 
   _initialize = function (options) {
     var configEl = options.configEl,
-        timeseriesEl = _this.el;
+        viewEl = _this.el,
+        timeseriesDiv = '<div class="timeseries-app">'+
+            '<div class="view"></div>' +
+            '<div class="load">' +
+              '<span class="loading-text">LOADING</span>' +
+            '</div>' +
+            '</div>';
 
     if (!configEl) {
-      timeseriesEl.innerHTML = '<div class="config"></div>' +
-          '<div class="timeseries"></div>';
-      configEl = timeseriesEl.querySelector('.config');
+      viewEl.innerHTML = '<div class="config"></div>' + timeseriesDiv;
+      configEl = viewEl.querySelector('.config');
     } else {
-      timeseriesEl.innerHTML = '<div class="timeseries"></div>';
+      viewEl.innerHTML = timeseriesDiv;
     }
-    timeseriesEl = timeseriesEl.querySelector('.timeseries');
+    viewEl = viewEl.querySelector('.view');
 
     _config = Model(Util.extend({
       channel: 'H',
@@ -105,9 +111,10 @@ var TimeseriesApp = function (options) {
     });
 
     _timeseriesView = TimeseriesCollectionView({
-      el: timeseriesEl,
+      el: viewEl,
       collection: _timeseries
     });
+    _timeseriesEl = _this.el.querySelector('.timeseries-app');
     _onConfigChange();
   };
 
@@ -147,6 +154,8 @@ var TimeseriesApp = function (options) {
       seconds = false;
     }
 
+    _timeseriesEl.classList.add('loading');
+
     _timeseriesFactory.getTimeseries({
       channel: channel,
       observatory: observatory,
@@ -162,6 +171,7 @@ var TimeseriesApp = function (options) {
    * Errback for TimeseriesFactory.
    */
   _onTimeseriesError = function () {
+    _timeseriesEl.classList.remove('loading');
     _timeseries.reset([]);
   };
 
@@ -172,6 +182,7 @@ var TimeseriesApp = function (options) {
    *        timeseries webservice response.
    */
   _onTimeseriesLoad = function (response) {
+    _timeseriesEl.classList.remove('loading');
     _timeseries.reset(response.getTimeseries());
   };
 
@@ -186,6 +197,7 @@ var TimeseriesApp = function (options) {
     _config = null;
     _configView = null;
     _timeseries = null;
+    _timeseriesEl = null;
     _timeseriesFactory = null;
     _timeseriesView = null;
   }, _this.destroy);
