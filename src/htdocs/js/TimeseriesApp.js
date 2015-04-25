@@ -108,7 +108,8 @@ var TimeseriesApp = function (options) {
         '<div class="description"></div>' +
         '<div class="view"></div>' +
         '<div class="load">' +
-          '<span class="loading-text">LOADING</span>' +
+          '<div class="load-mask"></div>' +
+          '<span class="load-text">LOADING</span>' +
         '</div>';
 
     if (!configEl) {
