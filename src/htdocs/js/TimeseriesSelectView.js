@@ -67,6 +67,7 @@ var TimeseriesSelectView = function (options) {
       _onObservatoryClick,
       _onTimeChange,
       _parseDate,
+      _setTimeError,
       _timeOrder,
       _validateRange,
       _validateTime;
@@ -196,16 +197,15 @@ var TimeseriesSelectView = function (options) {
       endTime = _parseDate(_endTime.value);
       startTime = _parseDate(_startTime.value);
 
-      if (_validateTime(startTime) && _validateTime(endTime)) {
-        if(_timeOrder(startTime, endTime)) {
-          if(_validateRange(startTime, endTime)){
-            _config.set({
-              endtime: endTime,
-              starttime: startTime,
-              timemode: 'custom'
-            });
-          }
-        }
+      if (_validateTime(startTime) &&
+          _validateTime(endTime) &&
+          _timeOrder(startTime, endTime) &&
+          _validateRange(startTime, endTime)){
+        _config.set({
+          endtime: endTime,
+          starttime: startTime,
+          timemode: 'custom'
+        });
       }
     } else {
       _timeEl.classList.remove('custom');
@@ -239,6 +239,25 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
+   * Show/clear error message for time inputs.
+   *
+   * @param message {String}
+   *        error message, or null if no errors.
+   */
+  _setTimeError = function (message) {
+    if (message === null) {
+      _timeError.innerHTML = '';
+      _timeError.classList.remove('error');
+      _timeError.classList.remove('alert');
+    } else {
+      _timeError.innerHTML = message;
+      _timeError.classList.add('alert');
+      _timeError.classList.add('error');
+    }
+  };
+
+
+  /**
    * Ensure that start time comes before end time. Swap them if needed.
    * If start and end are identical (within 10 seconds), make the range
    * between them 3 days.
@@ -252,12 +271,10 @@ var TimeseriesSelectView = function (options) {
    */
   _timeOrder = function(start, end) {
     if (start > end) {
-      _timeError.innerHTML = 'Start Time must come before End Time.';
-      _timeError.classList.add('error');
+      _setTimeError('Start Time must come before End Time.');
       return false;
     } else {
-      _timeError.innerHTML = '';
-      _timeError.classList.remove('error');
+      _setTimeError(null);
       return true;
     }
 
@@ -266,19 +283,17 @@ var TimeseriesSelectView = function (options) {
   /**
    * Validate a date-time string, or create a valid date-time.
    *
-   * @param time {String}
+   * @param time {Date}
    *        string that needs to be a valid date-time.
    * @return {Boolean}
    *         true if time is a valid date time.
    */
   _validateTime = function (time) {
     if (time === null || !(time instanceof Date) || isNaN(+time)) {
-      _timeError.innerHTML = 'Please enter a valid time.';
-      _timeError.classList.add('error');
+      _setTimeError('Please enter a valid time.');
       return false;
     } else {
-      _timeError.innerHTML = '';
-      _timeError.classList.remove('error');
+      _setTimeError(null);
       return true;
     }
   };
@@ -295,12 +310,10 @@ var TimeseriesSelectView = function (options) {
    */
   _validateRange = function (start, end) {
     if ((end-start) > 2678400000) {
-      _timeError.innerHTML = 'Please select less than 1 month of data.';
-      _timeError.classList.add('error');
+      _setTimeError('Please select less than 1 month of data.');
       return false;
     } else {
-      _timeError.innerHTML = '';
-      _timeError.classList.remove('error');
+      _setTimeError(null);
       return true;
     }
   };
