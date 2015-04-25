@@ -22,8 +22,11 @@ var TimeseriesCollectionView = function (options) {
 
       _collection,
       _list,
+      _resizeTimeout,
       _views,
 
+      _doResize,
+      _onResize,
       _onTimeseriesAdd,
       _onTimeseriesReset,
       _onTimeseriesRemove;
@@ -48,6 +51,27 @@ var TimeseriesCollectionView = function (options) {
     _collection.on('reset', _onTimeseriesReset);
 
     _onTimeseriesReset();
+
+    // svg events seem to break after orientation change, re-render
+    window.addEventListener('resize', _onResize);
+  };
+
+  /**
+   * Process window resize.
+   */
+  _doResize = function () {
+    _resizeTimeout = null;
+    _onTimeseriesReset();
+  };
+
+  /**
+   * Window resize event handler.
+   */
+  _onResize = function () {
+    if (_resizeTimeout !== null) {
+      clearTimeout(_resizeTimeout);
+    }
+    _resizeTimeout = setTimeout(_doResize, 100);
   };
 
   /**
@@ -120,6 +144,8 @@ var TimeseriesCollectionView = function (options) {
     _collection.off('remove', _onTimeseriesRemove);
     _collection.off('reset', _onTimeseriesReset);
     _collection = null;
+
+    window.removeEventListener('resize', _onResize);
 
     // destroy child views
     _views.data().forEach(function (view) {
