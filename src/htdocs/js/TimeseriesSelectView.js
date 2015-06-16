@@ -97,7 +97,7 @@ var TimeseriesSelectView = function (options) {
           '</label>' +
           '<label for="time-pastday">' +
             '<input type="radio" name="timemode" id="time-pastday"/>' +
-            'Past Day' +
+            'Past 24 Hours' +
           '</label>' +
           '<label for="time-custom">' +
             '<input type="radio" name="timemode" id="time-custom"/>' +
