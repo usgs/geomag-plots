@@ -80,6 +80,7 @@ var TimeseriesApp = function (options) {
       _initialize,
       // variables
       _autoUpdateTimeout,
+      _channels,
       _config,
       _configView,
       _descriptionEl,
@@ -102,6 +103,8 @@ var TimeseriesApp = function (options) {
         el = _this.el,
         observatoryFactory,
         viewEl;
+
+    _channels = options.channels || ['H', 'E', 'Z', 'F'];
 
     el.classList.add('timeseries-app');
     el.innerHTML =
@@ -149,7 +152,7 @@ var TimeseriesApp = function (options) {
 
     _configView = TimeseriesSelectView({
       el: configEl,
-      channels: options.channels || ['H', 'E', 'Z', 'F'],
+      channels: _channels,
       config: _config
     });
 
@@ -173,6 +176,7 @@ var TimeseriesApp = function (options) {
    */
   _onConfigChange = function () {
     var channel,
+        channels,
         endtime,
         seconds,
         observatory,
@@ -192,6 +196,7 @@ var TimeseriesApp = function (options) {
 
     channel = _config.get('channel');
     observatory = _config.get('observatory');
+    console.log(_channels);
     timemode = _config.get('timemode');
     if (timemode === 'realtime') {
       // 15 minutes
@@ -214,9 +219,16 @@ var TimeseriesApp = function (options) {
 
     _timeseriesEl.classList.add('loading');
 
+    if (observatory !== null) {
+      channels = _channels;
+    } else {
+      channels = null;
+    }
+
     _timeseriesFactory.getTimeseries({
       channel: channel,
       observatory: observatory,
+      channels: channels,
       endtime: endtime,
       starttime: starttime,
       callback: _onTimeseriesLoad,

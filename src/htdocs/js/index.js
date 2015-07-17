@@ -34,9 +34,12 @@ el = document.querySelector('#geomag-plots');
 app = TimeseriesApp({
   channels: [
     'H',
+    'D',
     'E',
     'Z',
     'F',
+    'X',
+    'Y',
     'Dist',
     'DeltaF'
   ],
