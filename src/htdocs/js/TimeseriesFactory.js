@@ -101,7 +101,6 @@ var TimeseriesFactory = function (options) {
     if (channel !== null) {
       data['chan[]'] = channel;
     }
-    console.log(data);
 
     Xhr.ajax({
       url: _url,

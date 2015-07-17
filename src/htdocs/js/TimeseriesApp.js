@@ -196,7 +196,6 @@ var TimeseriesApp = function (options) {
 
     channel = _config.get('channel');
     observatory = _config.get('observatory');
-    console.log(_channels);
     timemode = _config.get('timemode');
     if (timemode === 'realtime') {
       // 15 minutes
