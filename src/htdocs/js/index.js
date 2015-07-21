@@ -38,10 +38,10 @@ app = TimeseriesApp({
     'E',
     'Z',
     'F',
+    'DeltaF',
     'X',
     'Y',
-    'Dist',
-    'DeltaF'
+    'Dist'
   ],
   config: {
     channel: 'H',
