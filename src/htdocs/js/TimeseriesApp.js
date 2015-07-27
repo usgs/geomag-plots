@@ -176,7 +176,6 @@ var TimeseriesApp = function (options) {
    */
   _onConfigChange = function () {
     var channel,
-        channels,
         endtime,
         seconds,
         observatory,
@@ -218,16 +217,13 @@ var TimeseriesApp = function (options) {
 
     _timeseriesEl.classList.add('loading');
 
-    if (observatory !== null) {
-      channels = _channels;
-    } else {
-      channels = null;
+    if (channel === null) {
+      channel = _channels;
     }
 
     _timeseriesFactory.getTimeseries({
       channel: channel,
       observatory: observatory,
-      channels: channels,
       endtime: endtime,
       starttime: starttime,
       callback: _onTimeseriesLoad,

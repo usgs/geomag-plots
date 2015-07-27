@@ -68,7 +68,6 @@ var TimeseriesFactory = function (options) {
         endtime = options.endtime || new Date(),
         observatory = options.observatory || null,
         channel = options.channel || null,
-        channels = options.channels || null,
         callback = options.callback || function () {},
         errback = options.errback || function () {},
         seconds = options.seconds || false,
@@ -94,9 +93,6 @@ var TimeseriesFactory = function (options) {
     data.freq = seconds;
     if (observatory !== null) {
       data['obs[]'] = observatory;
-      if (channels !== null) {
-        data['chan[]'] = channels;
-      }
     }
     if (channel !== null) {
       data['chan[]'] = channel;
