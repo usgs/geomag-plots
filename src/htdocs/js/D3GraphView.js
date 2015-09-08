@@ -1,7 +1,6 @@
 'use strict';
 
 var d3 = require('d3'),
-    Model = require('mvc/Model'),
     Util = require('util/Util'),
     View = require('mvc/View');
 
@@ -108,7 +107,7 @@ var D3GraphView = function (options) {
   _initialize = function (options) {
     var el;
 
-    _this.model = Model(Util.extend({
+    _this.model.set(Util.extend({
       data: null,
       height: 500,
       marginBottom: 0,
@@ -135,7 +134,7 @@ var D3GraphView = function (options) {
       yAxisTicks: null,
       yDomainPadding: 0.1,
       yExtent: null
-    }, options));
+    }, _this.model.get(), options), {silent: true});
 
     el = _this.el;
     el.innerHTML = '<div class="graph">' +
@@ -192,17 +191,12 @@ var D3GraphView = function (options) {
         .on('zoom', _onZoom);
     _zoom.el = d3.select(_innerFrame);
     _zoom.el.call(_zoom);
-
-    _this.model.on('change', _this.render);
   };
 
   /**
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
-    _this.model.off('change', _this.render);
-    _this.model = null;
-
     _zoom.on('zoom', null);
     _zoom.el.on('mousedown.zoom', null);
     _zoom.el.on('mousemove.zoom', null);
