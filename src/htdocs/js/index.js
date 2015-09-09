@@ -1,3 +1,4 @@
+/* global _CONFIG */
 'use strict';
 
 
@@ -47,5 +48,8 @@ app = TimeseriesApp({
     starttime: __getTime(86400000 * 3)
   },
   configEl: configEl,
-  el: el
+  el: el,
+
+  obsMetaUrl: _CONFIG.obsMetaUrl,
+  obsDataUrl: _CONFIG.obsDataUrl
 });

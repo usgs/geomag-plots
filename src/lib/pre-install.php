@@ -47,7 +47,10 @@ $APACHE_CONFIG_FILE = $CONF_DIR . DIRECTORY_SEPARATOR . 'httpd.conf';
 $DEFAULTS = array(
   'APP_DIR' => $APP_DIR,
   'DATA_DIR' => str_replace('/apps/', '/data/', $APP_DIR),
-  'MOUNT_PATH' => '/geomag-plots'//,
+  'MOUNT_PATH' => '/geomag-plots',
+
+  'OBS_META_URL' => '/map/obervatories.geojson.php',
+  'OBS_DATA_URL' => '/map/observatories_data.json.php'
 
   // 'DB_DSN' => 'sqlite:data.db',
   // 'DB_USER' => '',
@@ -57,7 +60,10 @@ $DEFAULTS = array(
 $HELP_TEXT = array(
   'APP_DIR' => 'Absolute path to application root directory',
   'DATA_DIR' => 'Absolute path to application data directory',
-  'MOUNT_PATH' => 'Url path to application'//,
+  'MOUNT_PATH' => 'Url path to application',
+
+  'OBS_META_URL' => 'Url to observatory summary information',
+  'OBS_DATA_URL' => 'Url to observatory data information'
 
   // 'DB_DSN' => 'Database connection DSN string',
   // 'DB_USER' => 'Read-only username for database connections',

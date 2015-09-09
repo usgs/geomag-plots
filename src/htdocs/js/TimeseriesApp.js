@@ -53,6 +53,12 @@ var __formatDate = function (d) {
 };
 
 
+var _DEFAULTS = {
+  obsMetaUrl: '/map/observatories.geojson.php',
+  obsDataUrl: '/map/observatories_data.json.php'
+};
+
+
 /**
  * Timeseries application.
  *
@@ -103,6 +109,8 @@ var TimeseriesApp = function (options) {
         observatoryFactory,
         viewEl;
 
+    options = Util.extend({}, _DEFAULTS, options);
+
     el.classList.add('timeseries-app');
     el.innerHTML =
         '<div class="description"></div>' +
@@ -132,7 +140,8 @@ var TimeseriesApp = function (options) {
     _observatories = options.observatories || null;
     if (_observatories === null) {
       _observatories = Collection();
-      observatoryFactory = options.observatoryFactory || ObservatoryFactory();
+      observatoryFactory = options.observatoryFactory ||
+          ObservatoryFactory({url: options.obsMetaUrl});
       observatoryFactory.getObservatories({
         callback: function (observatories) {
           _observatories.reset(observatories);
@@ -144,7 +153,8 @@ var TimeseriesApp = function (options) {
     _timeseries = options.timeseries || Collection();
 
     _timeseriesFactory = TimeseriesFactory({
-      observatories: _observatories
+      observatories: _observatories,
+      url: options.obsDataUrl
     });
 
     _configView = TimeseriesSelectView({
