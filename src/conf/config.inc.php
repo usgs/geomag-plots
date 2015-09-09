@@ -8,6 +8,9 @@ $APP_DIR = $CONFIG['APP_DIR'];
 $DATA_DIR = $CONFIG['DATA_DIR'];
 $MOUNT_PATH = $CONFIG['MOUNT_PATH'];
 
+$OBS_META_URL = $CONFIG['OBS_META_URL'];
+$OBS_DATA_URL = $CONFIG['OBS_DATA_URL'];
+
 /* Database stuff, if applicable.  * /
 // Using NO_DB guard allows pages that do not need database connection to use
 // this same configuration file without adding in database overhead.
