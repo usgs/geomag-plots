@@ -49,7 +49,7 @@ $DEFAULTS = array(
   'DATA_DIR' => str_replace('/apps/', '/data/', $APP_DIR),
   'MOUNT_PATH' => '/geomag-plots',
 
-  'OBS_META_URL' => '/map/obervatories.geojson.php',
+  'OBS_META_URL' => '/map/observatories.geojson.php',
   'OBS_DATA_URL' => '/map/observatories_data.json.php'
 
   // 'DB_DSN' => 'sqlite:data.db',
