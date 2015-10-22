@@ -91,18 +91,15 @@ var TimeseriesSelectView = function (options) {
         '<div class="observatory"></div>' +
         '<h2>Time</h2>' +
         '<div class="time vertical">' +
-          '<label for="time-realtime">' +
-            '<input type="radio" name="timemode" id="time-realtime"/>' +
-            'Realtime' +
-          '</label>' +
-          '<label for="time-pastday">' +
-            '<input type="radio" name="timemode" id="time-pastday"/>' +
-            'Past 24 Hours' +
-          '</label>' +
-          '<label for="time-custom">' +
-            '<input type="radio" name="timemode" id="time-custom"/>' +
-            'Custom' +
-          '</label>' +
+          '<input type="radio" name="timemode" id="time-realtime" ' +
+            'value="realtime" />' +
+          '<label for="time-realtime">Realtime</label>' +
+          '<input type="radio" name="timemode" id="time-pastday" ' +
+            'value="pastday" />' +
+          '<label for="time-pastday">Past 24 Hours</label>' +
+          '<input type="radio" name="timemode" id="time-custom" ' +
+            'value="custom" />' +
+          '<label for="time-custom">Custom</label>' +
           '<div class="time-input">' +
             '<div class="time-error">' +
             '</div>' +
