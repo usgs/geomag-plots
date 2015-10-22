@@ -103,10 +103,14 @@ var TimeseriesSelectView = function (options) {
           '<div class="time-input">' +
             '<div class="time-error">' +
             '</div>' +
-            '<label for="time-starttime">Start Time (UTC)</label>' +
-            '<input type="text" id="time-starttime"/>' +
-            '<label for="time-endtime">End Time (UTC)</label>' +
-            '<input type="text" id="time-endtime"/>' +
+            '<label for="time-starttime">' +
+              'Start Time (UTC)' +
+              '<input type="text" id="time-starttime" name="time-starttime"/>' +
+            '</label>' +
+            '<label for="time-endtime">' +
+              'End Time (UTC)' +
+              '<input type="text" id="time-endtime" name="time-endtime"/>' +
+            '</label>' +
             '<button>Update</button>' +
           '</div>' +
         '</div>';
