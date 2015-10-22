@@ -52,9 +52,15 @@ var TimeseriesSelectView = function (options) {
       _channelEl,
       _config,
       _endTime,
+      _endTimeError,
+      _endTimeErrorContainer,
+      _endTimeErrorLabel,
       _observatories,
       _observatoryEl,
       _startTime,
+      _startTimeError,
+      _startTimeErrorContainer,
+      _startTimeErrorLabel,
       _timeCustom,
       _timeEl,
       _timeError,
@@ -70,9 +76,11 @@ var TimeseriesSelectView = function (options) {
       _setTimeError,
       _timeOrder,
       _validateRange,
-      _validateTime;
+      _validateEndTime,
+      _validateStartTime;
 
   _this = View(options);
+
 
   _initialize = function (options) {
     var el;
@@ -103,26 +111,43 @@ var TimeseriesSelectView = function (options) {
           '<div class="time-input">' +
             '<div class="time-error">' +
             '</div>' +
-            '<label for="time-starttime">' +
-              'Start Time (UTC)' +
-              '<input type="text" id="time-starttime" name="time-starttime"/>' +
-            '</label>' +
-            '<label for="time-endtime">' +
-              'End Time (UTC)' +
-              '<input type="text" id="time-endtime" name="time-endtime"/>' +
-            '</label>' +
+            '<div class="starttime-error-container">' +
+              '<label class="starttime-error-label" for="time-starttime">' +
+                'Start Time (UTC)' +
+                '<span class="usa-input-error-message" ' +
+                  'id="starttime-error-message">' +
+                '</span>' +
+                '<input type="text" id="time-starttime" name="time-starttime" ' +
+                  'aria-describedby="starttime-error-message" />' +
+              '</label>' +
+            '</div>' +
+            '<div class="endtime-error-container">' +
+              '<label class="endtime-error-label" for="time-endtime">' +
+                'End Time (UTC)' +
+                '<span class="usa-input-error-message" ' +
+                  'id="endtime-error-message">' +
+                '</span>' +
+                '<input type="text" id="time-endtime" name="time-endtime"/>' +
+              '</label>' +
+            '</div>' +
             '<button>Update</button>' +
           '</div>' +
         '</div>';
 
     _channelEl = el.querySelector('.channel');
+    _endTime = el.querySelector('#time-endtime');
+    _endTimeError = el.querySelector('#endtime-error-message');
+    _endTimeErrorContainer = el.querySelector('.endtime-error-container');
+    _endTimeErrorLabel = el.querySelector('.endtime-error-label');
     _observatoryEl = el.querySelector('.observatory');
     _timeEl = el.querySelector('.time');
     _timeRealtime = el.querySelector('#time-realtime');
     _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
     _startTime = el.querySelector('#time-starttime');
-    _endTime = el.querySelector('#time-endtime');
+    _startTimeError = el.querySelector('#starttime-error-message');
+    _startTimeErrorContainer = el.querySelector('.starttime-error-container');
+    _startTimeErrorLabel = el.querySelector('.starttime-error-label');
     _timeUpdate = el.querySelector('.time-input > button');
     _timeError = el.querySelector('.time-input > .time-error');
 
@@ -198,8 +223,8 @@ var TimeseriesSelectView = function (options) {
       endTime = _parseDate(_endTime.value);
       startTime = _parseDate(_startTime.value);
 
-      if (_validateTime(startTime) &&
-          _validateTime(endTime) &&
+      if (_validateStartTime(startTime) &&
+          _validateEndTime(endTime) &&
           _timeOrder(startTime, endTime) &&
           _validateRange(startTime, endTime)){
         _config.set({
@@ -289,12 +314,38 @@ var TimeseriesSelectView = function (options) {
    * @return {Boolean}
    *         true if time is a valid date time.
    */
-  _validateTime = function (time) {
+  _validateEndTime = function (time) {
     if (time === null || !(time instanceof Date) || isNaN(+time)) {
-      _setTimeError('Please enter a valid time.');
+      _endTimeError.innerHTML = 'Please enter a valid time.';
+      _endTimeErrorLabel.classList.add('usa-input-error-label');
+      _endTimeErrorContainer.classList.add('usa-input-error');
       return false;
     } else {
-      _setTimeError(null);
+      _endTimeError.innerHTML = '';
+      _endTimeErrorLabel.classList.remove('usa-input-error-label');
+      _endTimeErrorContainer.classList.remove('usa-input-error');
+      return true;
+    }
+  };
+
+  /**
+   * Validate a date-time string, or create a valid date-time.
+   *
+   * @param time {Date}
+   *        string that needs to be a valid date-time.
+   * @return {Boolean}
+   *         true if time is a valid date time.
+   */
+  _validateStartTime = function (time) {
+    if (time === null || !(time instanceof Date) || isNaN(+time)) {
+      _startTimeError.innerHTML = 'Please enter a valid time.';
+      _startTimeErrorLabel.classList.add('usa-input-error-label');
+      _startTimeErrorContainer.classList.add('usa-input-error');
+      return false;
+    } else {
+      _startTimeError.innerHTML = '';
+      _startTimeErrorLabel.classList.remove('usa-input-error-label');
+      _startTimeErrorContainer.classList.remove('usa-input-error');
       return true;
     }
   };
@@ -333,15 +384,40 @@ var TimeseriesSelectView = function (options) {
     _endTime.removeEventListener('change', _onTimeChange);
     _timeUpdate.removeEventListener('click', _onTimeChange);
 
-    _config = null;
+    // variables
+    _channels = null;
     _channelEl = null;
-    _observatoryEl = null;
-    _timeRealtime = null;
-    _timePastday = null;
-    _timeCustom = null;
-    _startTime = null;
+    _config = null;
     _endTime = null;
+    _endTimeError = null;
+    _endTimeErrorContainer = null;
+    _endTimeErrorLabel = null;
+    _observatories = null;
+    _observatoryEl = null;
+    _startTime = null;
+    _startTimeError = null;
+    _startTimeErrorContainer = null;
+    _startTimeErrorLabel = null;
+    _timeCustom = null;
+    _timeEl = null;
+    _timeError = null;
+    _timePastday = null;
+    _timeRealtime = null;
     _timeUpdate = null;
+    _validateEndTime = null;
+    _validateStartTime = null;
+
+    // methods
+    _formatDate = null;
+    _onChannelClick = null;
+    _onObservatoryClick = null;
+    _onTimeChange = null;
+    _parseDate = null;
+    _setTimeError = null;
+    _timeOrder = null;
+    _validateRange = null;
+    _validateEndTime = null;
+    _validateStartTime = null;
 
     _this = null;
   }, _this.destroy);
