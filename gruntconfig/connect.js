@@ -54,12 +54,6 @@ var connect = {
       }
     },
     {
-      context: iniConfig.MOUNT_PATH + '/data',
-      host: 'localhost',
-      port: config.dataPort,
-      rewrite: dataProxyRewrite
-    },
-    {
       context: '/map',
       headers: {
         host: 'geomag.usgs.gov'
@@ -117,13 +111,6 @@ var connect = {
     }
   },
 
-
-  data: {
-    options: {
-      base: [iniConfig.DATA_DIR],
-      port: config.dataPort
-    }
-  },
 
   template: {
     options: {
