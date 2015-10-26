@@ -2,6 +2,7 @@
 
 var config = require('./config');
 
+
 var watch = {
   resources: {
     files: [
@@ -14,12 +15,12 @@ var watch = {
     ]
   },
 
-  compass: {
+  scss: {
     files: [
-      config.src + '/htdocs/**/*.scss'
+      config.src + '/**/*.scss'
     ],
     tasks: [
-      'compass:dev'
+      'postcss:build'
     ]
   },
 
@@ -63,5 +64,6 @@ var watch = {
     ]
   }
 };
+
 
 module.exports = watch;

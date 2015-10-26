@@ -12,12 +12,6 @@ Make sure you are in your `geomag-plots` project directory.
 
     `npm install`
 
-1. Install Sass and Compass with Ruby
-
-    `gem install sass`
-
-    `gem install compass`
-
 1. Preview in a browser
 
     `grunt`

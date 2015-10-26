@@ -54,10 +54,12 @@ var connect = {
       }
     },
     {
-      context: iniConfig.MOUNT_PATH + '/data',
-      host: 'localhost',
-      port: config.dataPort,
-      rewrite: dataProxyRewrite
+      context: '/map',
+      headers: {
+        host: 'geomag.usgs.gov'
+      },
+      host: 'geomag.usgs.gov',
+      port: 80
     }
   ],
 
@@ -110,19 +112,15 @@ var connect = {
   },
 
 
-  data: {
-    options: {
-      base: [iniConfig.DATA_DIR],
-      port: config.dataPort
-    }
-  },
-
   template: {
     options: {
-      base: ['node_modules/hazdev-template/dist/htdocs'],
+      base: [
+        'node_modules/hazdev-template/dist/htdocs'
+      ],
       port: config.templatePort
     }
   }
 };
+
 
 module.exports = connect;

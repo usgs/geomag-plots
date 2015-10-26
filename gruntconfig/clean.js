@@ -2,6 +2,7 @@
 
 var config = require('./config');
 
+
 var clean = {
   build: [
     config.build,
@@ -12,5 +13,6 @@ var clean = {
     config.dist
   ]
 };
+
 
 module.exports = clean;

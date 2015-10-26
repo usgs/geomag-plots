@@ -10,10 +10,8 @@ provide SCSS alternatives.
 This file probably has only a minimal ammount of selectors/styles.
 */
 
-@import 'hazdev-template/src/htdocs/css/alert';
-
-@import 'D3GraphView';
-@import 'D3TimeseriesView';
-@import 'TimeseriesSelectView';
-@import 'TimeseriesView';
-@import 'TimeseriesAppView';
+@import '_D3GraphView.scss';
+@import '_D3TimeseriesView.scss';
+@import '_TimeseriesSelectView.scss';
+@import '_TimeseriesView.scss';
+@import '_TimeseriesAppView.scss';
