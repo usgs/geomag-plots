@@ -53,13 +53,11 @@ var TimeseriesSelectView = function (options) {
       _config,
       _endTime,
       _endTimeError,
-      _endTimeErrorContainer,
       _endTimeErrorLabel,
       _observatories,
       _observatoryEl,
       _startTime,
       _startTimeError,
-      _startTimeErrorContainer,
       _startTimeErrorLabel,
       _timeCustom,
       _timeEl,
@@ -111,33 +109,23 @@ var TimeseriesSelectView = function (options) {
           '<div class="time-input">' +
             '<div class="time-error">' +
             '</div>' +
-            '<div class="starttime-error-container">' +
-              '<label class="starttime-error-label" for="time-starttime">' +
-                'Start Time (UTC)' +
-                '<span class="usa-input-error-message" ' +
-                  'id="starttime-error-message">' +
-                '</span>' +
-                '<input type="text" id="time-starttime" name="time-starttime" ' +
-                  'aria-describedby="starttime-error-message" />' +
-              '</label>' +
-            '</div>' +
-            '<div class="endtime-error-container">' +
-              '<label class="endtime-error-label" for="time-endtime">' +
-                'End Time (UTC)' +
-                '<span class="usa-input-error-message" ' +
-                  'id="endtime-error-message">' +
-                '</span>' +
-                '<input type="text" id="time-endtime" name="time-endtime"/>' +
-              '</label>' +
-            '</div>' +
+            '<label class="starttime-error-label" for="time-starttime">' +
+              'Start Time (UTC)' +
+              '<input type="text" id="time-starttime" name="time-starttime" ' +
+                'aria-describedby="starttime-error-message" />' +
+            '</label>' +
+            '<label class="endtime-error-label" for="time-endtime">' +
+              'End Time (UTC)' +
+              '<input type="text" id="time-endtime" name="time-endtime"/>' +
+            '</label>' +
             '<button>Update</button>' +
           '</div>' +
         '</div>';
 
     _channelEl = el.querySelector('.channel');
     _endTime = el.querySelector('#time-endtime');
-    _endTimeError = el.querySelector('#endtime-error-message');
-    _endTimeErrorContainer = el.querySelector('.endtime-error-container');
+    _endTimeError = document.createElement('span');
+    _endTimeError.classList.add('usa-input-error-message');
     _endTimeErrorLabel = el.querySelector('.endtime-error-label');
     _observatoryEl = el.querySelector('.observatory');
     _timeEl = el.querySelector('.time');
@@ -145,8 +133,8 @@ var TimeseriesSelectView = function (options) {
     _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
     _startTime = el.querySelector('#time-starttime');
-    _startTimeError = el.querySelector('#starttime-error-message');
-    _startTimeErrorContainer = el.querySelector('.starttime-error-container');
+    _startTimeError = document.createElement('span');
+    _startTimeError.classList.add('usa-input-error-message');
     _startTimeErrorLabel = el.querySelector('.starttime-error-label');
     _timeUpdate = el.querySelector('.time-input > button');
     _timeError = el.querySelector('.time-input > .time-error');
@@ -318,12 +306,19 @@ var TimeseriesSelectView = function (options) {
     if (time === null || !(time instanceof Date) || isNaN(+time)) {
       _endTimeError.innerHTML = 'Please enter a valid time.';
       _endTimeErrorLabel.classList.add('usa-input-error-label');
-      _endTimeErrorContainer.classList.add('usa-input-error');
+      _endTimeErrorLabel.insertBefore(_endTimeError, _endTime);
       return false;
     } else {
+      var span;
+
       _endTimeError.innerHTML = '';
       _endTimeErrorLabel.classList.remove('usa-input-error-label');
-      _endTimeErrorContainer.classList.remove('usa-input-error');
+
+      span = _endTimeErrorLabel.querySelector('.usa-input-error-message');
+      if (span !== null) {
+        _endTimeErrorLabel.removeChild(span);
+      }
+
       return true;
     }
   };
@@ -340,12 +335,19 @@ var TimeseriesSelectView = function (options) {
     if (time === null || !(time instanceof Date) || isNaN(+time)) {
       _startTimeError.innerHTML = 'Please enter a valid time.';
       _startTimeErrorLabel.classList.add('usa-input-error-label');
-      _startTimeErrorContainer.classList.add('usa-input-error');
+      _startTimeErrorLabel.insertBefore(_startTimeError, _startTime);
       return false;
     } else {
+      var span;
+
       _startTimeError.innerHTML = '';
       _startTimeErrorLabel.classList.remove('usa-input-error-label');
-      _startTimeErrorContainer.classList.remove('usa-input-error');
+
+      span = _startTimeErrorLabel.querySelector('.usa-input-error-message');
+      if (span !== null) {
+        _startTimeErrorLabel.removeChild(span);
+      }
+      
       return true;
     }
   };
@@ -390,13 +392,11 @@ var TimeseriesSelectView = function (options) {
     _config = null;
     _endTime = null;
     _endTimeError = null;
-    _endTimeErrorContainer = null;
     _endTimeErrorLabel = null;
     _observatories = null;
     _observatoryEl = null;
     _startTime = null;
     _startTimeError = null;
-    _startTimeErrorContainer = null;
     _startTimeErrorLabel = null;
     _timeCustom = null;
     _timeEl = null;
