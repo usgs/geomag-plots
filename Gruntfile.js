@@ -14,7 +14,7 @@ module.exports = function (grunt) {
   grunt.registerTask('build', [
     'clean',
     'dev',
-    'concurrent:dist' // uglify, copy:dist, cssmin
+    'concurrent:dist' // uglify, copy:dist, postcss:dist
   ]);
 
   // default task useful during development
@@ -37,7 +37,7 @@ module.exports = function (grunt) {
   // builds development version of application
   grunt.registerTask('dev', [
     'jshint:dev',
-    'concurrent:dev' // browserify:index, copy:dev, compass:dev
+    'concurrent:dev' // browserify:index, copy:dev, postcss:build
   ]);
 
   // starts distribution server and preview
