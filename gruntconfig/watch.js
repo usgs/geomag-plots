@@ -2,6 +2,7 @@
 
 var config = require('./config');
 
+
 var watch = {
   resources: {
     files: [
@@ -63,5 +64,6 @@ var watch = {
     ]
   }
 };
+
 
 module.exports = watch;

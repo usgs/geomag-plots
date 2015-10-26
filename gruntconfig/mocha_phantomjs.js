@@ -2,6 +2,7 @@
 
 var config = require('./config');
 
+
 var mocha_phantomjs = {
   all: {
     options: {
@@ -11,5 +12,6 @@ var mocha_phantomjs = {
     }
   }
 };
+
 
 module.exports = mocha_phantomjs;
