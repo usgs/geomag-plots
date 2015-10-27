@@ -44,12 +44,12 @@ describe('TimeSeriesSelectView', function () {
     });
 
     it('selects observatory', function () {
-      var selected = view.el.querySelector('.observatory .selected');
+      var selected = view.el.querySelector('.timeseries-observatory .selected');
       expect(selected.getAttribute('data-id')).to.equal('HON');
     });
 
     it('selects channel', function () {
-      var selected = view.el.querySelector('.channel .selected');
+      var selected = view.el.querySelector('.timeseries-channel .selected');
       expect(selected.getAttribute('data-id')).to.equal('E');
     });
 
@@ -82,7 +82,7 @@ describe('TimeSeriesSelectView', function () {
     });
 
     it('observatory click updates config', function () {
-      var observatory = view.el.querySelector('.observatory :first-child');
+      var observatory = view.el.querySelector('.timeseries-observatory :first-child');
       _fireClickEvent(observatory);
       expect(config.get('observatory')).to.equal(
           observatory.getAttribute('data-id'));
@@ -90,7 +90,7 @@ describe('TimeSeriesSelectView', function () {
     });
 
     it('channel click updates config', function () {
-      var channel = view.el.querySelector('.channel :first-child');
+      var channel = view.el.querySelector('.timeseries-channel :first-child');
       _fireClickEvent(channel);
       expect(config.get('channel')).to.equal(
           channel.getAttribute('data-id'));

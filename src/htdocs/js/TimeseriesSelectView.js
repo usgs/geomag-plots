@@ -92,11 +92,11 @@ var TimeseriesSelectView = function (options) {
     el.classList.add('timeseries-selectview');
     el.innerHTML =
         '<h2>Channel</h2>' +
-        '<div class="channel"></div>' +
+        '<div class="timeseries-channel"></div>' +
         '<h2>Observatory</h2>' +
-        '<div class="observatory"></div>' +
+        '<div class="timeseries-observatory"></div>' +
         '<h2>Time</h2>' +
-        '<div class="time vertical">' +
+        '<div class="timeseries-time">' +
           '<input type="radio" name="timemode" id="time-realtime" ' +
             'value="realtime" />' +
           '<label for="time-realtime">Realtime</label>' +
@@ -122,13 +122,13 @@ var TimeseriesSelectView = function (options) {
           '</div>' +
         '</div>';
 
-    _channelEl = el.querySelector('.channel');
+    _channelEl = el.querySelector('.timeseries-channel');
     _endTime = el.querySelector('#time-endtime');
     _endTimeError = document.createElement('span');
     _endTimeError.classList.add('usa-input-error-message');
     _endTimeErrorLabel = el.querySelector('.endtime-error-label');
-    _observatoryEl = el.querySelector('.observatory');
-    _timeEl = el.querySelector('.time');
+    _observatoryEl = el.querySelector('.timeseries-observatory');
+    _timeEl = el.querySelector('.timeseries-time');
     _timeRealtime = el.querySelector('#time-realtime');
     _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
