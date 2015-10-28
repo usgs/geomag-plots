@@ -5,7 +5,6 @@ var gruntConfig = {
 
   browserify: require('./browserify'),
   clean: require('./clean'),
-  concurrent: require('./concurrent'),
   connect: require('./connect'),
   copy: require('./copy'),
   jshint: require('./jshint'),
@@ -16,7 +15,6 @@ var gruntConfig = {
 
   tasks: [
     'grunt-browserify',
-    'grunt-concurrent',
     'grunt-connect-proxy',
     'grunt-contrib-clean',
     'grunt-contrib-connect',
