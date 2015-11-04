@@ -58,7 +58,7 @@
     }
 
     // Check the input
-    if ($value === '' && $default !== null) {
+    if ($value === '' && $default !== '<none>') {
       $value = $default;
     }
 
