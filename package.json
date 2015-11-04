@@ -1,6 +1,6 @@
 {
   "name": "geomag-plots",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Plots of timeseries data for geomagnetic observatories",
   "repository": {
     "type": "git",
