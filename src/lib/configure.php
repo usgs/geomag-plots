@@ -6,17 +6,24 @@
 
   // Check if previous configuration file exists
   if (file_exists($CONFIG_FILE)) {
-    $configure_action = '0';
+    if ($NO_PROMPT) {
+      $configure_action = 1;
+    } else {
+      $configure_action = '0';
+    }
   }
 
-  while ($configure_action !== '1' && $configure_action !== '2' &&
-      $configure_action !== '3') {
+  while (!($configure_action == '1' ||
+           $configure_action == '2' ||
+           $configure_action == '3')) {
 
     // File exists. Does user want to just go with previous configuration?
     print "Previous configuration file found. What would you like to do?\n" .
       "   [1] Use previous configuration.\n" .
-      "   [2] Re-configure using current configuration as defaults.\n" .
-      "   [3] Re-configure using default configuration as defaults.\n" .
+      "   [2] Interactively re-configure " .
+              "using current configuration as defaults.\n" .
+      "   [3] Interactively re-configure " .
+              "using default configuration as defaults.\n" .
       'Enter the number corresponding to the action you would like to take: ';
 
     $configure_action = trim(fgets(STDIN));
@@ -48,8 +55,8 @@
       $unknown = !isset($DEFAULTS[$key]);
 
       $CONFIG[$key] = configure(
-        $key, // Name of option
-        $value, // Default value
+        $key,    // Name of option
+        $value,  // Default value
         (isset($HELP_TEXT[$key]))?$HELP_TEXT[$key]:null, // Help text
         $secure, // Should echo be turned off for inputs?
         $unknown // Is this a known/unkown option?
