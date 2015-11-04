@@ -19,8 +19,14 @@
    * @return {String}
    *      The configured value for the requested option.
    */
-  function configure ($option, $default=null, $comment='', $secure=false,
-      $unknown=false) {
+  function configure ($option, $default = '', $comment = '', $secure = false,
+      $unknown = false) {
+
+    global $NO_PROMPT;
+
+    if ($NO_PROMPT) {
+      return $default;
+    }
 
     // check if windows
     static $isWindows = null;
@@ -52,7 +58,7 @@
     }
 
     // Check the input
-    if ($value === '' && $default !== null) {
+    if ($value === '' && $default !== '<none>') {
       $value = $default;
     }
 

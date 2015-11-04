@@ -26,6 +26,13 @@ if ($argv[0] === './pre-install.php' || $_SERVER['PWD'] !== $OLD_PWD) {
   $LIB_DIR = getcwd();
 }
 
+// Use all of the defaults for automated builds.
+if (count($argv) > 1 && $argv[1] === '--non-interactive') {
+  $NO_PROMPT = true;
+} else {
+  $NO_PROMPT = false;
+}
+
 $APP_DIR = dirname($LIB_DIR);
 $CONF_DIR = $APP_DIR . DIRECTORY_SEPARATOR . 'conf';
 
