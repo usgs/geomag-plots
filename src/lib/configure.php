@@ -7,7 +7,7 @@
   // Check if previous configuration file exists
   if (file_exists($CONFIG_FILE)) {
     if ($NO_PROMPT) {
-      $configure_action = 1;
+      $configure_action = '1';
     } else {
       $configure_action = '0';
     }
