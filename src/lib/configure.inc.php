@@ -11,7 +11,19 @@ $PROMPTS = array(
 
   'MOUNT_PATH' => array(
     'prompt' => 'URL Path for application',
-    'default' => '/mount/path',
+    'default' => '/plots',
+    'secure' => false
+  ),
+
+  'OBS_META_URL' => array(
+    'prompt' => 'URL for observatory summary information',
+    'default' => '/map/observatories.geojson.php',
+    'secure' => false
+  ),
+
+  'OBS_DATA_URL' => array(
+    'prompt' => 'URL for observatory timeseries service',
+    'default' => '/map/observatories_data.json.php',
     'secure' => false
   )
 

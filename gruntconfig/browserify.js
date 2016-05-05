@@ -2,7 +2,7 @@
 
 
 var config = require('./config'),
-    glob = require('glob-fs')({ gitignore: true});
+    glob = require('glob');
 
 
 var BUNDLE_CLASSES;
@@ -11,11 +11,14 @@ BUNDLE_CLASSES = [];
 
 
 Object.keys(config.jsPath).forEach(function (path) {
-  var pattern;
+  var files,
+      pattern;
+
   pattern = config.jsPath[path];
   if (pattern) {
     path = path + '/';
-    glob.readdirSync(path + pattern).forEach(function (file) {
+    files = glob.sync(path + pattern);
+    files.forEach(function (file) {
       var alias;
       alias = file.replace(path, '').replace('.js', '');
       BUNDLE_CLASSES.push('./' + file + ':' + alias);

@@ -1,0 +1,60 @@
+
+.timeseries-app {
+  min-height: 3em;
+  position: relative;
+
+  > .load {
+    display: none;
+  }
+
+  &.loading > .load {
+    display: block;
+  }
+}
+
+.load {
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  > .load-mask {
+    background-color: #fff;
+    bottom: 0;
+    color: #7fae00;
+    display: block;
+    font-size: larger;
+    left: 0;
+    opacity: 0.8;
+    position: absolute;
+    right: 0;
+    text-align: center;
+    top: 0;
+    z-index: 100;
+  }
+
+  > .load-text {
+    background-color: #fff;
+    border: 1px solid #7fae00;
+    color: #7fae00;
+    display: inline-block;
+    left: 50%;
+    margin-left: -3.5em;
+    padding: 8px;
+    position: fixed;
+    text-align: center;
+    top: 50%;
+    width: 7em;
+    z-index: 101;
+  }
+}
+
+.timezone {
+  color: #494949;
+  font-size: 11px;
+}
+
+.timespan {
+  font-size: 11px;
+}

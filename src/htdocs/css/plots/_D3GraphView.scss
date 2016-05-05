@@ -1,0 +1,31 @@
+.axis {
+  fill: none;
+  stroke: #000;
+  stroke-width: 1;
+}
+
+.axis + .label {
+  fill: #000;
+  stroke: none;
+}
+
+.inner-frame,
+.outer-frame {
+  fill: none;
+  stroke: #000;
+  stroke-width:1;
+}
+
+.outer-frame {
+  stroke: #fff;
+}
+
+.tooltip-outline {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 1;
+}
+
+.inner-frame {
+  pointer-events: all;
+}

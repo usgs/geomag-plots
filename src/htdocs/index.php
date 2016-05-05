@@ -1,24 +1,27 @@
 <?php
-
 if (!isset($TEMPLATE)) {
-  // template functions
-  include_once 'functions.inc.php';
-
-  // defines the $CONFIG hash of configuration variables
   include_once '../conf/config.inc.php';
 
+  $TITLE = 'Geomag Plots';
+  $NAVIGATION = true;
+
   $HEAD = '<link rel="stylesheet" href="css/index.css"/>';
-  $FOOT = '<script src="js/index.js"></script>';
+  $FOOT = '
+    <script>
+      var _CONFIG = {
+        obsMetaUrl: \'' . $OBS_META_URL . '\',
+        obsDataUrl: \'' . $OBS_DATA_URL . '\'
+      };
+    </script>
+    <script src="js/index.js"></script>
+  ';
 
-  include 'template.inc.php';
+  include_once 'template.inc.php';
 }
-
 ?>
 
-<div id="application">
+<div id="geomag-plots">
   <noscript>
-    <a href="https://www.google.com/search?q=javascript">
-      This page requires javascript.
-    </a>
+    <p>This application requires javascript.</p>
   </noscript>
 </div>

@@ -39,6 +39,7 @@ config = {
 
   jsPath: {
     'src/htdocs/js': '*/*.js',
+    'node_modules/d3': '*d3.js',
     'node_modules/hazdev-webutils/src': '**/*.js'
   }
 

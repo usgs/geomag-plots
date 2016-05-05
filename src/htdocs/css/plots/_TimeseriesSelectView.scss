@@ -1,0 +1,55 @@
+
+@media screen and (max-width: 767px) {
+  .timeseries-selectview {
+    padding: 0 16px;
+  }
+}
+
+.timeseries-channel,
+.timeseries-observatory {
+
+  > a {
+    background-color: #eee;
+    border: 1px solid #ccc;
+    color: #000;
+    display: block;
+    float: left;
+    margin: 0 -1px -1px 0;
+    padding: 8px 0;
+    text-align: center;
+    text-decoration: none;
+    width: 33%;
+
+    &.selected {
+      color: #fff;
+      background-color: #333;
+    }
+  }
+
+  &:after {
+    clear: left;
+    content: ' ';
+    display: block;
+  }
+}
+
+.timeseries-time {
+  margin-bottom: 1.5em;
+
+  &.custom > .time-input {
+    display: block;
+  }
+
+  > .time-input {
+    display: none;
+
+    > label {
+      margin: 1em 0;
+    }
+  }
+}
+
+
+.time-error.error {
+  margin-top: 1em;
+}
