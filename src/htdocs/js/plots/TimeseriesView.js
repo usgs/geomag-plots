@@ -55,6 +55,7 @@ var TimeseriesView = function (options) {
     traceView = el.querySelector('.trace-view');
 
     _trace = D3TimeseriesView({
+      plotModel: options.plotModel,
       el: traceView,
       data: _timeseries,
       // title: meta.observatory,
