@@ -1,4 +1,4 @@
-/* global chai, sinon, describe, it, before, after */
+/* global chai, describe, it, sinon */
 'use strict';
 
 var expect = chai.expect,
@@ -14,41 +14,69 @@ describe('TimeseriesFactory', function () {
   });
 
   describe('getTimeseries', function () {
-    var stub;
-    before(function (){
-      stub = sinon.stub(Xhr, 'ajax', function (options) {
-        options.success({});
-      });
+    it('chooses the correct parsing method', function () {
+      var current,
+          factory,
+          legacy;
+
+      factory = TimeseriesFactory();
+      current = sinon.stub(factory, 'parseTimeseriesOptions',
+          function () { return {}; });
+      legacy = sinon.stub(factory, 'parseTimeseriesOptionsLegacy',
+          function () { return {}; });
+
+      factory.getTimeseries({observatory: 'BOU'});
+      expect(legacy.callCount).to.equal(1);
+      expect(current.callCount).to.equal(0);
+
+      factory.getTimeseries({id: 'BOU'});
+      expect(legacy.callCount).to.equal(1);
+      expect(current.callCount).to.equal(1);
+
+      current.restore();
+      legacy.restore();
+      factory.destroy();
     });
-    after(function () {
+
+    it('makes an ajax call', function () {
+      var factory,
+          stub;
+
+      factory = TimeseriesFactory();
+      stub = sinon.stub(Xhr, 'ajax', function (o) { o.success({}); });
+
+      factory.getTimeseries({});
+      expect(stub.callCount).to.equal(1);
+
       stub.restore();
+      factory.destroy();
     });
 
+    it('has correct data', function (done) {
+      var factory;
 
-    it ('has correct data', function (done) {
-      var timeseriesFactory = TimeseriesFactory({url:'data.json'});
+      factory = TimeseriesFactory({url: 'observatory_data.json'});
 
-      timeseriesFactory.getTimeseries({
-        observatory:'BOU',
-        channel: null,
-        starttime: new Date(1429459810000),
-        endtime: new Date(1429546200000),
-        callback: function () {
-          // check stub was called.
-          expect(stub.callCount).to.equal(1);
+      factory.getTimeseries({
+        callback: function (response) {
+          var timeseries;
 
-          //check data args present as expected.
-          expect(stub.getCall(0).args[0].data.starttime).to.equal(1429459810);
-          expect(stub.getCall(0).args[0].data.endtime).to.equal(1429546200);
-          expect(stub.getCall(0).args[0].data.freq).to.equal('minutes');
-          expect(stub.getCall(0).args[0].data['obs[]']).to.equal('BOU');
+          timeseries = response.getTimeseries();
+
+          expect(timeseries.length).to.equal(4);
+
+          timeseries = timeseries[3];
+
+          expect(timeseries.get('times').length).to.equal(1440);
+          expect(timeseries.get('values').length).to.equal(1440);
+          expect(timeseries.get('metadata').observatory).to.equal('BOU');
+          expect(timeseries.get('metadata').channel).to.equal('F');
         done();
         },
-        error: function (err) {
+        errback: function (err) {
           done(err);
         }
       });
     });
   });
-
 });

@@ -2,7 +2,7 @@
 
 var TimeseriesFactory = require('plots/TimeseriesFactory'),
     Xhr = require('util/Xhr'),
-    url = 'http://geomag.usgs.gov/map/observatories_data.json.php',
+    url = 'observatory_data.json',
     timeseriesFactory = TimeseriesFactory({url:url});
 
 timeseriesFactory.getTimeseries({
@@ -14,7 +14,7 @@ timeseriesFactory.getTimeseries({
     var el = document.getElementById('example'),
         data = response.getTimeseries();
 
-    el.innerHTML = data[0].get('metadata').observatory;
-    console.log(data[0].get('values'));
+    el.innerHTML = data[3].get('metadata').observatory;
+    console.log(data[3].get('values'));
    }
 });
