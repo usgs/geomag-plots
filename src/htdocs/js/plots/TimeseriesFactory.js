@@ -190,7 +190,7 @@ var TimeseriesFactory = function (options) {
 
     // Change seconds from a boolean to the string expected by get_geomag_data
     if (seconds) {
-      if (endtime.getTime() - starttime.getTime() > 1800) {
+      if (endtime.getTime() - starttime.getTime() > 1800000) {
         throw new Error(
             'Seconds data can only be requested 30 minutes at a time.');
       }
