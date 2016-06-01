@@ -1,9 +1,11 @@
 'use strict';
 
+
 var Model = require('mvc/Model'),
     Timeseries = require('plots/Timeseries');
 
-var ID_SEQUENCE = 0;
+
+var _ID_SEQUENCE = 0;
 
 
 /**
@@ -15,6 +17,7 @@ var ID_SEQUENCE = 0;
 var TimeseriesResponse = function (options) {
   var _this;
 
+
   _this = Model(options);
 
   /**
@@ -25,29 +28,30 @@ var TimeseriesResponse = function (options) {
    */
   _this.getTimeseries = function () {
     var times,
-        timeseries = [];
+        timeseries;
+
+    timeseries = [];
 
     times = _this.get('times').map(function (t) {
-      return new Date(t*1000);
+      return new Date(Date.parse(t));
     });
 
-    _this.get('data').forEach(function (obs) {
-      var channel;
+    _this.get('values').forEach(function (channel) {
+      var metadata;
 
-      for (channel in obs.values) {
-        timeseries.push(
-          Timeseries({
-            id: ID_SEQUENCE++,
-            times: times,
-            values: obs.values[channel],
-            metadata: {
-              observatory: obs.id,
-              channel: channel,
-              nominal: obs.nominals[channel]
-            }
-          })
-        );
-      }
+      metadata = channel.metadata;
+
+      timeseries.push(
+        Timeseries({
+          id: _ID_SEQUENCE++,
+          times: times,
+          values: channel.values,
+          metadata: {
+            observatory: metadata.station,
+            channel: metadata.element
+          }
+        })
+      );
     });
 
     return timeseries;
