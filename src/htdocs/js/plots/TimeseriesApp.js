@@ -55,7 +55,7 @@ var __formatDate = function (d) {
 
 var _DEFAULTS = {
   obsMetaUrl: '/map/observatories.geojson.php',
-  obsDataUrl: '/map/observatories_data.json.php'
+  obsDataUrl: '/ws/edge/'
 };
 
 
