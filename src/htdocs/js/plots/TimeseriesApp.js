@@ -203,6 +203,7 @@ var TimeseriesApp = function (options) {
     channel = _config.get('channel');
     observatory = _config.get('observatory');
     timemode = _config.get('timemode');
+
     if (timemode === 'realtime') {
       // 15 minutes
       endtime = __roundUpToNearestNMinutes(new Date(), 1);
@@ -216,6 +217,7 @@ var TimeseriesApp = function (options) {
       endtime = _config.get('endtime');
       starttime = _config.get('starttime');
     }
+
     if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
       seconds = true;
     } else {
@@ -226,7 +228,7 @@ var TimeseriesApp = function (options) {
 
     _timeseriesFactory.getTimeseries({
       channel: channel,
-      observatory: observatory,
+      observatory: observatory || 'BOU', // TODO :: Update app to fetch data ...
       endtime: endtime,
       starttime: starttime,
       callback: _onTimeseriesLoad,
