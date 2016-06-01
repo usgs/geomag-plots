@@ -188,12 +188,7 @@ var D3GraphView = function (options) {
     _xAxis = d3.svg.axis().orient('bottom').outerTickSize(0);
     _yAxis = d3.svg.axis().orient('left').outerTickSize(0);
 
-    if (options.plotModel) {
-      _this.plotModel = options.plotModel;
-    } else {
-      _this.plotModel = Model();
-    }
-
+    _this.plotModel = options.plotModel || Model();
     _this.plotModel.on('change', _onPlotModelChange);
 
     _zoom = d3.behavior.zoom()

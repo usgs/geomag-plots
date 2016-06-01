@@ -317,19 +317,31 @@ var D3TimeseriesView = function (options) {
    *         y extent.
    */
   _this.getYExtent = function (xExtent) {
-    var yExtent = _this.model.get('yExtent'),
+    var dataValues,
+        yExtent = _this.model.get('yExtent'),
+        yExtentSize,
+        yMean,
         minXIndex,
         maxXIndex;
+
     if (yExtent === null) {
       _data = _this.model.get('data').get();
+      dataValues = _data.values;
+
       if (xExtent) {
         minXIndex = d3.bisectLeft(_data.times, xExtent[0]);
         maxXIndex = d3.bisectLeft(_data.times, xExtent[1]);
-        yExtent = d3.extent(_data.values.slice(
+        dataValues = _data.values.slice(
             // include points just outside range
             Math.max(0, minXIndex - 1),
             Math.min(_data.values.length, maxXIndex + 2)
-            ));
+        );
+      }
+
+      yExtentSize = _this.plotModel.get('yExtentSize');
+
+      if (!yExtentSize) {
+        yExtent = d3.extent(dataValues);
         if (isNaN(yExtent[0]) || isNaN(yExtent[1])) {
           // if undefined over current x range, try entire range
           yExtent = d3.extent(_data.values);
@@ -339,9 +351,12 @@ var D3TimeseriesView = function (options) {
           return [0, 1];
         }
       } else {
-        yExtent = d3.extent(_data.values);
+        yMean = d3.mean(dataValues) || 0;
+        yExtent = [(yMean - yExtentSize / 2), (yMean + yExtentSize / 2)];
       }
+
     }
+
     return yExtent;
   };
 

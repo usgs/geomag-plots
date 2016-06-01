@@ -89,7 +89,7 @@ var TimeseriesView = function (options) {
     var range;
     if (y === _yExtent[0] || y === _yExtent[1]) {
       // display min/max
-      return y;
+      return y.toFixed(1);
     } else {
       // display range in middle
       range = _yExtent[1] - _yExtent[0];

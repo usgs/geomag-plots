@@ -8,6 +8,7 @@ var Collection = require('mvc/Collection'),
     TimeseriesView = require('plots/TimeseriesView');
 
 
+
 /**
  * Display a timeseries collection.
  *
@@ -41,6 +42,10 @@ var TimeseriesCollectionView = function (options) {
     _list.classList.add('no-style');
 
     _views = Collection([]);
+    _this.model.set({
+      // for a fixed scale, a numeric value will be centered on the mean
+      'yExtentSize': 100
+    });
 
     _collection = options.collection;
     _collection.on('add', _onTimeseriesAdd);

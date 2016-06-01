@@ -168,6 +168,10 @@ var TimeseriesApp = function (options) {
       config: _this.config
     });
 
+    _model = Model({
+      //TODO all the things
+      yExtentSize: null
+    });
 
     _timeseriesView = TimeseriesCollectionView({
       el: viewEl,
