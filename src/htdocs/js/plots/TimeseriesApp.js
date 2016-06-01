@@ -88,6 +88,7 @@ var TimeseriesApp = function (options) {
       _autoUpdateTimeout,
       _configView,
       _descriptionEl,
+      _model,
       _observatories,
       _timeseriesEl,
       _timeseries,
@@ -162,9 +163,14 @@ var TimeseriesApp = function (options) {
       config: _this.config
     });
 
+    _model = Model({
+      //TODO all the things
+    });
+
     _timeseriesView = TimeseriesCollectionView({
       el: viewEl,
-      collection: _timeseries
+      collection: _timeseries,
+      model: _model
     });
     _timeseriesEl = el;
     _onConfigChange();
@@ -364,6 +370,7 @@ var TimeseriesApp = function (options) {
 
     _configView = null;
     _descriptionEl = null;
+    _model = null;
     _observatories = null;
     _timeseries = null;
     _timeseriesEl = null;

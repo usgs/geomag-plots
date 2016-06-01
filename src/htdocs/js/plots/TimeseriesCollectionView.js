@@ -75,6 +75,7 @@ var TimeseriesCollectionView = function (options) {
     added.forEach(function(timeseries) {
       li = _list.appendChild(document.createElement('li'));
       view = TimeseriesView({
+        plotModel: _this.model,
         el: li,
         height: height,
         timeseries: timeseries,

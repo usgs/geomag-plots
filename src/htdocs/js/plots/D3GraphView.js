@@ -1,6 +1,7 @@
 'use strict';
 
 var d3 = require('d3'),
+    Model = require('mvc/Model'),
     Util = require('util/Util'),
     View = require('mvc/View');
 
@@ -87,6 +88,7 @@ var D3GraphView = function (options) {
       _outerFrame,
       _padding,
       _plotAreaClip,
+      _plotModel,
       _plotTitle,
       _svg,
       _tooltip,
@@ -100,6 +102,7 @@ var D3GraphView = function (options) {
       _yEl,
       _zoom,
       // methods
+      _onPlotModelChange,
       _onZoom;
 
   _this = View(options);
@@ -186,6 +189,14 @@ var D3GraphView = function (options) {
     _xAxis = d3.svg.axis().orient('bottom').outerTickSize(0);
     _yAxis = d3.svg.axis().orient('left').outerTickSize(0);
 
+    if (options.plotModel) {
+      _plotModel = options.plotModel;
+    } else {
+      _plotModel = Model();
+    }
+
+    _plotModel.on('change', _onPlotModelChange);
+
     _zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
         .on('zoom', _onZoom);
@@ -208,11 +219,17 @@ var D3GraphView = function (options) {
     _zoom.el = null;
     _zoom = null;
 
+    _plotModel.off('change', _onPlotModelChange);
+
+    _onZoom = null;
+    _onPlotModelChange = null;
+
     _svg = null;
     _plotAreaClip = null;
     _outerFrame = null;
     _innerFrame = null;
     _margin = null;
+    _plotModel = null;
     _plotTitle = null;
     _padding = null;
     _xAxis = null;
@@ -226,6 +243,13 @@ var D3GraphView = function (options) {
     _tooltip = null;
     _this = null;
   }, _this.destroy);
+
+  _onPlotModelChange = function () {
+    _zoom.scale(_plotModel.get('zoomScale'));
+    _zoom.translate(_plotModel.get('zoomTranslate'));
+    // update lines
+    _this.render({}, true);
+  };
 
   /**
    * Zoom event handler.
@@ -251,8 +275,12 @@ var D3GraphView = function (options) {
     tx = Math.min(tx, 0);
     tx = Math.max(tx, width - xSpan);
     _zoom.translate([tx, ty]);
-    // update lines
-    _this.render({}, true);
+    _plotModel.set(
+      {
+        zoomScale: _zoom.scale(),
+        zoomTranslate: _zoom.translate()
+      }
+    );
   };
 
   /**
