@@ -1,13 +1,14 @@
 'use strict';
 
-var Util = require('util/Util'),
-    Xhr = require('util/Xhr'),
 
-    TimeseriesResponse = require('plots/TimeseriesResponse');
+var Formatter = require('util/Formatter'),
+    TimeseriesResponse = require('plots/TimeseriesResponse'),
+    Util = require('util/Util'),
+    Xhr = require('util/Xhr');
 
 
 var _DEFAULTS = {
-  url: 'http://geomag.usgs.gov/map/observatories_data.json.php'
+  url: 'http://geomag.usgs.gov//ws/edge/'
 };
 
 
@@ -24,6 +25,7 @@ var TimeseriesFactory = function (options) {
 
       _url;
 
+
   _this = {};
 
   _initialize = function (options) {
@@ -31,14 +33,127 @@ var TimeseriesFactory = function (options) {
     _url = options.url;
   };
 
+
   /**
    * Makes certain everything is destroyed upon exit.
    */
   _this.destroy = function () {
+    _url = null;
+
+    _initialize = null;
     _this = null;
   };
 
   /**
+   * Fetches timeseries data based on the given options. This method occurs
+   * asynchronously and provides the resulting {TimeseriesResponse} object via
+   * the provided options.callback function.
+   *
+   * @param options.callback {Function}
+   *     The callback function to call when a request succeeds
+   * @param options.errback {Fucntion}
+   *     The callback function to call when a request fails
+   * @param options... {Mixed}
+   *     Additional options to provide to either `parseTimeseriesOptions` or
+   *     `parseTimeseriesOptionsLegacy`. See those methods for additional
+   *     documentation details.
+   */
+  _this.getTimeseries = function (options) {
+    var callback,
+        data,
+        errback;
+
+    if (options.hasOwnProperty('observatory') ||
+        options.hasOwnProperty('channel') ||
+        options.hasOwnProperty('seconds')) {
+      data = _this.parseTimeseriesOptionsLegacy(options);
+    } else {
+      data = _this.parseTimeseriesOptions(options);
+    }
+
+    callback = options.callback || function () {};
+    errback = options.errback || function () {};
+
+    Xhr.ajax({
+      url: _url,
+      data: data,
+      success: function (response) {
+        var responseObject;
+
+        try {
+          responseObject = JSON.parse(response);
+        } catch (e) {
+          responseObject = response;
+        }
+
+        callback(TimeseriesResponse(responseObject));
+      },
+      error: errback
+    });
+  };
+
+  /**
+   * Parse the given options into a data object that can be provided to an
+   * XHR call. The data object will conform to the edge web service API.
+   *
+   * See http://geomag.usgs.gov/ws/edge/ for more documentation about
+   * each configuration option.
+   *
+   * @param options.elements {String|Array}
+   *     The elements (channels) to fetch
+   * @param options.endtime {Date}
+   *     The end of the time window of interest
+   * @param options.id {String}
+   *     Observatory id
+   * @param options.sampling_period {Integer}
+   *     Sampling period in seconds
+   * @param options.starttime {Date}
+   *     The start of the time window of interest
+   * @param options.type {String}
+   *     The type of data to fetch.
+   *
+   */
+  _this.parseTimeseriesOptions = function (options) {
+    var data;
+
+    data = {};
+
+    if (options.id) {
+      data.id = options.id;
+    }
+
+    if (options.starttime) {
+      data.starttime = Formatter.iso8601(options.starttime);
+    }
+
+    if (options.endtime) {
+      data.endtime = Formatter.iso8601(options.endtime);
+    }
+
+    if (options.elements) {
+      if (Array.isArray(options.elements)) {
+        data.elements = options.elements.join(',');
+      } else {
+        data.elements = options.elements;
+      }
+    }
+
+    if (options.sampling_period) {
+      data.sampling_period = options.sampling_period;
+    }
+
+    if (options.type) {
+      data.type = options.type;
+    }
+
+    data.format = 'json';
+
+    return data;
+  };
+
+  /**
+   * @deprecated
+   *
    * getTimeseries from webservice.
    *
    * @param options {Object}
@@ -63,50 +178,47 @@ var TimeseriesFactory = function (options) {
    * @return {TimeseriesResponse}
    *      Response from webservice, in a TimeseriesResponse object
    */
-  _this.getTimeseries = function(options) {
+  _this.parseTimeseriesOptionsLegacy = function (options) {
     var starttime = options.starttime || new Date(),
         endtime = options.endtime || new Date(),
         observatory = options.observatory || null,
         channel = options.channel || null,
-        callback = options.callback || function () {},
-        errback = options.errback || function () {},
         seconds = options.seconds || false,
         data = {};
 
-    // Came in as a date,  change to seconds.
-    starttime = Math.floor(starttime.getTime()/1000);
-    endtime = Math.ceil(endtime.getTime()/1000);
+    console.log('Using deprecated timeseries factory API');
 
     // Change seconds from a boolean to the string expected by get_geomag_data
     if (seconds) {
-      if (endtime - starttime > 1800) {
+      if (endtime.getTime() - starttime.getTime() > 1800) {
         throw new Error(
             'Seconds data can only be requested 30 minutes at a time.');
       }
-      seconds = 'seconds';
+      seconds = 1;
     } else {
-      seconds = 'minutes';
+      seconds = 60;
     }
 
-    data.starttime = starttime;
-    data.endtime = endtime;
-    data.freq = seconds;
+    data.format = 'json';
+    data.starttime = Formatter.iso8601(starttime);
+    data.endtime = Formatter.iso8601(endtime);
+    data.sampling_period = seconds;
+
     if (observatory !== null) {
-      data['obs[]'] = observatory;
-    }
-    if (channel !== null) {
-      data['chan[]'] = channel;
+      data.id = observatory;
     }
 
-    Xhr.ajax({
-      url: _url,
-      data: data,
-      success: function (response) {
-        callback(TimeseriesResponse(response));
-      },
-      error: errback
-    });
+    if (channel !== null) {
+      if (Array.isArray(channel)) {
+        data.elements = channel.join(',');
+      } else {
+        data.elements = channel;
+      }
+    }
+
+    return data;
   };
+
 
   _initialize(options);
   options = null;
