@@ -244,24 +244,18 @@ var TimeseriesApp = function (options) {
   /**
    * Errback for TimeseriesFactory.
    */
-  _onTimeseriesError = function (status, xhr) {
+  _onTimeseriesError = function () {
     var config,
         el;
 
     el = _this.el.querySelector('.view');
-    el.classList.add('alert');
-    el.classList.add('error');
-
     config = _this.config.get();
     if (config) {
       el.innerHTML =
-        '<p>Failed to load data for, ' +
+        '<p class="alert error">Failed to load data for, ' +
           (config.channel ?
               'channel: ' + config.channel :
               'observatory: ' +config.observatory) +
-        '</p>' +
-        '<p>' +
-          '<i>' + status + ': ' + xhr.statusText + '</i>' +
         '</p>';
     }
 
