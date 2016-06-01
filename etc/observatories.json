@@ -1,1 +1,285 @@
-{"type": "FeatureCollection", "features": [{"type":"Feature","geometry":{"type":"Point","coordinates":[71.3225,-156.6231]},"properties":{"id":"BRW","dbid":29,"name":"Barrow","latitude":71.3225,"longitude":-156.6231,"startDate":"0000-00-00 00:00:00","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[40.1375,-105.2372]},"properties":{"id":"BOU","dbid":30,"name":"Boulder","latitude":40.1375,"longitude":-105.2372,"startDate":"0000-00-00 00:00:00","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[30.3507,-89.6359]},"properties":{"id":"BSL","dbid":31,"name":"Stennis","latitude":30.3507,"longitude":-89.6359,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[64.8742,-147.8597]},"properties":{"id":"CMO","dbid":32,"name":"College","latitude":64.8742,"longitude":-147.8597,"startDate":"0000-00-00 00:00:00","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[70.3552,-148.7928]},"properties":{"id":"DED","dbid":33,"name":"Deadhorse","latitude":70.3552,"longitude":-148.7928,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[38.2047,-77.3729]},"properties":{"id":"FRD","dbid":34,"name":"Fredericksburg","latitude":38.2047,"longitude":-77.3729,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[37.0913,-119.7139]},"properties":{"id":"FRN","dbid":35,"name":"Fresno","latitude":37.0913,"longitude":-119.7139,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[13.5895,144.8694]},"properties":{"id":"GUA","dbid":36,"name":"Guam","latitude":13.5895,"longitude":144.8694,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[21.3166,-157.9996]},"properties":{"id":"HON","dbid":37,"name":"Honululu","latitude":21.3166,"longitude":-157.9996,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[48.2649,-117.1231]},"properties":{"id":"NEW","dbid":38,"name":"Newport","latitude":48.2649,"longitude":-117.1231,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[18.111,-66.1498]},"properties":{"id":"SJG","dbid":39,"name":"San Juan","latitude":18.111,"longitude":-66.1498,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[55.3472,-160.4644]},"properties":{"id":"SHU","dbid":40,"name":"Shumagin","latitude":55.3472,"longitude":-160.4644,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[57.0576,-135.3273]},"properties":{"id":"SIT","dbid":41,"name":"Sitka","latitude":57.0576,"longitude":-135.3273,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}},{"type":"Feature","geometry":{"type":"Point","coordinates":[32.1745,-110.7337]},"properties":{"id":"TUC","dbid":42,"name":"Tucson","latitude":32.1745,"longitude":-110.7337,"startDate":"2012-04-30 21:02:34","endDate":"0000-00-00 00:00:00","pictures":[]}}]}
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          71.3225,
+          -156.6231
+        ]
+      },
+      "properties": {
+        "id": "BRW",
+        "dbid": 29,
+        "name": "Barrow",
+        "latitude": 71.3225,
+        "longitude": -156.6231,
+        "startDate": "0000-00-00 00:00:00",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          40.1375,
+          -105.2372
+        ]
+      },
+      "properties": {
+        "id": "BOU",
+        "dbid": 30,
+        "name": "Boulder",
+        "latitude": 40.1375,
+        "longitude": -105.2372,
+        "startDate": "0000-00-00 00:00:00",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          30.3507,
+          -89.6359
+        ]
+      },
+      "properties": {
+        "id": "BSL",
+        "dbid": 31,
+        "name": "Stennis",
+        "latitude": 30.3507,
+        "longitude": -89.6359,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          64.8742,
+          -147.8597
+        ]
+      },
+      "properties": {
+        "id": "CMO",
+        "dbid": 32,
+        "name": "College",
+        "latitude": 64.8742,
+        "longitude": -147.8597,
+        "startDate": "0000-00-00 00:00:00",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          70.3552,
+          -148.7928
+        ]
+      },
+      "properties": {
+        "id": "DED",
+        "dbid": 33,
+        "name": "Deadhorse",
+        "latitude": 70.3552,
+        "longitude": -148.7928,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          38.2047,
+          -77.3729
+        ]
+      },
+      "properties": {
+        "id": "FRD",
+        "dbid": 34,
+        "name": "Fredericksburg",
+        "latitude": 38.2047,
+        "longitude": -77.3729,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          37.0913,
+          -119.7139
+        ]
+      },
+      "properties": {
+        "id": "FRN",
+        "dbid": 35,
+        "name": "Fresno",
+        "latitude": 37.0913,
+        "longitude": -119.7139,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          13.5895,
+          144.8694
+        ]
+      },
+      "properties": {
+        "id": "GUA",
+        "dbid": 36,
+        "name": "Guam",
+        "latitude": 13.5895,
+        "longitude": 144.8694,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          21.3166,
+          -157.9996
+        ]
+      },
+      "properties": {
+        "id": "HON",
+        "dbid": 37,
+        "name": "Honululu",
+        "latitude": 21.3166,
+        "longitude": -157.9996,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          48.2649,
+          -117.1231
+        ]
+      },
+      "properties": {
+        "id": "NEW",
+        "dbid": 38,
+        "name": "Newport",
+        "latitude": 48.2649,
+        "longitude": -117.1231,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          18.111,
+          -66.1498
+        ]
+      },
+      "properties": {
+        "id": "SJG",
+        "dbid": 39,
+        "name": "San Juan",
+        "latitude": 18.111,
+        "longitude": -66.1498,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          55.3472,
+          -160.4644
+        ]
+      },
+      "properties": {
+        "id": "SHU",
+        "dbid": 40,
+        "name": "Shumagin",
+        "latitude": 55.3472,
+        "longitude": -160.4644,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          57.0576,
+          -135.3273
+        ]
+      },
+      "properties": {
+        "id": "SIT",
+        "dbid": 41,
+        "name": "Sitka",
+        "latitude": 57.0576,
+        "longitude": -135.3273,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          32.1745,
+          -110.7337
+        ]
+      },
+      "properties": {
+        "id": "TUC",
+        "dbid": 42,
+        "name": "Tucson",
+        "latitude": 32.1745,
+        "longitude": -110.7337,
+        "startDate": "2012-04-30 21:02:34",
+        "endDate": "0000-00-00 00:00:00",
+        "pictures": []
+      }
+    }
+  ]
+}

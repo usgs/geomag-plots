@@ -1,24 +1,24 @@
 'use strict';
 
+
 var config = require('./config');
+
 
 var jshint = {
   options: {
     jshintrc: '.jshintrc'
   },
-
   gruntfile: [
     'Gruntfile.js',
     'gruntconfig/**/*.js'
   ],
-
-  dev: [
+  scripts: [
     config.src + '/htdocs/**/*.js'
   ],
-
-  test: [
+  tests: [
     config.test + '/**/*.js'
   ]
 };
+
 
 module.exports = jshint;

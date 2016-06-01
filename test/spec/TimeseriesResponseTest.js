@@ -2,7 +2,7 @@
 'use strict';
 
 var expect = chai.expect,
-    TimeseriesResponse = require('TimeseriesResponse'),
+    TimeseriesResponse = require('plots/TimeseriesResponse'),
     Xhr = require('util/Xhr');
 
 

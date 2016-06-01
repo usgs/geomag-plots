@@ -4,58 +4,53 @@ module.exports = function (grunt) {
 
   var gruntConfig = require('./gruntconfig');
 
-
-  // Load grunt tasks
   gruntConfig.tasks.forEach(grunt.loadNpmTasks);
   grunt.initConfig(gruntConfig);
 
+  grunt.event.on('watch', function (action, filepath) {
+    // Only lint the file that actually changed
+    grunt.config(['jshint', 'scripts'], filepath);
+  });
 
-  // creates distributable version of application
-  grunt.registerTask('build', [
-    'clean',
-    'dev',
-    'concurrent:dist' // uglify, copy:dist, cssmin
-  ]);
-
-  // default task useful during development
-  grunt.registerTask('default', [
-    'dev',
-
-    'jshint:test',
-    'concurrent:test', // browserify:test, copy:test
-    'connect:test',
-    'mocha_phantomjs',
-
-    'configureProxies:dev',
-    'connect:data',
-    'connect:template',
-    'connect:dev',
-    'connect:example',
-
-    'watch'
-  ]);
-
-  // builds development version of application
-  grunt.registerTask('dev', [
-    'jshint:dev',
-    'concurrent:dev' // browserify:index, copy:dev, compass:dev
-  ]);
-
-  // starts distribution server and preview
-  grunt.registerTask('dist', [
-    'build',
-    'configureProxies:dist',
-    'connect:template',
-    'connect:dist:keepalive'
-  ]);
-
-  // runs tests against development version of library
   grunt.registerTask('test', [
-    'dev',
-
-    'jshint:test',
-    'concurrent:test', // browserify:test, copy:test
+    'build',
     'connect:test',
     'mocha_phantomjs'
   ]);
+
+  grunt.registerTask('build', [
+    'clean:build',
+    'jshint:scripts',
+    'jshint:tests',
+    'browserify',
+    'postcss:build',
+    'copy:build',
+    'copy:test'
+  ]);
+
+  grunt.registerTask('dist', [
+    'build',
+    'clean:dist',
+    'copy:dist',
+    'postcss:dist',
+    'uglify',
+    'configureRewriteRules',
+    'configureProxies:dist',
+    'connect:template',
+    'connect:dist'
+  ]);
+
+  grunt.registerTask('default', [
+    'build',
+    'configureRewriteRules',
+    'configureProxies:dev',
+    'configureProxies:test',
+    'connect:template',
+    'connect:dev',
+    'connect:test',
+    'connect:example',
+    'mocha_phantomjs',
+    'watch'
+  ]);
+
 };

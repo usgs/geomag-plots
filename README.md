@@ -1,32 +1,22 @@
 geomag-plots
-==============
+============
 
 Plots of timeseries data for geomagnetic observatories.
 
-[License](LICENSE.md)
 
-## Getting Started
-Make sure you are in your `geomag-plots` project directory.
+Getting Started
+---------------
 
-1. Install NPM dependencies
+- make sure `node`, `npm`, `grunt-cli`, and `php-cgi` are installed.
+- clone/download repository
+- from project directory:
+  - run `npm install` to install development dependencies
+  - run `src/lib/pre-install` (or, on windows, `php src/lib/pre-install.php`) to configure the application
+  - run `grunt` to start a local server to preview the application
 
-    `npm install`
 
-1. Install Sass and Compass with Ruby
-
-    `gem install sass`
-
-    `gem install compass`
-
-1. Preview in a browser
-
-    `grunt`
-
-### Having trouble getting started?
-
-1. If this is your first time using **grunt**, you need to install the grunt
-command line interface globally
-
-    `npm install -g grunt-cli`
-
-[Dependency install details for Windows and Mac](readme_dependency_install.md)
+Related Projects
+----------------
+This application displays data from the `geomag-edge-ws` timeseries web service,
+which is maintained as a separate project on github:
+  https://github.com/usgs/geomag-edge-ws

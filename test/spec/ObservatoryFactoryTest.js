@@ -2,7 +2,7 @@
 'use strict';
 
 var expect = chai.expect,
-    ObservatoryFactory = require('ObservatoryFactory');
+    ObservatoryFactory = require('plots/ObservatoryFactory');
 
 describe('Observatory Factory Test', function () {
   describe('constructor', function () {

@@ -1,12 +1,30 @@
 'use strict';
 
+
 var config = require('./config');
 
+
 var uglify = {
-  index: {
-    src: [config.build + '/' + config.src + '/htdocs/js/index.js'],
-    dest: config.dist + '/htdocs/js/index.js'
+
+  options: {
+    mangle: true,
+    compress: {},
+    report: 'gzip'
+  },
+
+  dist: {
+    files: [{
+      expand: true,
+      cwd: config.build + '/' + config.src,
+      src: [
+        '**/*.js',
+        '!**/bundle.js'
+      ],
+      dest: config.dist
+    }]
   }
+
 };
+
 
 module.exports = uglify;

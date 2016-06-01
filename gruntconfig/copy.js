@@ -2,43 +2,52 @@
 
 var config = require('./config');
 
+
 var copy = {
-  dev: {
+
+  build: {
+    expand: true,
     cwd: config.src,
     dest: config.build + '/' + config.src,
-    expand: true,
     src: [
       '**/*',
+      '!**/*.js',
       '!**/*.scss',
-      '!**/*.js'
-    ]
-  },
-
-  dist: {
-    cwd: config.build + '/' + config.src,
-    dest: config.dist,
-    expand: true,
-    src: [
-      'conf/config.inc.php',
-      'conf/config.ini',
-
-      'htdocs/css/images/**/*',
-      'htdocs/images/**/*',
-      'htdocs/*.html',
-      'htdocs/*.php',
-
-      'lib/**/*'
-    ]
+      '!**/*.orig'
+    ],
+    filter: 'isFile',
+    options: {
+      mode: true
+    }
   },
 
   test: {
+    expand: true,
     cwd: config.test,
     dest: config.build + '/' + config.test,
-    expand: true,
     src: [
-      'test.html'
-    ]
+      '**/*',
+      '!**/*.js'
+    ],
+    filter: 'isFile'
+  },
+
+  dist: {
+    expand: true,
+    cwd: config.build + '/' + config.src,
+    dest: config.dist,
+    src: [
+      '**/*',
+      '!**/*.js',
+      '!**/*.css'
+    ],
+    filter: 'isFile',
+    options: {
+      mode: true
+    }
   }
+
 };
+
 
 module.exports = copy;

@@ -4,8 +4,8 @@
 var expect = chai.expect,
 
     Collection = require('mvc/Collection'),
-    Timeseries = require('Timeseries'),
-    TimeseriesCollectionView = require('TimeseriesCollectionView');
+    Timeseries = require('plots/Timeseries'),
+    TimeseriesCollectionView = require('plots/TimeseriesCollectionView');
 
 describe('TimeseriesCollectionView test suite.', function () {
   describe('Constructor', function () {

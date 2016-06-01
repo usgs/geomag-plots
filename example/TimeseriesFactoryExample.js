@@ -1,6 +1,6 @@
 'use strict';
 
-var TimeseriesFactory = require('TimeseriesFactory'),
+var TimeseriesFactory = require('plots/TimeseriesFactory'),
     Xhr = require('util/Xhr'),
     url = 'http://geomag.usgs.gov/map/observatories_data.json.php',
     timeseriesFactory = TimeseriesFactory({url:url});
@@ -18,4 +18,3 @@ timeseriesFactory.getTimeseries({
     console.log(data[0].get('values'));
    }
 });
-

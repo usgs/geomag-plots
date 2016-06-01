@@ -1,48 +1,10 @@
 'use strict';
 
+
 var config = require('./config');
 
+
 var watch = {
-  resources: {
-    files: [
-      config.src + '/**/*',
-      '!' + config.src + '/**/*.scss',
-      '!' + config.src + '/**/*.js'
-    ],
-    tasks: [
-      'copy:dev'
-    ]
-  },
-
-  compass: {
-    files: [
-      config.src + '/htdocs/**/*.scss'
-    ],
-    tasks: [
-      'compass:dev'
-    ]
-  },
-
-  scripts: {
-    files: [
-      config.src + '/htdocs/**/*.js'
-    ],
-    tasks: [
-      'jshint:dev',
-      'browserify:index',
-      'browserify:bundle'
-    ]
-  },
-
-  tests: {
-    files: [
-      config.test + '/**/*.js'
-    ],
-    tasks: [
-      'jshint:test',
-      'browserify:test'
-    ]
-  },
 
   gruntfile: {
     files: [
@@ -61,7 +23,50 @@ var watch = {
     files: [
       config.build + '/' + config.src + '/**/*'
     ]
+  },
+
+  scripts: {
+    files: [config.src + '/htdocs/**/*.js'],
+    tasks: [
+      'jshint:scripts',
+      'browserify',
+      'mocha_phantomjs'
+    ]
+  },
+
+  scss: {
+    files: [config.src + '/htdocs/**/*.scss'],
+    tasks: [
+      'postcss:build'
+    ]
+  },
+
+  static: {
+    files: [
+      config.src + '/**/*',
+      '!**/*.js',
+      '!**/*.scss',
+      '!**/*.orig'
+    ],
+    tasks: [
+      'copy:build'
+    ]
+  },
+
+  tests: {
+    files: [
+      config.test + '/*.html',
+      config.test + '/**/*.js'
+    ],
+    tasks: [
+      'jshint:tests',
+      'copy:test',
+      'browserify:test',
+      'mocha_phantomjs'
+    ]
   }
+
 };
+
 
 module.exports = watch;

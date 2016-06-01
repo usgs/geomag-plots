@@ -2,7 +2,7 @@
 'use strict';
 
 
-var TimeseriesApp = require('TimeseriesApp');
+var TimeseriesApp = require('plots/TimeseriesApp');
 
 
 /**

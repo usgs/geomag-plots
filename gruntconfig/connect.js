@@ -2,32 +2,14 @@
 
 var config = require('./config');
 
-var iniConfig = require('ini').parse(require('fs')
-    .readFileSync(config.src + '/conf/config.ini', 'utf-8'));
 
-var dataProxyRewrite = {};
-dataProxyRewrite['^' + iniConfig.MOUNT_PATH + '/data'] = '';
+var MOUNT_PATH = config.ini.MOUNT_PATH;
 
-var rewrites = [
-  {
-    from: '^' + iniConfig.MOUNT_PATH + '/?(.*)$',
-    to: '/$1'
-  }
-];
-
-var corsMiddleware = function (req, res, next) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', '*');
-  res.setHeader('Access-Control-Allow-Headers',
-      'accept,origin,authorization,content-type');
-  return next();
-};
 
 var addMiddleware = function (connect, options, middlewares) {
   middlewares.unshift(
+    require('grunt-connect-rewrite/lib/utils').rewriteRequest,
     require('grunt-connect-proxy/lib/utils').proxyRequest,
-    require('http-rewrite-middleware').getMiddleware(rewrites),
-    corsMiddleware,
     require('gateway')(options.base[0], {
       '.php': 'php-cgi',
       'env': {
@@ -52,47 +34,62 @@ var connect = {
       rewrite: {
         '^/theme': ''
       }
-    },
-    {
-      context: iniConfig.MOUNT_PATH + '/data',
-      host: 'localhost',
-      port: config.dataPort,
-      rewrite: dataProxyRewrite
     }
   ],
 
+  rules: [
+    {
+      from: '^' + MOUNT_PATH + '/(.*)$',
+      to: '/$1'
+    }
+  ],
 
   dev: {
     options: {
-      base: [config.build + '/' + config.src + '/htdocs'],
+      base: [
+        config.build + '/' + config.src + '/htdocs'
+      ],
       livereload: config.liveReloadPort,
       middleware: addMiddleware,
-      open: 'http://localhost:' + config.buildPort + iniConfig.MOUNT_PATH +
-          '/index.php',
+      open: 'http://localhost:' + config.buildPort +
+          MOUNT_PATH + '/index.php',
       port: config.buildPort
     }
   },
 
   dist: {
     options: {
-      base: [config.dist + '/htdocs'],
-      middleware: addMiddleware,
-      open: 'http://localhost:' + config.distPort + iniConfig.MOUNT_PATH +
-          '/index.php',
-      port: config.distPort
+      base: [
+        config.dist + '/htdocs'
+      ],
+      port: config.distPort,
+      keepalive: true,
+      open: 'http://localhost:' + config.distPort +
+          MOUNT_PATH + '/index.php',
+      middleware: addMiddleware
     }
   },
 
   example: {
     options: {
       base: [
-        config.build + '/' + config.src + '/htdocs',
         config.example,
+        config.build + '/' + config.src + '/htdocs',
         config.etc
       ],
       middleware: addMiddleware,
-      open: 'http://localhost:' + config.examplePort + '/example.html',
+      open: 'http://localhost:' + config.examplePort + '/example.php',
       port: config.examplePort
+    }
+  },
+
+  template: {
+    options: {
+      base: [
+        'node_modules/hazdev-template/dist/htdocs'
+      ],
+      port: config.templatePort,
+      middleware: addMiddleware
     }
   },
 
@@ -102,27 +99,13 @@ var connect = {
         config.build + '/' + config.src + '/htdocs',
         config.build + '/' + config.test,
         config.etc,
-        'node_modules' // primarily for mocha/chai
+        'node_modules'
       ],
-      open: 'http://localhost:' + config.testPort + '/test.html',
-      port: config.testPort
-    }
-  },
-
-
-  data: {
-    options: {
-      base: [iniConfig.DATA_DIR],
-      port: config.dataPort
-    }
-  },
-
-  template: {
-    options: {
-      base: ['node_modules/hazdev-template/dist/htdocs'],
-      port: config.templatePort
+      port: config.testPort,
+      open: 'http://localhost:' + config.testPort + '/test.html'
     }
   }
 };
+
 
 module.exports = connect;

@@ -1,5 +1,4 @@
 <?php
 
-include_once '../conf/config.inc.php';
-
-echo ' ';
+// application injects its navigation into this element
+echo '<div class="config"></div>';

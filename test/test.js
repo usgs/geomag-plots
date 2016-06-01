@@ -1,56 +1,24 @@
 /* global mocha */
+'use strict';
 
-// PhantomJS is missing native bind support,
-//     https://github.com/ariya/phantomjs/issues/10522
-// Polyfill from:
-//     https://developer.mozilla.org
-//         /en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/bind
-if (!Function.prototype.bind) {
-  Function.prototype.bind = function (oThis) {
-    'use strict';
 
-    if (typeof this !== 'function') {
-      // closest thing possible to the ECMAScript 5 internal IsCallable
-      throw new TypeError('object to be bound is not callable');
-    }
+mocha.setup('bdd');
 
-    var aArgs = Array.prototype.slice.call(arguments, 1),
-        fToBind = this,
-        fNOP = function () {},
-        fBound;
 
-    fBound = function () {
-      return fToBind.apply(
-          (this instanceof fNOP && oThis ? this : oThis),
-          aArgs.concat(Array.prototype.slice.call(arguments)));
-    };
+// Add each test class here as they are implemented
+require('./spec/ExampleTest');
 
-    fNOP.prototype = this.prototype;
-    fBound.prototype = new fNOP();
+require('./spec/ObservatoryFactoryTest');
+require('./spec/TimeseriesCollectionViewTest');
+require('./spec/TimeseriesFactoryTest');
+require('./spec/TimeseriesResponseTest');
+require('./spec/TimeseriesSelectViewTest');
+require('./spec/TimeseriesTest');
+require('./spec/TimeseriesViewTest');
 
-    return fBound;
-  };
+
+if (window.mochaPhantomJS) {
+  window.mochaPhantomJS.run();
+} else {
+  mocha.run();
 }
-
-(function () {
-  'use strict';
-
-  mocha.ui('bdd');
-  mocha.reporter('html');
-
-  // Add each test class here as they are implemented
-  require('./spec/ObservatoryFactoryTest');
-  require('./spec/TestTest');
-  require('./spec/TimeseriesCollectionViewTest');
-  require('./spec/TimeseriesFactoryTest');
-  require('./spec/TimeseriesResponseTest');
-  require('./spec/TimeseriesSelectViewTest');
-  require('./spec/TimeseriesTest');
-  require('./spec/TimeseriesViewTest');
-
-  if (window.mochaPhantomJS) {
-      window.mochaPhantomJS.run();
-  } else {
-    mocha.run();
-  }
-})(this);
