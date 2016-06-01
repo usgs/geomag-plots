@@ -19,6 +19,8 @@ _iso8601 = function (date) {
   minute = date.getUTCMinutes();
   second = date.getUTCSeconds();
 
+  month += 1; // months are zero-indexed
+
   if (month < 10) {
     month = '0' + month;
   }
