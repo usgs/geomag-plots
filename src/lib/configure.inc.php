@@ -23,7 +23,7 @@ $PROMPTS = array(
 
   'OBS_DATA_URL' => array(
     'prompt' => 'URL for observatory timeseries service',
-    'default' => '/map/observatories_data.json.php',
+    'default' => '/ws/edge/',
     'secure' => false
   )
 

@@ -21,7 +21,8 @@ describe('Timeseries Test', function () {
         success: function (data) {
           response = Timeseries({
             times: data.times,
-            values: data.data[4].values.H
+            // values: data.data[4].values.H
+            values: data.values[3].values // F
           });
           done();
         }
@@ -29,19 +30,19 @@ describe('Timeseries Test', function () {
     });
 
     it('returns gaps in data', function () {
-      expect(response.getGaps().length).to.equal(2);
+      expect(response.getGaps().length).to.equal(4);
     });
 
     it('returns start time for gap data', function () {
       var gap = response.getGaps()[0];
 
-      expect(gap.start).to.equal(1429480440);
+      expect(gap.start).to.equal('2015-03-19T21:29:10Z');
     });
 
     it('returns end time for gap data', function () {
       var gap = response.getGaps()[0];
 
-      expect(gap.end).to.equal(1429481280);
+      expect(gap.end).to.equal('2015-03-19T21:29:10Z');
     });
   });
 });
