@@ -86,7 +86,6 @@ var TimeseriesApp = function (options) {
       _initialize,
       // variables
       _autoUpdateTimeout,
-      _config,
       _configView,
       _descriptionEl,
       _observatories,
@@ -128,14 +127,14 @@ var TimeseriesApp = function (options) {
     _descriptionEl = el.querySelector('.description');
     viewEl = el.querySelector('.view');
 
-    _config = Model(Util.extend({
+    _this.config = Model(Util.extend({
       channel: 'H',
       endtime: null,
       observatory: null,
       starttime: null,
       timemode: 'pasthour'
     }, options.config));
-    _config.on('change', _onConfigChange);
+    _this.config.on('change', _onConfigChange);
 
     _observatories = options.observatories || null;
     if (_observatories === null) {
@@ -160,7 +159,7 @@ var TimeseriesApp = function (options) {
     _configView = TimeseriesSelectView({
       el: configEl,
       channels: options.channels || ['H', 'E', 'Z', 'F'],
-      config: _config
+      config: _this.config
     });
 
     _timeseriesView = TimeseriesCollectionView({
@@ -200,9 +199,9 @@ var TimeseriesApp = function (options) {
       _autoUpdateTimeout = null;
     }
 
-    channel = _config.get('channel');
-    observatory = _config.get('observatory');
-    timemode = _config.get('timemode');
+    channel = _this.config.get('channel');
+    observatory = _this.config.get('observatory');
+    timemode = _this.config.get('timemode');
 
     if (timemode === 'realtime') {
       // 15 minutes
@@ -214,8 +213,8 @@ var TimeseriesApp = function (options) {
       starttime = new Date(endtime.getTime() - 86400000);
       autoUpdateTime = 300000;
     } else {
-      endtime = _config.get('endtime');
-      starttime = _config.get('starttime');
+      endtime = _this.config.get('endtime');
+      starttime = _this.config.get('starttime');
     }
 
     if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
@@ -245,7 +244,27 @@ var TimeseriesApp = function (options) {
   /**
    * Errback for TimeseriesFactory.
    */
-  _onTimeseriesError = function () {
+  _onTimeseriesError = function (status, xhr) {
+    var config,
+        el;
+
+    el = _this.el.querySelector('.view');
+    el.classList.add('alert');
+    el.classList.add('error');
+
+    config = _this.config.get();
+    if (config) {
+      el.innerHTML =
+        '<p>Failed to load data for, ' +
+          (config.channel ?
+              'channel: ' + config.channel :
+              'observatory: ' +config.observatory) +
+        '</p>' +
+        '<p>' +
+          '<i>' + status + ': ' + xhr.statusText + '</i>' +
+        '</p>';
+    }
+
     _timeseriesEl.classList.remove('loading');
     _timeseries.reset([]);
   };
@@ -303,14 +322,14 @@ var TimeseriesApp = function (options) {
    * Update description of data being shown.
    */
   _updateDescription = function () {
-    var channel = _config.get('channel'),
+    var channel = _this.config.get('channel'),
         description,
-        endtime = _config.get('endtime'),
+        endtime = _this.config.get('endtime'),
         obs,
-        observatory = _config.get('observatory'),
-        starttime = _config.get('starttime'),
+        observatory = _this.config.get('observatory'),
+        starttime = _this.config.get('starttime'),
         timeDescription,
-        timemode = _config.get('timemode'),
+        timemode = _this.config.get('timemode'),
         title;
 
     if (observatory !== null) {
@@ -343,13 +362,12 @@ var TimeseriesApp = function (options) {
    * Destroy this application.
    */
   _this.destroy = Util.compose(function () {
-    _config.off('change', _onConfigChange);
+    _this.config.off('change', _onConfigChange);
     _configView.destroy();
     _timeseriesView.destroy();
 
     _observatories.off('reset', _updateDescription);
 
-    _config = null;
     _configView = null;
     _descriptionEl = null;
     _observatories = null;
