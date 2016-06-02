@@ -8,6 +8,7 @@ mocha.setup('bdd');
 // Add each test class here as they are implemented
 require('./spec/ExampleTest');
 
+require('./spec/D3TimeseriesViewTest');
 require('./spec/ObservatoryFactoryTest');
 require('./spec/ScaleViewTest');
 require('./spec/TimeseriesCollectionViewTest');
