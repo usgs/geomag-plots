@@ -228,7 +228,6 @@ var D3GraphView = function (options) {
     _outerFrame = null;
     _padding = null;
     _plotAreaClip = null;
-    _plotModel = null;
     _plotTitle = null;
     _svg = null;
     _tooltip = null;
