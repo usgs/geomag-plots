@@ -9,6 +9,7 @@ mocha.setup('bdd');
 require('./spec/ExampleTest');
 
 require('./spec/ObservatoryFactoryTest');
+require('./spec/ScaleViewTest');
 require('./spec/TimeseriesCollectionViewTest');
 require('./spec/TimeseriesFactoryTest');
 require('./spec/TimeseriesResponseTest');

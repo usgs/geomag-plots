@@ -74,6 +74,10 @@ var ScaleView = function (options) {
 
 
   _this.destroy = function () {
+    if (_this === null) {
+      return; // Already destroyed ...
+    }
+
     _this.el.removeEventListener('click', _onContainerClick, _this);
 
     _id = null;
@@ -89,7 +93,7 @@ var ScaleView = function (options) {
     element = evt.target;
 
     if (element.nodeName === 'LABEL') {
-      element = document.querySelector('#' + element.getAttribute('for'));
+      element = _this.el.querySelector('#' + element.getAttribute('for'));
     }
 
     if (element && element.nodeName !== 'INPUT') {
