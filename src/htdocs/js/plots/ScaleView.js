@@ -5,7 +5,10 @@ var Util = require('util/Util'),
     View = require('mvc/View');
 
 
-var _DEFAULTS = {
+var _DEFAULTS,
+    _ID;
+
+_DEFAULTS = {
   scales: [
     {display: 'Auto', value: 'null'},
     {display: '1,000 nT', value: '1000'},
@@ -16,7 +19,7 @@ var _DEFAULTS = {
   titleTag: 'h3'
 };
 
-var _ID = 0; // Identifier to keep multiple scale views separate
+_ID = 0; // Identifier to keep multiple scale views separate
 
 
 /**
