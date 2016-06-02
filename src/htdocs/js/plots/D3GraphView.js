@@ -88,7 +88,6 @@ var D3GraphView = function (options) {
       _outerFrame,
       _padding,
       _plotAreaClip,
-      _plotModel,
       _plotTitle,
       _svg,
       _tooltip,
@@ -190,12 +189,12 @@ var D3GraphView = function (options) {
     _yAxis = d3.svg.axis().orient('left').outerTickSize(0);
 
     if (options.plotModel) {
-      _plotModel = options.plotModel;
+      _this.plotModel = options.plotModel;
     } else {
-      _plotModel = Model();
+      _this.plotModel = Model();
     }
 
-    _plotModel.on('change', _onPlotModelChange);
+    _this.plotModel.on('change', _onPlotModelChange);
 
     _zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
@@ -219,7 +218,7 @@ var D3GraphView = function (options) {
     _zoom.el = null;
     _zoom = null;
 
-    _plotModel.off('change', _onPlotModelChange);
+    _this.plotModel.off('change', _onPlotModelChange);
 
     _onZoom = null;
     _onPlotModelChange = null;
@@ -229,7 +228,6 @@ var D3GraphView = function (options) {
     _outerFrame = null;
     _innerFrame = null;
     _margin = null;
-    _plotModel = null;
     _plotTitle = null;
     _padding = null;
     _xAxis = null;
@@ -245,8 +243,20 @@ var D3GraphView = function (options) {
   }, _this.destroy);
 
   _onPlotModelChange = function () {
-    _zoom.scale(_plotModel.get('zoomScale'));
-    _zoom.translate(_plotModel.get('zoomTranslate'));
+    var zoomScale,
+        zoomTranslate;
+
+    zoomScale = _this.plotModel.get('zoomScale');
+    zoomTranslate = _this.plotModel.get('zoomTranslate');
+
+    if (zoomScale !== null) {
+      _zoom.scale(_this.plotModel.get('zoomScale'));
+    }
+
+    if (zoomTranslate !== null) {
+      _zoom.translate(_this.plotModel.get('zoomTranslate'));
+    }
+
     // update lines
     _this.render({}, true);
   };
@@ -275,7 +285,7 @@ var D3GraphView = function (options) {
     tx = Math.min(tx, 0);
     tx = Math.max(tx, width - xSpan);
     _zoom.translate([tx, ty]);
-    _plotModel.set(
+    _this.plotModel.set(
       {
         zoomScale: _zoom.scale(),
         zoomTranslate: _zoom.translate()
@@ -556,6 +566,12 @@ var D3GraphView = function (options) {
     } else {
       y = y + offset;
     }
+
+    if (x < 0) {
+      _this.showTooltip(null);
+      return;
+    }
+
     // set position
     _tooltip.setAttribute('transform',
         'translate(' + x + ',' + y + ')');
