@@ -42,7 +42,7 @@ app = TimeseriesApp({
     'DeltaF'
   ],
   config: {
-    channel: 'H',
+    channel: ['H', 'E', 'Z', 'F'],
     endtime: __getTime(0),
     timemode: 'pastday',
     starttime: __getTime(86400000 * 3)
