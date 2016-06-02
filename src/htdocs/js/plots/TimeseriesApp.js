@@ -1,4 +1,4 @@
-/* global OffCanvas */
+s/* global OffCanvas */
 'use strict';
 
 
@@ -49,6 +49,8 @@ var TimeseriesApp = function (options) {
 
       _configView,
       _descriptionEl,
+      _formatErrorMessage,
+      _model,
       _observatories,
       _timeseriesEl,
       _timeseriesFactory,
@@ -68,6 +70,7 @@ var TimeseriesApp = function (options) {
     el.classList.add('timeseries-app');
     el.innerHTML =
         '<div class="description"></div>' +
+        '<div class="message"></div>' +
         '<div class="view"></div>' +
         '<div class="load">' +
           '<div class="load-mask"></div>' +
@@ -226,6 +229,8 @@ var TimeseriesApp = function (options) {
 
     _configView = null;
     _descriptionEl = null;
+    _formatErrorMessage = null;
+    _model = null;
     _observatories = null;
     _timeseriesEl = null;
     _timeseriesFactory = null;
