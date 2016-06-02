@@ -37,8 +37,13 @@ app = TimeseriesApp({
     'H',
     'E',
     'Z',
+    'D',
     'F',
-    'Dist',
+    'B',
+    'A',
+    'X',
+    'Y',
+    'V',
     'DeltaF'
   ],
   config: {
