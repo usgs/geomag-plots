@@ -28,19 +28,19 @@ describe('Observatory Factory Test', function () {
     });
 
     it('parses observatory id correctly', function () {
-      expect(observatories[0].id).to.equal('BRW');
+      expect(observatories[0].id).to.equal('BDT');
     });
 
     it('parses observatory name correctly', function () {
-      expect(observatories[0].get('name')).to.equal('Barrow');
+      expect(observatories[0].get('name')).to.equal('Boulder Test');
     });
 
     it('parses observatory latitude correctly', function () {
-      expect(observatories[0].get('latitude')).to.equal(71.3225);
+      expect(observatories[0].get('latitude')).to.equal(40.137);
     });
 
     it('parses observatory longitude correctly', function () {
-      expect(observatories[0].get('longitude')).to.equal(-156.6231);
+      expect(observatories[0].get('longitude')).to.equal(254.764);
     });
   });
 });

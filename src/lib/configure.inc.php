@@ -17,13 +17,25 @@ $PROMPTS = array(
 
   'OBS_META_URL' => array(
     'prompt' => 'URL for observatory summary information',
-    'default' => '/map/observatories.geojson.php',
+    'default' => '/ws/edge/observatories.json',
     'secure' => false
   ),
 
   'OBS_DATA_URL' => array(
     'prompt' => 'URL for observatory timeseries service',
     'default' => '/ws/edge/',
+    'secure' => false
+  ),
+
+  'OFFSITE_HOST' => array(
+    'prompt' => 'Web service host for local development',
+    'default' => 'geomag.usgs.gov',
+    'secure' => false
+  ),
+
+  'OFFSITE_PORT' => array(
+    'prompt' => 'Web service port for local development',
+    'default' => 80,
     'secure' => false
   )
 

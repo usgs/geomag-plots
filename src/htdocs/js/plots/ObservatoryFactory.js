@@ -7,7 +7,7 @@ var Util = require('util/Util'),
 
 
 var _DEFAULTS = {
-  url: 'http://geomag.usgs.gov/map/observatories.geojson.php'
+  url: 'http://geomag.usgs.gov/ws/edge/observatories.json'
 };
 
 
@@ -87,20 +87,25 @@ var ObservatoryFactory = function (options) {
   /**
    * Parse one observatory feature.
    *
-   * @param features {Object}
+   * @param feature {Object}
    *        features from GeoJSON feed.
    * @return {Observatory}
    *         parsed Observatory model.
    */
-  _this.parseObservatory = function (features) {
-    var observatory,
-        p = features.properties;
+  _this.parseObservatory = function (feature) {
+    var coords,
+        observatory,
+        props;
 
+    coords = feature.geometry.coordinates;
+    props = feature.properties;
     observatory = Observatory({
-      id: p.id,
-      name: p.name,
-      latitude: p.latitude,
-      longitude: p.longitude
+      decbase: props.declination_base || null,
+      elevation: coords[2],
+      id: feature.id,
+      latitude: coords[1],
+      longitude: coords[0],
+      name: props.station_name
     });
 
     return observatory;

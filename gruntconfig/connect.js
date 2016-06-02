@@ -3,7 +3,9 @@
 var config = require('./config');
 
 
-var MOUNT_PATH = config.ini.MOUNT_PATH;
+var MOUNT_PATH = config.ini.MOUNT_PATH,
+    OFFSITE_HOST = config.ini.OFFSITE_HOST,
+    OFFSITE_PORT = config.ini.OFFSITE_PORT;
 
 
 var addMiddleware = function (connect, options, middlewares) {
@@ -33,6 +35,14 @@ var connect = {
       port: config.templatePort,
       rewrite: {
         '^/theme': ''
+      }
+    },
+    {
+      context: '/ws/',
+      host: OFFSITE_HOST,
+      port: OFFSITE_PORT,
+      headers: {
+        host: OFFSITE_HOST
       }
     }
   ],
