@@ -6,8 +6,8 @@ var Util = require('util/Util'),
 
 var DEFAULTS = {
   channels: [
-    'X',
-    'Y',
+    'H',
+    'E',
     'Z',
     'F'
   ],
