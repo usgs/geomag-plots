@@ -29,7 +29,7 @@ var app,
     configEl,
     el;
 
-configEl = document.querySelector('#site-sectionnav');
+configEl = document.querySelector('#geomag-config');
 el = document.querySelector('#geomag-plots');
 
 app = TimeseriesApp({
