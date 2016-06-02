@@ -19,6 +19,11 @@ var _DEFAULTS = {
 var _ID = 0; // Identifier to keep multiple scale views separate
 
 
+/**
+ * This class provides an interface for the user to select either auto or
+ * manual y-axis scaling.
+ *
+ */
 var ScaleView = function (options) {
   var _this,
       _initialize,
@@ -31,6 +36,20 @@ var ScaleView = function (options) {
   options = Util.extend({}, _DEFAULTS, options);
   _this = View(options);
 
+  /**
+   * @constructor
+   *
+   * Initializes a new {ScaleView} object.
+   *
+   * @param options.scales {Array}
+   *     An array of available scale options. Each scale option should be an
+   *     an object with a "display" and "value" property.
+   * @param options.title {String}
+   *     The title to display above the scale view interface.
+   * @param options.titleTag {String}
+   *     The HTML tag name to use for the title element.
+   *
+   */
   _initialize = function (options) {
     var yExtentSize;
 
@@ -68,11 +87,21 @@ var ScaleView = function (options) {
   };
 
 
+  /**
+   * Private event listener for DOMClick events on this view's element. This
+   * method only calls the public version `_this.onClick`.
+   *
+   */
   _onContainerClick = function (evt) {
     _this.onClick(evt);
   };
 
 
+  /**
+   * Frees resources associated with this view. This method should only be
+   * called once per instance, but subsequent calls should not cause errors.
+   *
+   */
   _this.destroy = function () {
     if (_this === null) {
       return; // Already destroyed ...
@@ -87,6 +116,20 @@ var ScaleView = function (options) {
     _this = null;
   };
 
+  /**
+   * Finds the associated input element for a DOMClick event. If the event
+   * target is itself an input element, simply return that element. If the
+   * event target is a label element, return the associated input element. If
+   * the event target is anything else, return null.
+   *
+   *
+   * @param evt {Object}
+   *     An object with a `target` attribute that is an HTMLElement.
+   *
+   * @return {HTMLElement}
+   *     The input element associated with the given `evt` or `null` if no
+   *     such element exists.
+   */
   _this.getElementForEvent = function (evt) {
     var element;
 
@@ -103,6 +146,17 @@ var ScaleView = function (options) {
     return element;
   };
 
+  /**
+   * Event handler for click events on this view. The view utilizes event
+   * delegation so this method must be implemented to match.
+   *
+   * This method finds the input element that was interacted with and then
+   * updates the model `yExtentSize` property to the input's value.
+   *
+   * @param evt {Object}
+   *     An object with a `target` attribute that is an HTMLElement.
+   *
+   */
   _this.onClick = function (evt) {
     var input,
         value;
@@ -121,6 +175,13 @@ var ScaleView = function (options) {
     }
   };
 
+  /**
+   * Updates the view rendering.
+   *
+   * Checks the model's current `yExtentSize` property and ensures the
+   * input with the corresponding value is rendered as selected.
+   *
+   */
   _this.render = function () {
     var input,
         yExtentSize;
