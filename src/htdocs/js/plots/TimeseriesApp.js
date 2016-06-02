@@ -129,9 +129,9 @@ var TimeseriesApp = function (options) {
     viewEl = el.querySelector('.view');
 
     _this.config = Model(Util.extend({
-      channel: 'H',
+      channel: ['H', 'E', 'Z', 'F'],
       endtime: null,
-      observatory: null,
+      observatory: 'BOU',
       starttime: null,
       timemode: 'pasthour'
     }, options.config));
@@ -232,13 +232,13 @@ var TimeseriesApp = function (options) {
     _timeseriesEl.classList.add('loading');
 
     _timeseriesFactory.getTimeseries({
-      channel: channel,
-      observatory: observatory || 'BOU', // TODO :: Update app to fetch data ...
+      elements: channel,
+      id: observatory,
       endtime: endtime,
       starttime: starttime,
       callback: _onTimeseriesLoad,
       errback: _onTimeseriesError,
-      seconds: seconds
+      sampling_period: (seconds ? 1 : 60)
     });
 
     // schedule auto update

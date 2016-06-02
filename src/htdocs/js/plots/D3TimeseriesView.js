@@ -90,9 +90,13 @@ var D3TimeseriesView = function (options) {
     _el = d3.select(_this.el.querySelector('.inner-frame'));
     _el.on('mousemove', _onMouseMove);
     _el.on('mouseout', _onMouseOut);
+
+    _this.plotModel.on('change:tooltipX', 'renderTooltip', _this);
   };
 
   _this.destroy = Util.compose(function () {
+    _this.plotModel.off('change:tooltipX', 'renderTooltip', _this);
+
     // unbind listeners
     _el.on('mousemove', null);
     _el.on('mouseout', null);
@@ -206,8 +210,7 @@ var D3TimeseriesView = function (options) {
         i0,
         t,
         t0,
-        x,
-        y;
+        x;
 
     // determine mouse coordinates in svg coordinates.
     coords = d3.mouse(this);
@@ -229,47 +232,68 @@ var D3TimeseriesView = function (options) {
       i = i0;
     }
 
-    x = _data.times[i];
-    y = _data.values[i];
-
-    if (!y) {
-      // gap or out of plot
-      i = d3.bisector(_gapStart).left(_gaps, x) - 1;
-      if (i >= 0) {
-        // found gap
-        _onGapOver(_gaps[i], x);
-      } else {
-        _onMouseOut();
-      }
-      return;
-    }
-
-    // show data point on line
-    _point.attr('transform', 'translate(' + _x(x) + ',' + _y(y) + ')')
-        .classed({'visible': true});
-    // show tooltip of current point
-    _this.showTooltip([x, y],
-      [
-        {
-          class: 'value',
-          text: y
-        },
-        {
-          class: 'time',
-          text: __formatTooltipDate(x)
-        }
-      ]
-    );
+    // set model property and let that render tooltip
+    _this.plotModel.set({tooltipX: _data.times[i]});
   };
 
   /**
    * Mouse out event handler.
    */
   _onMouseOut = function () {
-    // hide point
-    _point.classed({'visible': false});
-    // hide tooltip
-    _this.showTooltip(null);
+    _this.plotModel.set({'tooltipX': null});
+  };
+
+  _this.renderTooltip = function () {
+    var i,
+        tooltipX,
+        x,
+        xpos,
+        y;
+
+    tooltipX = _this.plotModel.get('tooltipX');
+
+    if (tooltipX === null) {
+      // hide point
+      _point.classed({'visible': false});
+      // hide tooltip
+      _this.showTooltip(null);
+    } else {
+      i = d3.bisectLeft(_data.times, tooltipX, 1);
+      x = _data.times[i];
+      y = _data.values[i];
+
+      if (!y) {
+        // gap or out of plot
+        i = d3.bisector(_gapStart).left(_gaps, x) - 1;
+        if (i >= 0) {
+          // found gap
+          _onGapOver(_gaps[i], x);
+        } else {
+          _onMouseOut();
+        }
+        return;
+      }
+
+      xpos = _x(x);
+
+      // show data point on line (if in plot extent)
+      _point.attr('transform', 'translate(' + xpos + ',' + _y(y) + ')')
+          .classed({'visible': (xpos>0)});
+
+      // show tooltip of current point
+      _this.showTooltip([x, y],
+        [
+          {
+            class: 'value',
+            text: y
+          },
+          {
+            class: 'time',
+            text: __formatTooltipDate(x)
+          }
+        ]
+      );
+    }
   };
 
   /**
@@ -381,6 +405,8 @@ var D3TimeseriesView = function (options) {
 
     // plot timeseries
     _timeseries.attr('d', _line(d3.range(_data.times.length)));
+
+    _this.renderTooltip();
   };
 
 
