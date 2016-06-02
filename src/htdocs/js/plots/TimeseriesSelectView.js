@@ -6,8 +6,8 @@ var Util = require('util/Util'),
 
 var DEFAULTS = {
   channels: [
-    'H',
-    'E',
+    'X',
+    'Y',
     'Z',
     'F'
   ],
@@ -347,7 +347,7 @@ var TimeseriesSelectView = function (options) {
       if (span !== null) {
         _startTimeErrorLabel.removeChild(span);
       }
-      
+
       return true;
     }
   };
