@@ -75,6 +75,8 @@ var TimeseriesApp = function (options) {
       _initialize,
 
       _autoUpdateTimeout,
+      _onConfigChanging,
+      _config,
       _configView,
       _descriptionEl,
       _observatories,
@@ -123,6 +125,10 @@ var TimeseriesApp = function (options) {
       starttime: null,
       timemode: 'pastday'
     }, options.config));
+
+    _this.config.on('change', _onConfigChange);
+
+    _onConfigChanging = false;
 
     _this.elements = Collection();
     _this.observatories = Collection();
@@ -247,6 +253,11 @@ var TimeseriesApp = function (options) {
         timemode,
         autoUpdateTime = null;
 
+    if (_onConfigChanging) {
+      return;
+    }
+    _onConfigChanging = true;
+
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
       OffCanvas.getOffCanvas().hide();
@@ -266,10 +277,18 @@ var TimeseriesApp = function (options) {
       endtime = __roundUpToNearestNMinutes(new Date(), 1);
       starttime = new Date(endtime.getTime() - 900000);
       autoUpdateTime = 300000;
+      _config.set({
+        endtime: endtime,
+        starttime: starttime
+      });
     } else if (timemode === 'pastday') {
       endtime = __roundUpToNearestNMinutes(new Date(), 5);
       starttime = new Date(endtime.getTime() - 86400000);
       autoUpdateTime = 300000;
+      _config.set({
+        endtime: endtime,
+        starttime: starttime
+      });
     } else {
       endtime = _this.config.get('endtime');
       starttime = _this.config.get('starttime');
@@ -301,6 +320,8 @@ var TimeseriesApp = function (options) {
     if (autoUpdateTime !== null) {
       _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
     }
+
+    _onConfigChanging = false;
   };
 
   /**
@@ -402,6 +423,5 @@ var TimeseriesApp = function (options) {
   options = null;
   return _this;
 };
-
 
 module.exports = TimeseriesApp;
