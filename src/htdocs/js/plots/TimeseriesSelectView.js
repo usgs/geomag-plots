@@ -1,6 +1,7 @@
 'use strict';
 
-var Util = require('util/Util'),
+var ScaleView = require('plots/ScaleView'),
+    Util = require('util/Util'),
     View = require('mvc/View');
 
 
@@ -56,6 +57,7 @@ var TimeseriesSelectView = function (options) {
       _endTimeErrorLabel,
       _observatories,
       _observatoryEl,
+      _scaleView,
       _startTime,
       _startTimeError,
       _startTimeErrorLabel,
@@ -120,6 +122,7 @@ var TimeseriesSelectView = function (options) {
             '</label>' +
             '<button>Update</button>' +
           '</div>' +
+          '<div class="scale-view"></div>' +
         '</div>';
 
     _channelEl = el.querySelector('.timeseries-channel');
@@ -148,6 +151,11 @@ var TimeseriesSelectView = function (options) {
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
     _timeUpdate.addEventListener('click', _onTimeChange);
+
+    _scaleView = ScaleView({
+      el: _this.el.querySelector('.scale-view'),
+      model: _this.model
+    });
 
     // initial render
     _this.render();
@@ -347,7 +355,7 @@ var TimeseriesSelectView = function (options) {
       if (span !== null) {
         _startTimeErrorLabel.removeChild(span);
       }
-      
+
       return true;
     }
   };
@@ -376,6 +384,8 @@ var TimeseriesSelectView = function (options) {
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
+    _scaleView.destroy();
+
     _config.off('change', _this.render);
     _channelEl.removeEventListener('click', _onChannelClick);
     _observatoryEl.removeEventListener('click', _onObservatoryClick);
@@ -395,6 +405,7 @@ var TimeseriesSelectView = function (options) {
     _endTimeErrorLabel = null;
     _observatories = null;
     _observatoryEl = null;
+    _scaleView = null;
     _startTime = null;
     _startTimeError = null;
     _startTimeErrorLabel = null;

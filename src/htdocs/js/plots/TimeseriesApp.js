@@ -157,15 +157,17 @@ var TimeseriesApp = function (options) {
       url: options.obsDataUrl
     });
 
+    _model = Model({
+      //TODO all the things
+    });
+
     _configView = TimeseriesSelectView({
       el: configEl,
+      model: _model,
       channels: options.channels || ['H', 'E', 'Z', 'F'],
       config: _this.config
     });
 
-    _model = Model({
-      //TODO all the things
-    });
 
     _timeseriesView = TimeseriesCollectionView({
       el: viewEl,
