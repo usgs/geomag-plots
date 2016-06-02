@@ -82,7 +82,7 @@ var d3 = require('d3'),
 var D3GraphView = function (options) {
   var _this,
       _initialize,
-      // variables
+
       _innerFrame,
       _margin,
       _outerFrame,
@@ -100,7 +100,7 @@ var D3GraphView = function (options) {
       _yAxisLabel,
       _yEl,
       _zoom,
-      // methods
+
       _onPlotModelChange,
       _onZoom;
 
@@ -223,13 +223,15 @@ var D3GraphView = function (options) {
     _onZoom = null;
     _onPlotModelChange = null;
 
-    _svg = null;
-    _plotAreaClip = null;
-    _outerFrame = null;
     _innerFrame = null;
     _margin = null;
-    _plotTitle = null;
+    _outerFrame = null;
     _padding = null;
+    _plotAreaClip = null;
+    _plotModel = null;
+    _plotTitle = null;
+    _svg = null;
+    _tooltip = null;
     _xAxis = null;
     _xAxisEl = null;
     _xAxisLabel = null;
@@ -238,10 +240,14 @@ var D3GraphView = function (options) {
     _yAxisEl = null;
     _yAxisLabel = null;
     _yEl = null;
-    _tooltip = null;
+
+    _initialize = null;
     _this = null;
   }, _this.destroy);
 
+  /**
+   * Updates scale and translate from model and calls render.
+   */
   _onPlotModelChange = function () {
     var zoomScale,
         zoomTranslate;
@@ -312,7 +318,7 @@ var D3GraphView = function (options) {
         marginRight,
         marginTop,
         options,
-        originalChanged = changed,
+        originalChanged,
         outerHeight,
         outerWidth,
         paddingBottom,
@@ -329,6 +335,7 @@ var D3GraphView = function (options) {
         yDomainPadding,
         yExtent;
 
+    originalChanged = changed;
     // changed options,
     // when called with no arguments, update everything
     changed = changed || _this.model.get();
