@@ -84,17 +84,16 @@ var _DEFAULTS = {
 var TimeseriesApp = function (options) {
   var _this,
       _initialize,
-      // variables
+
       _autoUpdateTimeout,
       _configView,
       _descriptionEl,
-      _model,
       _observatories,
       _timeseriesEl,
       _timeseries,
       _timeseriesFactory,
       _timeseriesView,
-      // methods
+
       _onAutoUpdate,
       _onConfigChange,
       _onTimeseriesError,
@@ -157,22 +156,21 @@ var TimeseriesApp = function (options) {
       url: options.obsDataUrl
     });
 
-    _model = Model({
+    _this.plotModel = Model({
       //TODO all the things
     });
 
     _configView = TimeseriesSelectView({
       el: configEl,
-      model: _model,
+      model: _this.plotModel,
       channels: options.channels || ['H', 'E', 'Z', 'F'],
       config: _this.config
     });
 
-
     _timeseriesView = TimeseriesCollectionView({
       el: viewEl,
       collection: _timeseries,
-      model: _model
+      model: _this.plotModel
     });
     _timeseriesEl = el;
     _onConfigChange();
@@ -372,7 +370,6 @@ var TimeseriesApp = function (options) {
 
     _configView = null;
     _descriptionEl = null;
-    _model = null;
     _observatories = null;
     _timeseries = null;
     _timeseriesEl = null;
