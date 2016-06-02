@@ -101,7 +101,6 @@ var D3GraphView = function (options) {
       _yEl,
       _zoom,
 
-      _onPlotModelChange,
       _onZoom;
 
   _this = View(options);
@@ -194,7 +193,7 @@ var D3GraphView = function (options) {
       _this.plotModel = Model();
     }
 
-    _this.plotModel.on('change', _onPlotModelChange);
+    _this.plotModel.on('change', _this.onPlotModelChange);
 
     _zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
@@ -218,10 +217,9 @@ var D3GraphView = function (options) {
     _zoom.el = null;
     _zoom = null;
 
-    _this.plotModel.off('change', _onPlotModelChange);
+    _this.plotModel.off('change', _this.onPlotModelChange);
 
     _onZoom = null;
-    _onPlotModelChange = null;
 
     _innerFrame = null;
     _margin = null;
@@ -244,27 +242,6 @@ var D3GraphView = function (options) {
     _this = null;
   }, _this.destroy);
 
-  /**
-   * Updates scale and translate from model and calls render.
-   */
-  _onPlotModelChange = function () {
-    var zoomScale,
-        zoomTranslate;
-
-    zoomScale = _this.plotModel.get('zoomScale');
-    zoomTranslate = _this.plotModel.get('zoomTranslate');
-
-    if (zoomScale !== null) {
-      _zoom.scale(_this.plotModel.get('zoomScale'));
-    }
-
-    if (zoomTranslate !== null) {
-      _zoom.translate(_this.plotModel.get('zoomTranslate'));
-    }
-
-    // update lines
-    _this.render({}, true);
-  };
 
   /**
    * Zoom event handler.
@@ -296,6 +273,28 @@ var D3GraphView = function (options) {
         zoomTranslate: _zoom.translate()
       }
     );
+  };
+
+  /**
+   * Updates scale and translate from model and calls render.
+   */
+  _this.onPlotModelChange = function () {
+    var zoomScale,
+        zoomTranslate;
+
+    zoomScale = _this.plotModel.get('zoomScale');
+    zoomTranslate = _this.plotModel.get('zoomTranslate');
+
+    if (zoomScale !== null) {
+      _zoom.scale(_this.plotModel.get('zoomScale'));
+    }
+
+    if (zoomTranslate !== null) {
+      _zoom.translate(_this.plotModel.get('zoomTranslate'));
+    }
+
+    // update lines
+    _this.render({}, true);
   };
 
   /**
