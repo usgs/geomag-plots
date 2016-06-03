@@ -1,6 +1,20 @@
 'use strict';
 
-var _iso8601;
+var _formatDate,
+    _iso8601;
+
+/**
+ * Format a date object.
+ *
+ * @param d {Date}
+ *        date to format.
+ */
+_formatDate = function (d) {
+  if (!d || typeof d.toISOString !== 'function') {
+    return '';
+  }
+  return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
+};
 
 
 _iso8601 = function (date) {
@@ -47,5 +61,6 @@ _iso8601 = function (date) {
 
 
 module.exports = {
+  formatDate: _formatDate,
   iso8601: _iso8601
 };
