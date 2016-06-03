@@ -14,6 +14,7 @@ require('./spec/ObservatoryFactoryTest');
 require('./spec/ScaleViewTest');
 require('./spec/TimeseriesCollectionViewTest');
 require('./spec/TimeseriesFactoryTest');
+require('./spec/TimeseriesManagerRequestTest');
 require('./spec/TimeseriesResponseTest');
 require('./spec/TimeseriesSelectViewTest');
 require('./spec/TimeseriesTest');
