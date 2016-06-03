@@ -99,7 +99,6 @@ var D3GraphView = function (options) {
       _yAxisEl,
       _yAxisLabel,
       _yEl,
-      _zoom,
 
       _onZoom;
 
@@ -195,27 +194,27 @@ var D3GraphView = function (options) {
 
     _this.plotModel.on('change', _this.onPlotModelChange);
 
-    _zoom = d3.behavior.zoom()
+    _this.zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
         .on('zoom', _onZoom);
-    _zoom.el = d3.select(_innerFrame);
-    _zoom.el.call(_zoom);
+    _this.zoom.el = d3.select(_innerFrame);
+    _this.zoom.el.call(_this.zoom);
   };
 
   /**
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
-    _zoom.on('zoom', null);
-    _zoom.el.on('mousedown.zoom', null);
-    _zoom.el.on('mousemove.zoom', null);
-    _zoom.el.on('dblclick.zoom', null);
-    _zoom.el.on('touchstart.zoom', null);
-    _zoom.el.on('wheel.zoom', null);
-    _zoom.el.on('mousewheel.zoom', null);
-    _zoom.el.on('MozMousePixelScroll.zoom', null);
-    _zoom.el = null;
-    _zoom = null;
+    _this.zoom.on('zoom', null);
+    _this.zoom.el.on('mousedown.zoom', null);
+    _this.zoom.el.on('mousemove.zoom', null);
+    _this.zoom.el.on('dblclick.zoom', null);
+    _this.zoom.el.on('touchstart.zoom', null);
+    _this.zoom.el.on('wheel.zoom', null);
+    _this.zoom.el.on('mousewheel.zoom', null);
+    _this.zoom.el.on('MozMousePixelScroll.zoom', null);
+    _this.zoom.el = null;
+    _this.zoom = null;
 
     _this.plotModel.off('change', _this.onPlotModelChange);
 
@@ -248,7 +247,7 @@ var D3GraphView = function (options) {
    */
   _onZoom = function () {
     var options,
-        t = _zoom.translate(),
+        t = _this.zoom.translate(),
         tx = t[0],
         ty = t[1],
         width,
@@ -266,11 +265,11 @@ var D3GraphView = function (options) {
     xSpan = xAxisScale(xExtent[1]) - xAxisScale(xExtent[0]);
     tx = Math.min(tx, 0);
     tx = Math.max(tx, width - xSpan);
-    _zoom.translate([tx, ty]);
+    _this.zoom.translate([tx, ty]);
     _this.plotModel.set(
       {
-        zoomScale: _zoom.scale(),
-        zoomTranslate: _zoom.translate()
+        zoomScale: _this.zoom.scale(),
+        zoomTranslate: _this.zoom.translate()
       }
     );
   };
@@ -286,11 +285,11 @@ var D3GraphView = function (options) {
     zoomTranslate = _this.plotModel.get('zoomTranslate');
 
     if (zoomScale !== null) {
-      _zoom.scale(_this.plotModel.get('zoomScale'));
+      _this.zoom.scale(_this.plotModel.get('zoomScale'));
     }
 
     if (zoomTranslate !== null) {
-      _zoom.translate(_this.plotModel.get('zoomTranslate'));
+      _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
     }
 
     // update lines
@@ -415,7 +414,7 @@ var D3GraphView = function (options) {
     yDomain = [yExtent[0] - yDomainPadding, yExtent[1] + yDomainPadding];
     yAxisScale.domain(yDomain);
     if (changed.hasOwnProperty('xAxisScale')) {
-      _zoom.x(xAxisScale);
+      _this.zoom.x(xAxisScale);
     }
 
     // redraw axes
