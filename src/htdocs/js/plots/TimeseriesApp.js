@@ -147,7 +147,7 @@ var TimeseriesApp = function (options) {
 
     _configView = TimeseriesSelectView({
       el: configEl,
-      model: _this.plotModel,
+      plotModel: _this.plotModel,
       channels: options.channels || ['H', 'E', 'Z', 'F'],
       config: _this.config
     });

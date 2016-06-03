@@ -89,6 +89,7 @@ var TimeseriesSelectView = function (options) {
     _channels = options.channels;
     _config = options.config;
     _observatories = options.observatories;
+    _this.plotModel = options.plotModel;
 
     el = _this.el;
     el.classList.add('timeseries-selectview');
@@ -154,7 +155,7 @@ var TimeseriesSelectView = function (options) {
 
     _scaleView = ScaleView({
       el: _this.el.querySelector('.scale-view'),
-      model: _this.model
+      model: _this.plotModel
     });
 
     // initial render

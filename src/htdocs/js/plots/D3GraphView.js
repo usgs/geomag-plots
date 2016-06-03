@@ -186,6 +186,7 @@ var D3GraphView = function (options) {
 
     _this.plotModel = options.plotModel || Model();
     _this.plotModel.on('change', _this.renderZoom);
+    _this.plotModel.on('change:yExtentSize', _this.render);
 
     _this.zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
@@ -209,6 +210,7 @@ var D3GraphView = function (options) {
     _this.zoom.el = null;
 
     _this.plotModel.off('change', _this.renderZoom);
+    _this.plotModel.off('change:yExtentSize', _this.render);
 
     _innerFrame = null;
     _margin = null;
