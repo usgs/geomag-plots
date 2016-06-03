@@ -184,12 +184,7 @@ var D3GraphView = function (options) {
     _xAxis = d3.svg.axis().orient('bottom').outerTickSize(0);
     _yAxis = d3.svg.axis().orient('left').outerTickSize(0);
 
-    if (options.plotModel) {
-      _this.plotModel = options.plotModel;
-    } else {
-      _this.plotModel = Model();
-    }
-
+    _this.plotModel = options.plotModel || Model();
     _this.plotModel.on('change', _this.renderZoom);
 
     _this.zoom = d3.behavior.zoom()
@@ -488,7 +483,7 @@ var D3GraphView = function (options) {
    * Updates scale and translate from model and calls render.
    */
   _this.renderZoom = function (changes) {
-    if (changes && ( changes.zoomScale || changes.zoomTranslate)) {
+    if (changes && (changes.zoomScale || changes.zoomTranslate)) {
       _this.zoom.scale(_this.plotModel.get('zoomScale'));
       _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
       // update lines
