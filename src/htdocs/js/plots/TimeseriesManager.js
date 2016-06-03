@@ -48,8 +48,7 @@ var TimeseriesManager = function (options) {
     // keep track of incomplete requests.
     _this.pendingRequests = [];
 
-    _this.config.on('change', _this.onConfigChange);
-    _this.timeseries.on('reset', _this.fetchData);
+    _this.config.on('change', 'onConfigChange', _this);
   };
 
 
@@ -85,11 +84,12 @@ var TimeseriesManager = function (options) {
         var id,
             model,
             observatory;
-        observatory = _this.observatories.get(observatoryId);
+        observatory = _this.observatorys.get(observatoryId);
         id = observatoryId + '_' + elementId;
         model = _this.timeseries.get(id);
         if (model === null) {
           model = Timeseries({
+            id: id,
             element: element,
             observatory: observatory,
             times: [],
@@ -129,7 +129,7 @@ var TimeseriesManager = function (options) {
       changes = _this.config.get();
     }
 
-    if ('channel' in changes || 'observatory' in changes) {
+    if ('element' in changes || 'observatory' in changes) {
       // update timeseries collection, then fetch data
       _this.createTimeseries();
       _this.fetchData();
@@ -164,17 +164,44 @@ var TimeseriesManager = function (options) {
     _this.timeseries.data().forEach(function (timeseries) {
       var request;
 
-      request = TimeseriesManagerRequest({
-        callback: _this.onFetchComplete,
+      request = _this.getTimeseriesRequest({
         endtime: endtime,
-        factory: _this.factory,
         sampling_period: sampling_period,
         starttime: starttime,
         timeseries: timeseries
       });
+
       _this.pendingRequests.push(request);
       request.start();
     });
+  };
+
+  /**
+   * Create a TimeseriesManagerRequest object.
+   *
+   * @param options {Object}
+   * @param options.endtime {Date}
+   *     time of last sample.
+   * @param options.sampling_period {Number}
+   *     requested sampling_period.
+   * @param options.starttime {Date}
+   *     time of first sample.
+   * @param options.timeseries {Timeseries}
+   *     timeseries to request.
+   */
+  _this.getTimeseriesRequest = function (options) {
+    var request;
+
+    request = TimeseriesManagerRequest({
+      callback: _this.onFetchComplete,
+      endtime: options.endtime,
+      factory: _this.factory,
+      sampling_period: options.sampling_period,
+      starttime: options.starttime,
+      timeseries: options.timeseries
+    });
+
+    return request;
   };
 
   /**
