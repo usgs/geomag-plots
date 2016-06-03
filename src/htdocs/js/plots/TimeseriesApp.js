@@ -47,15 +47,12 @@ var TimeseriesApp = function (options) {
   var _this,
       _initialize,
 
-      _autoUpdateTimeout,
       _configView,
       _descriptionEl,
       _observatories,
       _timeseriesEl,
       _timeseriesFactory,
       _timeseriesView,
-
-      _onAutoUpdate,
       _onConfigChange,
       _onTimeseriesError,
       _onTimeseriesLoad;
@@ -208,13 +205,6 @@ var TimeseriesApp = function (options) {
   };
 
   /**
-   * Auto update displayed data.
-   */
-  _onAutoUpdate = function () {
-    _onConfigChange();
-  };
-
-  /**
    * Configuration model "change" listener.
    */
   _onConfigChange = function () {
@@ -223,25 +213,17 @@ var TimeseriesApp = function (options) {
         seconds,
         observatory,
         starttime,
-        timemode,
-        autoUpdateTime = null;
+        timemode;
 
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
       OffCanvas.getOffCanvas().hide();
     }
 
-    if (_autoUpdateTimeout !== null) {
-      clearTimeout(_autoUpdateTimeout);
-      _autoUpdateTimeout = null;
-    }
-
     channel = _this.config.get('channel');
     observatory = _this.config.get('observatory');
     timemode = _this.config.get('timemode');
 
-
-    autoUpdateTime = _this.config.get('autoUpdateTime');
     endtime = _this.config.get('endtime');
     starttime = _this.config.get('starttime');
 
@@ -266,11 +248,6 @@ var TimeseriesApp = function (options) {
       errback: _onTimeseriesError,
       sampling_period: (seconds ? 1 : 60)
     });
-
-    // schedule auto update
-    if (autoUpdateTime !== null) {
-      _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
-    }
   };
 
   /**
