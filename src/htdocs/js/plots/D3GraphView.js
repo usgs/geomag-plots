@@ -190,7 +190,7 @@ var D3GraphView = function (options) {
       _this.plotModel = Model();
     }
 
-    _this.plotModel.on('change', _this.onPlotModelChange);
+    _this.plotModel.on('change', _this.renderZoom);
 
     _this.zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
@@ -213,7 +213,7 @@ var D3GraphView = function (options) {
     _this.zoom.el.on('MozMousePixelScroll.zoom', null);
     _this.zoom.el = null;
 
-    _this.plotModel.off('change', _this.onPlotModelChange);
+    _this.plotModel.off('change', _this.renderZoom);
 
     _innerFrame = null;
     _margin = null;
@@ -293,28 +293,6 @@ var D3GraphView = function (options) {
    */
   _this.getYExtent = function () {
     return _this.model.get('yExtent');
-  };
-
-  /**
-   * Updates scale and translate from model and calls render.
-   */
-  _this.onPlotModelChange = function () {
-    var zoomScale,
-        zoomTranslate;
-
-    zoomScale = _this.plotModel.get('zoomScale');
-    zoomTranslate = _this.plotModel.get('zoomTranslate');
-
-    if (zoomScale !== null) {
-      _this.zoom.scale(_this.plotModel.get('zoomScale'));
-    }
-
-    if (zoomTranslate !== null) {
-      _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
-    }
-
-    // update lines
-    _this.render({}, true);
   };
 
   /**
@@ -504,6 +482,18 @@ var D3GraphView = function (options) {
 
     // ask subclass to (re)render
     _this.plot(originalChanged);
+  };
+
+  /**
+   * Updates scale and translate from model and calls render.
+   */
+  _this.renderZoom = function (changes) {
+    if (changes && ( changes.zoomScale || changes.zoomTranslate)) {
+      _this.zoom.scale(_this.plotModel.get('zoomScale'));
+      _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
+      // update lines
+      _this.render({}, true);
+    }
   };
 
   /**
