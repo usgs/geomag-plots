@@ -6,6 +6,7 @@ mocha.setup('bdd');
 
 
 // Add each test class here as they are implemented
+require('./spec/D3GraphViewTest');
 require('./spec/ExampleTest');
 
 require('./spec/ObservatoryFactoryTest');
