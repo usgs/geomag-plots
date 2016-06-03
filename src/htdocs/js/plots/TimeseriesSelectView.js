@@ -198,8 +198,8 @@ var TimeseriesSelectView = function (options) {
    * Time radio and text input change handler.
    */
   _onTimeChange = function (e) {
-    var endTime,
-        startTime;
+    var endtime,
+        starttime;
 
     if (_timeCustom.checked) {
       _timeEl.classList.add('custom');
@@ -208,39 +208,51 @@ var TimeseriesSelectView = function (options) {
         return;
       }
 
-      endTime = _parseDate(_endTime.value);
-      startTime = _parseDate(_startTime.value);
+      endtime = _parseDate(_endTime.value);
+      starttime = _parseDate(_startTime.value);
 
-      if (_validateStartTime(startTime) &&
-          _validateEndTime(endTime) &&
-          _timeOrder(startTime, endTime, e) &&
-          _validateRange(startTime, endTime)){
+      if (_validateStartTime(starttime) &&
+          _validateEndTime(endtime) &&
+          _timeOrder(starttime, endtime) &&
+          _validateRange(starttime, endtime)){
         _config.set({
-          endtime: endTime,
-          starttime: startTime,
+          autoUpdateTime: null,
+          timeIncrement: ((endtime.getTime() - starttime.getTime()) / 2),
+          endtime: endtime,
+          starttime: starttime,
           timemode: 'custom'
         });
       }
     } else {
       _timeEl.classList.remove('custom');
       if (_timeRealtime.checked) {
+        endtime = _roundUpToNearestNMinutes(new Date(), 1);
+        starttime = new Date(endtime.getTime() - 900000);
         _config.set({
+          autoUpdateTime: 300000,
+          timeIncrement: 450000,
+          endtime: endtime,
+          starttime: starttime,
           timemode: 'realtime'
         });
       } else if (_timePastday.checked) {
+        endtime = _roundUpToNearestNMinutes(new Date(), 5);
+        starttime = new Date(endtime.getTime() - 86400000);
         _config.set({
+          autoUpdateTime: 300000,
+          timeIncrement: 43200000,
+          endtime: endtime,
+          starttime: starttime,
           timemode: 'pastday'
         });
       }
     }
-
   };
 
   _onTimeIncrement = function (e) {
     var direction,
         endtime,
         increment,
-        roundValue,
         starttime,
         timemode;
 
@@ -259,21 +271,11 @@ var TimeseriesSelectView = function (options) {
       direction = -1;
     }
 
-    if (timemode === 'pastday') {
-      roundValue = 5;
-    } else {
-      roundValue = 1;
-    }
+    increment = direction * _config.get('timeIncrement');
 
-    increment = direction * ((endtime.getTime() - starttime.getTime()) / 2);
-    starttime = _roundUpToNearestNMinutes(
-      new Date(starttime.getTime() + increment),
-      roundValue
-    );
-    endtime = _roundUpToNearestNMinutes(
-      new Date(endtime.getTime() + increment),
-      roundValue
-    );
+    starttime = new Date(starttime.getTime() + increment);
+
+    endtime = new Date(endtime.getTime() + increment);
 
     _config.set({
       timemode: 'custom',
@@ -283,7 +285,6 @@ var TimeseriesSelectView = function (options) {
 
     _startTime.value = _formatDate(starttime);
     _endTime.value = _formatDate(endtime);
-
   };
 
 
@@ -361,11 +362,9 @@ var TimeseriesSelectView = function (options) {
    * @return [{Date}, {Date}]
    *         start time and end time in proper order.
    */
-  _timeOrder = function(start, end, e) {
+  _timeOrder = function(start, end) {
     if (start > end) {
-      if (e.target !== _startTime) {
-        _setTimeError('Start Time must come before End Time.');
-      }
+      _setTimeError('Start Time must come before End Time.');
       return false;
     } else {
       _setTimeError(null);
@@ -510,6 +509,10 @@ var TimeseriesSelectView = function (options) {
 
     _this = null;
   }, _this.destroy);
+
+  _this.onTimeChange = function () {
+    _onTimeChange({});
+  };
 
   /**
    * Update controls based on current model.
