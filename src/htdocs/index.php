@@ -5,11 +5,7 @@ if (!isset($TEMPLATE)) {
   $TITLE = 'Geomagnetism Plots';
   $NAVIGATION = true;
 
-  $HEAD = '<link rel="stylesheet" href="css/index.css"/>
-      <link rel="stylesheet" href="https://fonts.googleapis.com/icon?
-      family=Material+Icons|Merriweather:400,400italic,700|
-      Source+Sans+Pro:400,300,700"/>
-  ';
+  $HEAD = '<link rel="stylesheet" href="css/index.css"/>';
   $FOOT = '
     <script>
       var _CONFIG = {
