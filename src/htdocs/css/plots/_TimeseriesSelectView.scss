@@ -39,18 +39,6 @@
 
 .timeseries-time {
   margin-bottom: 1.5em;
-
-  &.custom > .time-input {
-    display: block;
-  }
-
-  > .time-input {
-    display: none;
-
-    > label {
-      margin: 1em 0;
-    }
-  }
 }
 
 
