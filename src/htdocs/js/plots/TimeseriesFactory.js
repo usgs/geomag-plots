@@ -8,7 +8,7 @@ var Formatter = require('util/Formatter'),
 
 
 var _DEFAULTS = {
-  url: 'http://geomag.usgs.gov//ws/edge/'
+  url: 'http://geomag.usgs.gov/ws/edge/'
 };
 
 
@@ -74,7 +74,7 @@ var TimeseriesFactory = function (options) {
     callback = options.callback || function () {};
     errback = options.errback || function () {};
 
-    Xhr.ajax({
+    return Xhr.ajax({
       url: _url,
       data: data,
       success: function (response) {
