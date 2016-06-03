@@ -39,19 +39,6 @@ var __roundUpToNearestNMinutes = function (dt, n) {
   return new Date(Date.UTC(y, m, d, h, i));
 };
 
-/**
- * Format a date object.
- *
- * @param d {Date}
- *        date to format.
- */
-var __formatDate = function (d) {
-  if (!d || typeof d.toISOString !== 'function') {
-    return '';
-  }
-  return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
-};
-
 
 var _DEFAULTS = {
   obsMetaUrl: '/map/observatories.geojson.php',
@@ -97,8 +84,7 @@ var TimeseriesApp = function (options) {
       _onAutoUpdate,
       _onConfigChange,
       _onTimeseriesError,
-      _onTimeseriesLoad,
-      _updateDescription;
+      _onTimeseriesLoad;
 
   _this = View(options);
 
@@ -147,7 +133,6 @@ var TimeseriesApp = function (options) {
         }
       });
     }
-    _observatories.on('reset', _updateDescription);
 
     _timeseries = options.timeseries || Collection();
 
@@ -313,49 +298,8 @@ var TimeseriesApp = function (options) {
     });
     // update collection
     _timeseries.reset(timeseries);
-    _updateDescription();
     // done loading
     _timeseriesEl.classList.remove('loading');
-  };
-
-  /**
-   * Update description of data being shown.
-   */
-  _updateDescription = function () {
-    var channel = _this.config.get('channel'),
-        description,
-        endtime = _this.config.get('endtime'),
-        obs,
-        observatory = _this.config.get('observatory'),
-        starttime = _this.config.get('starttime'),
-        timeDescription,
-        timemode = _this.config.get('timemode'),
-        title;
-
-    if (observatory !== null) {
-      title = observatory;
-      description = 'all observatory channels';
-      // try to load observatory name, collection may not be loaded yet
-      obs = _observatories.get(observatory);
-      if (obs !== null) {
-        title = title + ' ' + obs.get('name');
-      }
-      title = title + ' Observatory';
-    } else if (channel !== null) {
-      title = channel + ' Channel';
-      description = 'all observatories with this channel.';
-    }
-
-    if (timemode === 'realtime') {
-      timeDescription = 'Past 15 Minutes';
-    } else if (timemode === 'pastday') {
-      timeDescription = 'Past day';
-    } else { // custom
-      timeDescription = __formatDate(starttime) + ' - ' + __formatDate(endtime);
-    }
-
-    _descriptionEl.innerHTML = '<h2>' + title + '</h2>' +
-        '<p>' + timeDescription + ', ' + description + '</p>';
   };
 
   /**
@@ -365,8 +309,6 @@ var TimeseriesApp = function (options) {
     _this.config.off('change', _onConfigChange);
     _configView.destroy();
     _timeseriesView.destroy();
-
-    _observatories.off('reset', _updateDescription);
 
     _configView = null;
     _descriptionEl = null;
