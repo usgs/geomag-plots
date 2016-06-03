@@ -98,9 +98,7 @@ var D3GraphView = function (options) {
       _yAxis,
       _yAxisEl,
       _yAxisLabel,
-      _yEl,
-
-      _onZoom;
+      _yEl;
 
   _this = View(options);
 
@@ -196,7 +194,7 @@ var D3GraphView = function (options) {
 
     _this.zoom = d3.behavior.zoom()
         .scaleExtent([1, 50])
-        .on('zoom', _onZoom);
+        .on('zoom', _this.onZoom);
     _this.zoom.el = d3.select(_innerFrame);
     _this.zoom.el.call(_this.zoom);
   };
@@ -214,11 +212,8 @@ var D3GraphView = function (options) {
     _this.zoom.el.on('mousewheel.zoom', null);
     _this.zoom.el.on('MozMousePixelScroll.zoom', null);
     _this.zoom.el = null;
-    _this.zoom = null;
 
     _this.plotModel.off('change', _this.onPlotModelChange);
-
-    _onZoom = null;
 
     _innerFrame = null;
     _margin = null;
@@ -243,9 +238,89 @@ var D3GraphView = function (options) {
 
 
   /**
+   * Format tooltip content.
+   *
+   * @param el {D3Element}
+   *        tooltip container element.
+   * @param data {Array<Object|Array>}
+   *        data passed to showTooltip.
+   *        this implementation expects objects (or arrays of objects):
+   *        obj.class {String} class attribute for text|tspan.
+   *        obj.text {String} content for text|tspan.
+   */
+  _this.formatTooltip = function (el, data) {
+    var y;
+
+    // add content to tooltip
+    data = data.map(function (line) {
+      var text = el.append('text');
+      if (typeof line.forEach === 'function') {
+        // array of components:
+        line.forEach(function (l) {
+          text.append('tspan').attr('class', l.class || '').text(l.text);
+        });
+      } else {
+        text.attr('class', line.class || '').text(line.text);
+      }
+      return text;
+    });
+    // position lines in tooltip
+    y = 0;
+    data.forEach(function (line) {
+      var bbox = line.node().getBBox();
+      y += bbox.height;
+      line.attr('y', y);
+    });
+  };
+
+  /**
+   * Compute X axis domain.
+   *
+   * @return {Array}
+   *         data domain.
+   * @see d3.extent
+   */
+  _this.getXExtent = function () {
+    return _this.model.get('xExtent');
+  };
+
+  /**
+   * Compute Y axis domain.
+   *
+   * @return {Array}
+   *         data domain.
+   * @see d3.extent
+   */
+  _this.getYExtent = function () {
+    return _this.model.get('yExtent');
+  };
+
+  /**
+   * Updates scale and translate from model and calls render.
+   */
+  _this.onPlotModelChange = function () {
+    var zoomScale,
+        zoomTranslate;
+
+    zoomScale = _this.plotModel.get('zoomScale');
+    zoomTranslate = _this.plotModel.get('zoomTranslate');
+
+    if (zoomScale !== null) {
+      _this.zoom.scale(_this.plotModel.get('zoomScale'));
+    }
+
+    if (zoomTranslate !== null) {
+      _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
+    }
+
+    // update lines
+    _this.render({}, true);
+  };
+
+  /**
    * Zoom event handler.
    */
-  _onZoom = function () {
+  _this.onZoom = function () {
     var options,
         t = _this.zoom.translate(),
         tx = t[0],
@@ -275,25 +350,10 @@ var D3GraphView = function (options) {
   };
 
   /**
-   * Updates scale and translate from model and calls render.
+   * Method for subclasses to plot lines.
    */
-  _this.onPlotModelChange = function () {
-    var zoomScale,
-        zoomTranslate;
-
-    zoomScale = _this.plotModel.get('zoomScale');
-    zoomTranslate = _this.plotModel.get('zoomTranslate');
-
-    if (zoomScale !== null) {
-      _this.zoom.scale(_this.plotModel.get('zoomScale'));
-    }
-
-    if (zoomTranslate !== null) {
-      _this.zoom.translate(_this.plotModel.get('zoomTranslate'));
-    }
-
-    // update lines
-    _this.render({}, true);
+  _this.plot = function (/*el*/) {
+    // plot lines
   };
 
   /**
@@ -444,71 +504,6 @@ var D3GraphView = function (options) {
 
     // ask subclass to (re)render
     _this.plot(originalChanged);
-  };
-
-  /**
-   * Compute X axis domain.
-   *
-   * @return {Array}
-   *         data domain.
-   * @see d3.extent
-   */
-  _this.getXExtent = function () {
-    return _this.model.get('xExtent');
-  };
-
-  /**
-   * Compute Y axis domain.
-   *
-   * @return {Array}
-   *         data domain.
-   * @see d3.extent
-   */
-  _this.getYExtent = function () {
-    return _this.model.get('yExtent');
-  };
-
-  /**
-   * Method for subclasses to plot lines.
-   */
-  _this.plot = function (/*el*/) {
-    // plot lines
-  };
-
-  /**
-   * Format tooltip content.
-   *
-   * @param el {D3Element}
-   *        tooltip container element.
-   * @param data {Array<Object|Array>}
-   *        data passed to showTooltip.
-   *        this implementation expects objects (or arrays of objects):
-   *        obj.class {String} class attribute for text|tspan.
-   *        obj.text {String} content for text|tspan.
-   */
-  _this.formatTooltip = function (el, data) {
-    var y;
-
-    // add content to tooltip
-    data = data.map(function (line) {
-      var text = el.append('text');
-      if (typeof line.forEach === 'function') {
-        // array of components:
-        line.forEach(function (l) {
-          text.append('tspan').attr('class', l.class || '').text(l.text);
-        });
-      } else {
-        text.attr('class', line.class || '').text(line.text);
-      }
-      return text;
-    });
-    // position lines in tooltip
-    y = 0;
-    data.forEach(function (line) {
-      var bbox = line.node().getBBox();
-      y += bbox.height;
-      line.attr('y', y);
-    });
   };
 
   /**
