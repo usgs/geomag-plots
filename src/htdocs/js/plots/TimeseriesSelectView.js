@@ -1,7 +1,9 @@
 'use strict';
 
+
 var Collection = require('mvc/Collection'),
     CompactSelectView = require('plots/CompactSelectView'),
+    Formatter = require('util/Formatter'),
     ScaleView = require('plots/ScaleView'),
     Util = require('util/Util'),
     View = require('mvc/View');
@@ -36,6 +38,9 @@ var TimeseriesSelectView = function (options) {
   var _this,
       _initialize,
       // variables
+      _autoUpdateTimeout,
+      _channels,
+      _channelEl,
       _config,
       _elements,
       _elementsEl,
@@ -59,7 +64,9 @@ var TimeseriesSelectView = function (options) {
       _timeRealtime,
       _timeUpdate,
       // methods
-      _formatDate,
+      _onAutoUpdate,
+      _onChannelClick,
+      _onObservatoryClick,
       _onTimeChange,
       _onTimeIncrement,
       _parseDate,
@@ -79,8 +86,10 @@ var TimeseriesSelectView = function (options) {
     options = Util.extend({}, DEFAULTS, options);
     _config = options.config;
     _elements = options.elements || Collection();
+
     _observatories = options.observatories || Collection();
     _this.plotModel = options.plotModel;
+    _autoUpdateTimeout = null;
 
     el = _this.el;
     el.classList.add('timeseries-selectview');
@@ -182,71 +191,38 @@ var TimeseriesSelectView = function (options) {
 
 
   /**
-   * Format a date object.
-   *
-   * @param d {Date}
-   *        date to format.
+   * Channel element delegated click handler.
    */
-  _formatDate = function (d) {
-    if (!d || typeof d.toISOString !== 'function') {
-      return '';
+  _onChannelClick = function (e) {
+    var id = e.target.getAttribute('data-id');
+    e.preventDefault();
+    if (id) {
+      _config.set({
+        channel: id,
+        observatory: null
+      });
     }
-    return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
+  };
+
+  /**
+   * Observatory element delegated click handler.
+   */
+  _onObservatoryClick = function (e) {
+    var id = e.target.getAttribute('data-id');
+    e.preventDefault();
+    if (id) {
+      _config.set({
+        channel: null,
+        observatory: id
+      });
+    }
   };
 
   /**
    * Time radio and text input change handler.
    */
-  _onTimeChange = function (e) {
-    var endtime,
-        starttime;
-
-    if (_timeCustom.checked) {
-      _timeEl.classList.add('custom');
-      if (e.target === _timeCustom) {
-        // user selected custom, allow to edit times
-        return;
-      }
-
-      endtime = _parseDate(_endTime.value);
-      starttime = _parseDate(_startTime.value);
-
-      if (_validateStartTime(starttime) &&
-          _validateEndTime(endtime) &&
-          _timeOrder(starttime, endtime) &&
-          _validateRange(starttime, endtime)){
-        _config.set({
-          autoUpdateTime: null,
-          timeIncrement: ((endtime.getTime() - starttime.getTime()) / 2),
-          endtime: endtime,
-          starttime: starttime,
-          timemode: 'custom'
-        });
-      }
-    } else {
-      _timeEl.classList.remove('custom');
-      if (_timeRealtime.checked) {
-        endtime = _roundUpToNearestNMinutes(new Date(), 1);
-        starttime = new Date(endtime.getTime() - 900000);
-        _config.set({
-          autoUpdateTime: 300000,
-          timeIncrement: 450000,
-          endtime: endtime,
-          starttime: starttime,
-          timemode: 'realtime'
-        });
-      } else if (_timePastday.checked) {
-        endtime = _roundUpToNearestNMinutes(new Date(), 5);
-        starttime = new Date(endtime.getTime() - 86400000);
-        _config.set({
-          autoUpdateTime: 300000,
-          timeIncrement: 43200000,
-          endtime: endtime,
-          starttime: starttime,
-          timemode: 'pastday'
-        });
-      }
-    }
+  _onTimeChange = function () {
+    _this.onTimeChange();
   };
 
   _onTimeIncrement = function (e) {
@@ -262,7 +238,6 @@ var TimeseriesSelectView = function (options) {
 
     if (!_timeCustom.checked) {
       _timeCustom.checked = true;
-      _timeEl.classList.add('custom');
     }
 
     if (e.target === _timeNext) {
@@ -271,20 +246,21 @@ var TimeseriesSelectView = function (options) {
       direction = -1;
     }
 
-    increment = direction * _config.get('timeIncrement');
+    increment = direction * ((endtime.getTime() - starttime.getTime()) / 2);
 
     starttime = new Date(starttime.getTime() + increment);
 
     endtime = new Date(endtime.getTime() + increment);
 
     _config.set({
+      autoUpdateTime: null,
       timemode: 'custom',
       starttime: starttime,
       endtime: endtime
     });
 
-    _startTime.value = _formatDate(starttime);
-    _endTime.value = _formatDate(endtime);
+    _startTime.value = Formatter.formatDate(starttime);
+    _endTime.value = Formatter.formatDate(endtime);
   };
 
 
@@ -497,7 +473,8 @@ var TimeseriesSelectView = function (options) {
     _validateStartTime = null;
 
     // methods
-    _formatDate = null;
+    _onChannelClick = null;
+    _onObservatoryClick = null;
     _onTimeChange = null;
     _onTimeIncrement = null;
     _parseDate = null;
@@ -511,7 +488,54 @@ var TimeseriesSelectView = function (options) {
   }, _this.destroy);
 
   _this.onTimeChange = function () {
-    _onTimeChange({});
+    var autoUpdateTime,
+        endtime,
+        starttime;
+
+    if (_autoUpdateTimeout !== null) {
+      clearTimeout(_autoUpdateTimeout);
+      _autoUpdateTimeout = null;
+    }
+
+    if (_timeCustom.checked) {
+      autoUpdateTime = null;
+      endtime = _parseDate(_endTime.value);
+      starttime = _parseDate(_startTime.value);
+
+      if (_validateStartTime(starttime) &&
+          _validateEndTime(endtime) &&
+          _timeOrder(starttime, endtime) &&
+          _validateRange(starttime, endtime)){
+        _config.set({
+          endtime: endtime,
+          starttime: starttime,
+          timemode: 'custom'
+        });
+      }
+    } else {
+      autoUpdateTime = 300000;
+      if (_timeRealtime.checked) {
+        endtime = _roundUpToNearestNMinutes(new Date(), 1);
+        starttime = new Date(endtime.getTime() - 900000);
+        _config.set({
+          endtime: endtime,
+          starttime: starttime,
+          timemode: 'realtime'
+        });
+      } else if (_timePastday.checked) {
+        endtime = _roundUpToNearestNMinutes(new Date(), 5);
+        starttime = new Date(endtime.getTime() - 86400000);
+        _config.set({
+          endtime: endtime,
+          starttime: starttime,
+          timemode: 'pastday'
+        });
+      }
+    }
+
+    if (autoUpdateTime !== null) {
+      _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
+    }
   };
 
   /**
@@ -525,8 +549,23 @@ var TimeseriesSelectView = function (options) {
         startTime = _config.get('starttime'),
         timeMode = _config.get('timemode');
 
-    _endTime.value = _formatDate(endTime);
-    _startTime.value = _formatDate(startTime);
+    _channelEl.innerHTML = _channels.map(function (channel) {
+      return '<a href="#" data-id="' + channel + '"' +
+          (channel === selectedChannel ?
+              ' class="selected"' : '') +
+          '>' + channel + '</a>';
+    }).join('');
+
+    _observatoryEl.innerHTML = Object.keys(_observatories.getIds()).
+        map(function (observatory) {
+          return '<a href="#" data-id="' + observatory + '"' +
+              (observatory === selectedObservatory ?
+                  ' class="selected"' : '') +
+              '>' + observatory + '</a>';
+        }).join('');
+
+    _endTime.value = Formatter.formatDate(endTime);
+    _startTime.value = Formatter.formatDate(startTime);
     if (timeMode === 'realtime') {
       _timeRealtime.checked = true;
       _timeNext.disabled = true;
