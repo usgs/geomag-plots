@@ -49,6 +49,7 @@ var TimeseriesApp = function (options) {
 
       _configView,
       _descriptionEl,
+      _errorMessageEl,
       _formatErrorMessage,
       _model,
       _observatories,
@@ -83,6 +84,7 @@ var TimeseriesApp = function (options) {
     }
 
     _descriptionEl = el.querySelector('.description');
+    _errorMessageEl = _this.el.querySelector('.message');
     viewEl = el.querySelector('.view');
 
     _this.config = Model(Util.extend({
@@ -229,6 +231,7 @@ var TimeseriesApp = function (options) {
 
     _configView = null;
     _descriptionEl = null;
+    _errorMessageEl = null;
     _formatErrorMessage = null;
     _model = null;
     _observatories = null;
