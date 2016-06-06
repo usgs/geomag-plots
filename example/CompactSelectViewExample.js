@@ -18,6 +18,8 @@ collection = Collection([
   {id: 6, properties: {name: 'Option 6'}}
 ]);
 
+collection.select(collection.data()[0]);
+
 view = CompactSelectView({
   collection: collection,
   el: document.querySelector('#example')
