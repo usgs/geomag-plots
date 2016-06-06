@@ -78,15 +78,7 @@ var TimeseriesFactory = function (options) {
       url: _url,
       data: data,
       success: function (response) {
-        var responseObject;
-
-        try {
-          responseObject = JSON.parse(response);
-        } catch (e) {
-          responseObject = response;
-        }
-
-        callback(TimeseriesResponse(responseObject));
+        callback(TimeseriesResponse(response));
       },
       error: errback
     });
