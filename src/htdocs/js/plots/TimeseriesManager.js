@@ -24,7 +24,7 @@ var _DEFAULTS = {};
  *     collection of elements.
  * @param options.factory {TimeseriesFactory}
  *     factory used to fetch data.
- * @param options.observatorys {Collection}
+ * @param options.observatories {Collection}
  *     collection of observatories.
  * @param options.timeseries {Collection}
  *     collection of Timeseries objects to manage.
@@ -42,7 +42,7 @@ var TimeseriesManager = function (options) {
     _this.config = options.config || Model();
     _this.elements = options.elements || Collection();
     _this.factory = options.factory || TimeseriesFactory();
-    _this.observatorys = options.observatorys || Collection();
+    _this.observatories = options.observatories || Collection();
     _this.timeseries = options.timeseries || Collection();
 
     // keep track of incomplete requests.
@@ -69,22 +69,22 @@ var TimeseriesManager = function (options) {
   _this.createTimeseries = function () {
     var elements,
         models,
-        observatorys;
+        observatories;
 
     // get current configuration
     elements = _this.config.get('elements') || [];
-    observatorys = _this.config.get('observatorys') || [];
+    observatories = _this.config.get('observatories') || [];
 
     // create models
     models = [];
     elements.forEach(function (elementId) {
       var element;
       element = _this.elements.get(elementId);
-      observatorys.forEach(function (observatoryId) {
+      observatories.forEach(function (observatoryId) {
         var id,
             model,
             observatory;
-        observatory = _this.observatorys.get(observatoryId);
+        observatory = _this.observatories.get(observatoryId);
         id = observatoryId + '_' + elementId;
         model = _this.timeseries.get(id);
         if (model === null) {
@@ -129,7 +129,7 @@ var TimeseriesManager = function (options) {
       changes = _this.config.get();
     }
 
-    if ('elements' in changes || 'observatorys' in changes) {
+    if ('elements' in changes || 'observatories' in changes) {
       // update timeseries collection, then fetch data
       _this.createTimeseries();
       _this.fetchData();

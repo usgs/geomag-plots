@@ -55,7 +55,7 @@ describe('plots/TimeseriesManager', function () {
     beforeEach(function () {
       manager = TimeseriesManager();
       sinon.stub(manager, 'fetchData', function () {});
-      manager.observatorys.reset([
+      manager.observatories.reset([
         {
           id: 'A',
           geometry: {
@@ -81,7 +81,7 @@ describe('plots/TimeseriesManager', function () {
       expect(manager.timeseries.data().length).to.equal(0);
       manager.config.set({
         elements: ['A', 'B'],
-        observatorys: ['A']
+        observatories: ['A']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -95,14 +95,14 @@ describe('plots/TimeseriesManager', function () {
       expect(manager.timeseries.data().length).to.equal(0);
       manager.config.set({
         elements: ['A', 'B'],
-        observatorys: ['A']
+        observatories: ['A']
       }, {silent: true});
       manager.createTimeseries();
 
       existing = manager.timeseries.get('A_A');
       manager.config.set({
         elements: ['A'],
-        observatorys: ['A', 'B']
+        observatories: ['A', 'B']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -114,7 +114,7 @@ describe('plots/TimeseriesManager', function () {
     it('sorts by observatory latitude descending', function () {
       manager.config.set({
         elements: ['A'],
-        observatorys: ['A', 'B']
+        observatories: ['A', 'B']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -179,13 +179,13 @@ describe('plots/TimeseriesManager', function () {
       expect(manager.createTimeseries.callCount).to.equal(1);
       expect(manager.fetchData.callCount).to.equal(1);
       manager.onConfigChange({
-        observatorys: true
+        observatories: true
       });
       expect(manager.createTimeseries.callCount).to.equal(2);
       expect(manager.fetchData.callCount).to.equal(2);
       manager.onConfigChange({
         elements: true,
-        observatorys: true
+        observatories: true
       });
       expect(manager.createTimeseries.callCount).to.equal(3);
       expect(manager.fetchData.callCount).to.equal(3);
