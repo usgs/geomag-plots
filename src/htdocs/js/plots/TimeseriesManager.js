@@ -235,19 +235,37 @@ var TimeseriesManager = function (options) {
    *     }
    */
   _this.sortByObservatoryLatitudeDescending = function (a, b) {
-    var aLat,
-        bLat;
+    var aEl,
+        aLat,
+        aObs,
+        bEl,
+        bLat,
+        bObs;
 
-    aLat = a.get('observatory').geometry.coords[1];
-    bLat = b.get('observatory').geometry.coords[1];
 
+    aObs = a.get('observatory');
+    bObs = b.get('observatory');
+
+    if (!aObs || !bObs) {
+      return 0;
+    }
+
+    aLat = aObs.geometry.coordinates[1];
+    bLat = bObs.geometry.coordinates[1];
     if (aLat < bLat) {
       return 1;
     } else if (aLat > bLat) {
       return -1;
-    } else {
-      return 0;
     }
+
+    aEl = a.get('element').id;
+    bEl = b.get('element').id;
+    if (aEl < bEl) {
+      return -1;
+    } else if (aEl > bEl) {
+      return 1;
+    }
+    return 0;
   };
 
 

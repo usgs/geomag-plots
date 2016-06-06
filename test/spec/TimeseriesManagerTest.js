@@ -59,14 +59,14 @@ describe('plots/TimeseriesManager', function () {
         {
           id: 'A',
           geometry: {
-            coords: [0, 1]
+            coordinates: [0, 1]
           }
         },
         {
           id: 'B',
           geometry: {
             // b latitude is greater than a latitude
-            coords: [0, 2]
+            coordinates: [0, 2]
           }
         }
       ], {silent: true});
@@ -308,14 +308,14 @@ describe('plots/TimeseriesManager', function () {
       lowerTimeseries = Model({
         observatory: {
           geometry: {
-            coords: [0, 1]
+            coordinates: [0, 1]
           }
         }
       });
       upperTimeseries = Model({
         observatory: {
           geometry: {
-            coords: [0, 2]
+            coordinates: [0, 2]
           }
         }
       });
