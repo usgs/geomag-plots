@@ -26,7 +26,6 @@ var TimeseriesView = function (options) {
       _initialize,
 
       _errorLoading,
-      _formatErrorMessage,
       _height,
       _metaViewEl,
       _onTimeseriesError,
@@ -141,7 +140,6 @@ var TimeseriesView = function (options) {
     _trace.destroy();
 
     _errorLoading = null;
-    _formatErrorMessage = null;
     _height = null;
     _metaViewEl = null;
     _onTimeseriesError = null;
@@ -203,18 +201,7 @@ var TimeseriesView = function (options) {
       _traceViewEl.innerHTML =
         '<div class="alert error">' +
           '<p>Failed to load timeseries data.</p>' +
-          '<pre class="response-text">' +
-             _formatErrorMessage(_errorLoading) +
-          '</pre>' +
         '</div>';
-    }
-  };
-
-  _formatErrorMessage = function (text) {
-    try {
-      return JSON.stringify(JSON.parse(text), null, '  ');
-    } catch (e) {
-      return text;
     }
   };
 
