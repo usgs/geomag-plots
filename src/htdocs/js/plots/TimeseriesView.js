@@ -1,6 +1,7 @@
 'use strict';
 
-var Util = require('util/Util'),
+var Model = require('mvc/Model'),
+    Util = require('util/Util'),
     View = require('mvc/View'),
 
     D3TimeseriesView = require('plots/D3TimeseriesView');
@@ -24,10 +25,14 @@ var TimeseriesView = function (options) {
   var _this,
       _initialize,
 
+      _errorLoading,
+      _formatErrorMessage,
       _height,
-      _metaView,
+      _metaViewEl,
+      _onTimeseriesError,
       _timeseries,
       _trace,
+      _traceViewEl,
       _width,
       _yExtent,
 
@@ -37,12 +42,13 @@ var TimeseriesView = function (options) {
   _this = View(options);
 
   _initialize = function (options) {
-    var el,
-        traceView;
+    var el;
 
+    _errorLoading = options.errorLoading || null;
     _height = options.height || 240;
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
+    _this.model = options.plotModel || Model();
 
     el = _this.el;
     el.classList.add('timeseries-view');
@@ -51,12 +57,12 @@ var TimeseriesView = function (options) {
         '<div class="meta-view"></div>' +
         '<div class="trace-view"></div>';
 
-    _metaView = el.querySelector('.meta-view');
-    traceView = el.querySelector('.trace-view');
+    _metaViewEl = el.querySelector('.meta-view');
+    _traceViewEl = el.querySelector('.trace-view');
 
     _trace = D3TimeseriesView({
-      plotModel: options.plotModel,
-      el: traceView,
+      plotModel: _this.model,
+      el: _traceViewEl,
       data: _timeseries,
       // title: meta.observatory,
       height: _height,
@@ -134,7 +140,20 @@ var TimeseriesView = function (options) {
     _timeseries.off('change', _this.render);
     _trace.destroy();
 
+    _errorLoading = null;
+    _formatErrorMessage = null;
+    _height = null;
+    _metaViewEl = null;
+    _onTimeseriesError = null;
+    _timeseries = null;
     _trace = null;
+    _traceViewEl = null;
+    _width = null;
+    _yExtent = null;
+    _yAxisFormat = null;
+    _yAxisTicks = null;
+
+    _initialize = null;
     _this = null;
   }, _this.destroy);
 
@@ -160,11 +179,43 @@ var TimeseriesView = function (options) {
       element.properties.abbreviation :
       element.id;
 
-    _metaView.innerHTML =
+    _metaViewEl.innerHTML =
         '<span class="observatory">' + observatory.id + '</span>' +
         '<span class="channel">' + elementDisplay + '</span>';
 
-    _trace.render();
+    // render D3TimeseriesView, or xhr request error
+    if (_errorLoading) {
+      _onTimeseriesError();
+    } else {
+      _trace.render();
+    }
+  };
+
+
+  /**
+   * Errback for TimeseriesFactory.
+   */
+  _onTimeseriesError = function () {
+    var config;
+
+    config = _this.model.get();
+    if (config) {
+      _traceViewEl.innerHTML =
+        '<div class="alert error">' +
+          '<p>Failed to load timeseries data.</p>' +
+          '<pre class="response-text">' +
+             _formatErrorMessage(_errorLoading) +
+          '</pre>' +
+        '</div>';
+    }
+  };
+
+  _formatErrorMessage = function (text) {
+    try {
+      return JSON.stringify(JSON.parse(text), null, '  ');
+    } catch (e) {
+      return text;
+    }
   };
 
   _initialize(options);

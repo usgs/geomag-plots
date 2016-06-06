@@ -78,6 +78,7 @@ var TimeseriesCollectionView = function (options) {
       view = TimeseriesView({
         plotModel: _this.model,
         el: li,
+        errorLoading: 'this is a test.',
         height: height,
         timeseries: timeseries,
         width: width
