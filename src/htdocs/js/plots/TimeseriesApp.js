@@ -10,6 +10,7 @@ var Collection = require('mvc/Collection'),
 
     TimeseriesCollectionView = require('plots/TimeseriesCollectionView'),
     TimeseriesFactory = require('plots/TimeseriesFactory'),
+    TimeseriesManager = require('plots/TimeseriesManager'),
     TimeseriesSelectView = require('plots/TimeseriesSelectView');
 
 
@@ -116,12 +117,12 @@ var TimeseriesApp = function (options) {
 
     _this.config = Model(Util.extend({
       channel: ['H', 'E', 'Z', 'F'],
+      elements: null,
       endtime: null,
-      observatory: 'BOU',
+      observatories: null,
       starttime: null,
       timemode: 'pastday'
     }, options.config));
-    _this.config.on('change', _onConfigChange);
 
     _this.elements = Collection();
     _this.observatories = Collection();
@@ -130,6 +131,14 @@ var TimeseriesApp = function (options) {
     _timeseriesFactory = TimeseriesFactory({
       observatories: _this.observatories,
       url: options.obsDataUrl
+    });
+
+    _this.timeseriesManager = TimeseriesManager({
+      config: _this.config,
+      elements: _this.elements,
+      factory: _timeseriesFactory,
+      observatories: _this.observatories,
+      timeseries: _this.timeseries
     });
 
     _this.plotModel = Model({
@@ -209,7 +218,13 @@ var TimeseriesApp = function (options) {
    */
   _this.onCollectionLoad = function () {
     if (_this.elements.loaded && _this.observatories.loaded) {
-      _onConfigChange();
+      // set default view
+      _this.config.set({
+        // "H" element
+        elements: ['H'],
+        // all observatories
+        observatories: Object.keys(_this.observatories.getIds())
+      });
     }
   };
 
