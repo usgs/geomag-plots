@@ -1,0 +1,38 @@
+.compact-select-view-options {
+  overflow: hidden;
+  border: 1px solid #ccc;
+}
+
+.compact-select-view-item {
+  float: left;
+  width: 33.33333%;
+  background-color: #eee;
+  border-right: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  padding: 8px;
+  color: #333;
+  text-decoration: none;
+  text-align: center;
+
+  &:nth-child(3n+3) {
+    border-right: none;
+  }
+
+  &:nth-child(1),
+  &:nth-child(2),
+  &:nth-child(3) {
+    border-top: none;
+  }
+
+  &:hover {
+    color: #000;
+    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%);
+  }
+
+  &.selected {
+    color: #fff;
+    background-color: #333;
+
+    background-image: none;
+  }
+}
