@@ -502,6 +502,8 @@ var TimeseriesSelectView = function (options) {
     starttime = _config.get('starttime');
     timemode = _config.get('timemode');
 
+    _this.clearAutoUpdateTimeout();
+
     if (!_timeCustom.checked) {
       _timeCustom.checked = true;
     }
