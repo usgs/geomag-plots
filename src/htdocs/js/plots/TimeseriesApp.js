@@ -150,7 +150,7 @@ var TimeseriesApp = function (options) {
 
     //Calling onTimeChange sets the time in config,
     //which triggers _onConfigChange
-    _configView.onTimeChange();
+    _configView.setPastDay();
   };
 
   /**
@@ -212,8 +212,7 @@ var TimeseriesApp = function (options) {
         endtime,
         seconds,
         observatory,
-        starttime,
-        timemode;
+        starttime;
 
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
@@ -222,7 +221,6 @@ var TimeseriesApp = function (options) {
 
     channel = _this.config.get('channel');
     observatory = _this.config.get('observatory');
-    timemode = _this.config.get('timemode');
 
     endtime = _this.config.get('endtime');
     starttime = _this.config.get('starttime');
