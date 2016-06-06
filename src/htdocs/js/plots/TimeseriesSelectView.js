@@ -62,10 +62,9 @@ var TimeseriesSelectView = function (options) {
       _timePrevious,
       _timePastday,
       _timeRealtime,
-      _timeUpdate,
       // methods
-      _onAutoUpdate,
       _onChannelClick,
+      _onModeChanged,
       _onObservatoryClick,
       _onTimeChange,
       _onTimeIncrement,
@@ -107,14 +106,6 @@ var TimeseriesSelectView = function (options) {
           '<input type="radio" name="timemode" id="time-custom" ' +
             'value="custom" />' +
           '<label for="time-custom">Custom</label>' +
-          '<div class="timeseries-increment">' +
-            '<button class="previous-button">' +
-              '&#xe020' +
-            '</button>' +
-            '<button class="next-button">' +
-              '&#xe01F' +
-            '</button>' +
-          '</div>' +
           '<div class="time-input">' +
             '<div class="time-error">' +
             '</div>' +
@@ -127,7 +118,14 @@ var TimeseriesSelectView = function (options) {
               'End Time (UTC)' +
               '<input type="text" id="time-endtime" name="time-endtime"/>' +
             '</label>' +
-            '<button>Update</button>' +
+          '</div>' +
+          '<div class="timeseries-increment">' +
+            '<button class="previous-button">' +
+              'Step Back' +
+            '</button>' +
+            '<button class="next-button">' +
+              'Step Forward' +
+            '</button>' +
           '</div>' +
           '<div class="scale-view"></div>' +
         '</div>';
@@ -153,20 +151,22 @@ var TimeseriesSelectView = function (options) {
     _startTimeError = document.createElement('span');
     _startTimeError.classList.add('usa-input-error-message');
     _startTimeErrorLabel = el.querySelector('.starttime-error-label');
-
-    _timeUpdate = el.querySelector('.time-input > button');
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
 
-    _timeRealtime.addEventListener('change', _onTimeChange);
+    _channelEl.addEventListener('click', _onChannelClick);
+    _observatoryEl.addEventListener('click', _onObservatoryClick);
+
+    _timeRealtime.addEventListener('change', _onModeChanged);
+    _timePastday.addEventListener('change', _onModeChanged);
+    _timeCustom.addEventListener('change', _onModeChanged);
+
     _timePrevious.addEventListener('click', _onTimeIncrement);
     _timeNext.addEventListener('click', _onTimeIncrement);
-    _timePastday.addEventListener('change', _onTimeChange);
-    _timeCustom.addEventListener('change', _onTimeChange);
+
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
-    _timeUpdate.addEventListener('click', _onTimeChange);
 
     _elementsView = CompactSelectView({
       collection: _elements,
@@ -205,6 +205,21 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
+   * Handles radio button changes for time mode.
+   *
+   * Note Custom doesn't actually cause a reset, it just turns off auto update.
+   */
+  _onModeChanged = function (e) {
+    if (e.target === _timeRealtime) {
+      _this.setRealtime();
+    } else if (e.target === _timePastday) {
+      _this.setPastDay();
+    } else if (e.target === _timeCustom) {
+      _this.clearAutoUpdateTimeout();
+    }
+  };
+
+  /**
    * Observatory element delegated click handler.
    */
   _onObservatoryClick = function (e) {
@@ -219,50 +234,21 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
-   * Time radio and text input change handler.
+   * Time text input change handler.
    */
   _onTimeChange = function () {
-    _this.onTimeChange();
-  };
-
-  _onTimeIncrement = function (e) {
-    var direction,
-        endtime,
-        increment,
-        starttime,
-        timemode;
-
-    endtime = _config.get('endtime');
-    starttime = _config.get('starttime');
-    timemode = _config.get('timemode');
-
     if (!_timeCustom.checked) {
       _timeCustom.checked = true;
     }
-
-    if (e.target === _timeNext) {
-      direction = 1;
-    } else {
-      direction = -1;
-    }
-
-    increment = direction * ((endtime.getTime() - starttime.getTime()) / 2);
-
-    starttime = new Date(starttime.getTime() + increment);
-
-    endtime = new Date(endtime.getTime() + increment);
-
-    _config.set({
-      autoUpdateTime: null,
-      timemode: 'custom',
-      starttime: starttime,
-      endtime: endtime
-    });
-
-    _startTime.value = Formatter.formatDate(starttime);
-    _endTime.value = Formatter.formatDate(endtime);
+    _this.onTimeChange();
   };
 
+  /**
+   * Event handler for when time is incremented.
+   */
+  _onTimeIncrement = function (e) {
+    _this.onTimeIncrement(e);
+  };
 
   /**
    * Parse a date string.
@@ -443,7 +429,6 @@ var TimeseriesSelectView = function (options) {
     _timeCustom.removeEventListener('change', _onTimeChange);
     _startTime.removeEventListener('change', _onTimeChange);
     _endTime.removeEventListener('change', _onTimeChange);
-    _timeUpdate.removeEventListener('click', _onTimeChange);
 
 
     // variables
@@ -468,7 +453,6 @@ var TimeseriesSelectView = function (options) {
     _timePrevious = null;
     _timePastday = null;
     _timeRealtime = null;
-    _timeUpdate = null;
     _validateEndTime = null;
     _validateStartTime = null;
 
@@ -487,18 +471,69 @@ var TimeseriesSelectView = function (options) {
     _this = null;
   }, _this.destroy);
 
-  _this.onTimeChange = function () {
-    var autoUpdateTime,
-        endtime,
-        starttime;
-
+  /**
+   * Clear Auto Update Timeout
+   */
+  _this.clearAutoUpdateTimeout = function () {
     if (_autoUpdateTimeout !== null) {
       clearTimeout(_autoUpdateTimeout);
       _autoUpdateTimeout = null;
     }
+  };
+
+  /**
+   * Event Handler for previous/next clicks.
+   *
+   * @params e (Event)
+   *    The event which called onTimeIncrement.
+   *    Used to determine whether to increment or decrement the time.
+   *
+   * @Notes
+   *    Time values are incremented/decremented by 1/2 the current time range.
+   */
+  _this.onTimeIncrement = function (e) {
+    var direction,
+        endtime,
+        increment,
+        starttime,
+        timemode;
+
+    endtime = _config.get('endtime');
+    starttime = _config.get('starttime');
+    timemode = _config.get('timemode');
+
+    if (!_timeCustom.checked) {
+      _timeCustom.checked = true;
+    }
+
+    if (e.target === _timeNext) {
+      direction = 1;
+    } else {
+      direction = -1;
+    }
+
+    increment = direction * ((endtime.getTime() - starttime.getTime()) / 2);
+
+    starttime = new Date(starttime.getTime() + increment);
+    endtime = new Date(endtime.getTime() + increment);
+
+    _config.set({
+      timemode: 'custom',
+      starttime: starttime,
+      endtime: endtime
+    });
+  };
+
+  /**
+   * Handles changes in time(s) inputs.
+   */
+  _this.onTimeChange = function () {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
 
     if (_timeCustom.checked) {
-      autoUpdateTime = null;
       endtime = _parseDate(_endTime.value);
       starttime = _parseDate(_startTime.value);
 
@@ -512,30 +547,51 @@ var TimeseriesSelectView = function (options) {
           timemode: 'custom'
         });
       }
-    } else {
-      autoUpdateTime = 300000;
-      if (_timeRealtime.checked) {
-        endtime = _roundUpToNearestNMinutes(new Date(), 1);
-        starttime = new Date(endtime.getTime() - 900000);
-        _config.set({
-          endtime: endtime,
-          starttime: starttime,
-          timemode: 'realtime'
-        });
-      } else if (_timePastday.checked) {
-        endtime = _roundUpToNearestNMinutes(new Date(), 5);
-        starttime = new Date(endtime.getTime() - 86400000);
-        _config.set({
-          endtime: endtime,
-          starttime: starttime,
-          timemode: 'pastday'
-        });
-      }
     }
+  };
 
-    if (autoUpdateTime !== null) {
-      _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
-    }
+  /**
+   * Sets the config time to "Realtime"
+   *
+   * Realtime is defined as the current 15 minutes.
+   */
+  _this.setRealtime= function() {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    endtime = _roundUpToNearestNMinutes(new Date(), 1);
+    starttime = new Date(endtime.getTime() - 900000);
+
+    _config.set({
+      endtime: endtime,
+      starttime: starttime,
+      timemode: 'realtime'
+    });
+
+    _autoUpdateTimeout = setTimeout(_this.setRealtime, 30000);
+  };
+
+  /**
+   * Set the config time to the past day.
+   */
+  _this.setPastDay = function() {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    endtime = _roundUpToNearestNMinutes(new Date(), 5);
+    starttime = new Date(endtime.getTime() - 86400000);
+
+    _config.set({
+      endtime: endtime,
+      starttime: starttime,
+      timemode: 'pastday'
+    });
+
+    _autoUpdateTimeout = setTimeout(_this.setPastDay, 30000);
   };
 
   /**
@@ -582,7 +638,6 @@ var TimeseriesSelectView = function (options) {
       }
     }
   };
-
 
   _initialize(options);
   options = null;
