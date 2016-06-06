@@ -3,6 +3,7 @@
 
 var expect = chai.expect,
 
+    Collection = require('mvc/Collection'),
     Model = require('mvc/Model'),
     Util = require('util/Util'),
 
@@ -40,7 +41,10 @@ describe('TimeSeriesSelectView', function () {
     });
 
     view = TimeseriesSelectView({
-      config: config
+      config: config,
+      observatories: Collection([
+        {id: 'HON'}
+      ])
     });
 
     it('selects observatory', function () {
@@ -71,7 +75,10 @@ describe('TimeSeriesSelectView', function () {
       });
 
       view = TimeseriesSelectView({
-        config: config
+        config: config,
+        observatories: Collection([
+          {id: 'HON'}
+        ])
       });
       document.querySelector('body').appendChild(view.el);
     });

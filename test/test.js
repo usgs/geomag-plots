@@ -10,8 +10,8 @@ require('./spec/D3GraphViewTest');
 require('./spec/ExampleTest');
 
 require('./spec/D3TimeseriesViewTest');
-require('./spec/ObservatoryFactoryTest');
 require('./spec/ScaleViewTest');
+require('./spec/TimeseriesAppTest');
 require('./spec/TimeseriesCollectionViewTest');
 require('./spec/TimeseriesFactoryTest');
 require('./spec/TimeseriesManagerTest');

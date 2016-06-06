@@ -1,0 +1,142 @@
+{
+  "type": "FeatureCollection",
+
+  "features": [
+    {
+      "type": "Feature",
+      "id": "D",
+      "properties": {
+        "name": "Declination",
+        "units": "0.1′"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "E",
+      "properties": {
+        "name": "Observatory East Component",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "F",
+      "properties": {
+        "name": "Total Field Magnitude",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "G",
+      "properties": {
+        "name": "Delta F",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "H",
+      "properties": {
+        "name": "Observatory North Component",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "X",
+      "properties": {
+        "name": "Geographic North Magnitude",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "Y",
+      "properties": {
+        "name": "Geographic East Magnitude",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "Z",
+      "properties": {
+        "name": "Vertical Magnitude",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+
+    {
+      "type": "Feature",
+      "id": "MSD",
+      "properties": {
+        "name": "Disturbance",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "MSQ",
+      "properties": {
+        "name": "Solar Quiet",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "MSV",
+      "properties": {
+        "name": "Solar Variation",
+        "units": "nT"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "UK1",
+      "properties": {
+        "name": "Electronics Temperature",
+        "units": "°C"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "UK2",
+      "properties": {
+        "name": "Fluxgate Temperature",
+        "units": "°C"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "UK3",
+      "properties": {
+        "name": "Proton Temperature",
+        "units": "°C"
+      },
+      "geometry": null
+    },
+    {
+      "type": "Feature",
+      "id": "UK4",
+      "properties": {
+        "name": "Outside Temperature",
+        "units": "°C"
+      },
+      "geometry": null
+    }
+  ]
+}

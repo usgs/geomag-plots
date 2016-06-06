@@ -1,6 +1,7 @@
 'use strict';
 
-var ScaleView = require('plots/ScaleView'),
+var Collection = require('mvc/Collection'),
+    ScaleView = require('plots/ScaleView'),
     Util = require('util/Util'),
     View = require('mvc/View');
 
@@ -12,22 +13,7 @@ var DEFAULTS = {
     'Z',
     'F'
   ],
-  observatories: [
-    'BOU',
-    'BRW',
-    'BSL',
-    'CMO',
-    'DED',
-    'FRD',
-    'FRN',
-    'GUA',
-    'HON',
-    'NEW',
-    'SHU',
-    'SIT',
-    'SJG',
-    'TUC'
-  ]
+  observatories: null
 };
 
 
@@ -88,7 +74,7 @@ var TimeseriesSelectView = function (options) {
     options = Util.extend({}, DEFAULTS, options);
     _channels = options.channels;
     _config = options.config;
-    _observatories = options.observatories;
+    _observatories = options.observatories || Collection();
     _this.plotModel = options.plotModel;
 
     el = _this.el;
@@ -144,6 +130,8 @@ var TimeseriesSelectView = function (options) {
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
+    _observatories.on('reset', _this.render);
+
     _channelEl.addEventListener('click', _onChannelClick);
     _observatoryEl.addEventListener('click', _onObservatoryClick);
     _timeRealtime.addEventListener('change', _onTimeChange);
@@ -152,7 +140,6 @@ var TimeseriesSelectView = function (options) {
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
     _timeUpdate.addEventListener('click', _onTimeChange);
-
     _scaleView = ScaleView({
       el: _this.el.querySelector('.scale-view'),
       model: _this.plotModel
@@ -388,6 +375,8 @@ var TimeseriesSelectView = function (options) {
     _scaleView.destroy();
 
     _config.off('change', _this.render);
+    _observatories.off('reset', _this.render);
+
     _channelEl.removeEventListener('click', _onChannelClick);
     _observatoryEl.removeEventListener('click', _onObservatoryClick);
     _timeRealtime.removeEventListener('change', _onTimeChange);
@@ -396,6 +385,7 @@ var TimeseriesSelectView = function (options) {
     _startTime.removeEventListener('change', _onTimeChange);
     _endTime.removeEventListener('change', _onTimeChange);
     _timeUpdate.removeEventListener('click', _onTimeChange);
+
 
     // variables
     _channels = null;
@@ -451,12 +441,13 @@ var TimeseriesSelectView = function (options) {
           '>' + channel + '</a>';
     }).join('');
 
-    _observatoryEl.innerHTML = _observatories.map(function (observatory) {
-      return '<a href="#" data-id="' + observatory + '"' +
-          (observatory === selectedObservatory ?
-              ' class="selected"' : '') +
-          '>' + observatory + '</a>';
-    }).join('');
+    _observatoryEl.innerHTML = Object.keys(_observatories.getIds()).
+        map(function (observatory) {
+          return '<a href="#" data-id="' + observatory + '"' +
+              (observatory === selectedObservatory ?
+                  ' class="selected"' : '') +
+              '>' + observatory + '</a>';
+        }).join('');
 
     _endTime.value = _formatDate(endTime);
     _startTime.value = _formatDate(startTime);
