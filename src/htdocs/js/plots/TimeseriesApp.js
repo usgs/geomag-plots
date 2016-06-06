@@ -94,8 +94,6 @@ var TimeseriesApp = function (options) {
       timemode: 'pastday'
     }, options.config));
 
-    _this.config.on('change', _onConfigChange);
-
     _this.elements = Collection();
     _this.observatories = Collection();
     _this.timeseries = Collection();
