@@ -1,0 +1,556 @@
+{
+  "type": "FeatureCollection",
+
+  "features": [
+    {
+      "type": "Feature",
+      "id": "BDT",
+      "properties": {
+        "station_name": "Boulder Test",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 5527
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [254.764, 40.137, 1682]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BOU",
+      "properties": {
+        "station_name": "Boulder",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 5527
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [254.764, 40.137, 1682]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "TST",
+      "properties": {
+        "station_name": "Boulder Test (ObsRIO)",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 5527
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [254.764, 40.137, 1682]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BRW",
+      "properties": {
+        "station_name": "Barrow",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 16000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [203.378, 71.322, 12]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BRT",
+      "properties": {
+        "station_name": "Barrow Test",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 16000
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [203.378, 71.322, 12]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BSL",
+      "properties": {
+        "station_name": "Stennis Space Center",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 1530
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [270.365, 30.350, 8]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "CMO",
+      "properties": {
+        "station_name": "College",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 16876
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [212.140, 64.874, 197]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "DED",
+      "properties": {
+        "station_name": "Deadhorse",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 13200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [211.207, 70.356, 10]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "DHT",
+      "properties": {
+        "station_name": "Deadhorse Test",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 13200
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [211.207, 70.356, 10]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "FRD",
+      "properties": {
+        "station_name": "Fredericksburg",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 210942
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [282.627, 38.205, 69]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "FRN",
+      "properties": {
+        "station_name": "Fresno",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 9250
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [240.282, 37.091, 331]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "GUA",
+      "properties": {
+        "station_name": "Guam",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 1157
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [144.867, 13.588, 140]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "HON",
+      "properties": {
+        "station_name": "Honolulu",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 6920
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [202.000, 21.316, 4]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "NEW",
+      "properties": {
+        "station_name": "Newport",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 12133
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [242.878, 48.265, 770]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SHU",
+      "properties": {
+        "station_name": "Shumagin",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 13974
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [199.538, 55.348, 80]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SIT",
+      "properties": {
+        "station_name": "Sitka",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 16523
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [224.674, 57.058, 24]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SJG",
+      "properties": {
+        "station_name": "San Juan",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 209800
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [293.849, 18.113, 424]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "TUC",
+      "properties": {
+        "station_name": "Tucson",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 7258
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [249.267, 32.174, 946]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "USGS",
+      "properties": {
+        "station_name": "USGS",
+        "agency": "USGS",
+        "agency_name": "United States Geological Survey (USGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [254.764, 40.137, 1682]
+      }
+    },
+
+
+    {
+      "type": "Feature",
+      "id": "BLC",
+      "properties": {
+        "station_name": "Bake Lake",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [264.000, 64.300, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "BRD",
+      "properties": {
+        "station_name": "Brandon",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [262.900, 49.600, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "CBB",
+      "properties": {
+        "station_name": "Cambridge Bay",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [255.000, 69.200, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "EUA",
+      "properties": {
+        "station_name": "Eureka",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [282.300, 55.300, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "FCC",
+      "properties": {
+        "station_name": "Fort Churchill",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [265.900, 58.800, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "IQA",
+      "properties": {
+        "station_name": "Iqaluit",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [291.500, 63.800, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "MEA",
+      "properties": {
+        "station_name": "Meanook",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [246.700, 54.600, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "OTT",
+      "properties": {
+        "station_name": "Ottawa",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [284.500, 45.400, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "RES",
+      "properties": {
+        "station_name": "Resolute Bay",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [265.100, 74.700, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "SNK",
+      "properties": {
+        "station_name": "Sanikiluaq",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [245.500, 62.400, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "STJ",
+      "properties": {
+        "station_name": "Saint John's",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [307.300, 47.600, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "VIC",
+      "properties": {
+        "station_name": "Victoria",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [236.600, 48.600, 0]
+      }
+    },
+    {
+      "type": "Feature",
+      "id": "YKC",
+      "properties": {
+        "station_name": "Yellow Knife",
+        "agency": "GSC",
+        "agency_name": "Geological Survey of Canada (GSC)",
+        "sensor_orientation": "XYZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [245.500, 62.400, 0]
+      }
+    },
+
+
+    {
+      "type": "Feature",
+      "id": "HAD",
+      "properties": {
+        "station_name": "Hartland",
+        "agency": "BGS",
+        "agency_name": "British Geological Survey (BGS)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [355.500, 51.000, 0]
+      }
+    },
+
+
+    {
+      "type": "Feature",
+      "id": "HER",
+      "properties": {
+        "station_name": "Hermanus",
+        "agency": "SANSA",
+        "agency_name": "South African National Space Agency (SANSA)",
+        "sensor_orientation": "HDZF",
+        "sensor_sampling_rate": 0.01,
+        "declination_base": 0
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19.200, -34.400, 0]
+      }
+    }
+  ]
+}

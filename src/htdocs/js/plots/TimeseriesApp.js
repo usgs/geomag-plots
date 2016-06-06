@@ -6,8 +6,8 @@ var Collection = require('mvc/Collection'),
     Model = require('mvc/Model'),
     View = require('mvc/View'),
     Util = require('util/Util'),
+    Xhr = require('util/Xhr'),
 
-    ObservatoryFactory = require('plots/ObservatoryFactory'),
     TimeseriesCollectionView = require('plots/TimeseriesCollectionView'),
     TimeseriesFactory = require('plots/TimeseriesFactory'),
     TimeseriesSelectView = require('plots/TimeseriesSelectView');
@@ -41,7 +41,8 @@ var __roundUpToNearestNMinutes = function (dt, n) {
 
 
 var _DEFAULTS = {
-  obsMetaUrl: '/map/observatories.geojson.php',
+  elementsMetaUrl: '/ws/edge/elements.json',
+  obsMetaUrl: '/ws/edge/observatories.json',
   obsDataUrl: '/ws/edge/'
 };
 
@@ -77,7 +78,6 @@ var TimeseriesApp = function (options) {
       _descriptionEl,
       _observatories,
       _timeseriesEl,
-      _timeseries,
       _timeseriesFactory,
       _timeseriesView,
 
@@ -89,12 +89,13 @@ var TimeseriesApp = function (options) {
   _this = View(options);
 
   _initialize = function (options) {
-    var configEl = options.configEl,
-        el = _this.el,
-        observatoryFactory,
+    var configEl,
+        el,
         viewEl;
 
     options = Util.extend({}, _DEFAULTS, options);
+    configEl = options.configEl;
+    el = _this.el;
 
     el.classList.add('timeseries-app');
     el.innerHTML =
@@ -118,26 +119,16 @@ var TimeseriesApp = function (options) {
       endtime: null,
       observatory: 'BOU',
       starttime: null,
-      timemode: 'pasthour'
+      timemode: 'pastday'
     }, options.config));
     _this.config.on('change', _onConfigChange);
 
-    _observatories = options.observatories || null;
-    if (_observatories === null) {
-      _observatories = Collection();
-      observatoryFactory = options.observatoryFactory ||
-          ObservatoryFactory({url: options.obsMetaUrl});
-      observatoryFactory.getObservatories({
-        callback: function (observatories) {
-          _observatories.reset(observatories);
-        }
-      });
-    }
-
-    _timeseries = options.timeseries || Collection();
+    _this.elements = Collection();
+    _this.observatories = Collection();
+    _this.timeseries = Collection();
 
     _timeseriesFactory = TimeseriesFactory({
-      observatories: _observatories,
+      observatories: _this.observatories,
       url: options.obsDataUrl
     });
 
@@ -146,19 +137,80 @@ var TimeseriesApp = function (options) {
     });
 
     _configView = TimeseriesSelectView({
-      el: configEl,
-      plotModel: _this.plotModel,
       channels: options.channels || ['H', 'E', 'Z', 'F'],
-      config: _this.config
+      config: _this.config,
+      el: configEl,
+      elements: _this.elements,
+      observatories: _this.observatories,
+      plotModel: _this.plotModel
     });
 
     _timeseriesView = TimeseriesCollectionView({
       el: viewEl,
-      collection: _timeseries,
+      collection: _this.timeseries,
       model: _this.plotModel
     });
     _timeseriesEl = el;
-    _onConfigChange();
+
+    _this.elements.on('reset', _this.onCollectionLoad);
+    _this.observatories.on('reset', _this.onCollectionLoad);
+
+    _this.loadCollection({
+      collection: _this.elements,
+      url: options.elementsMetaUrl
+    });
+    _this.loadCollection({
+      collection: _this.observatories,
+      filter: function (obs) {
+        return obs.properties.agency === 'USGS';
+      },
+      url: options.obsMetaUrl
+    });
+  };
+
+  /**
+   * Load a collection from a geojson url.
+   *
+   * @param options {Object}
+   * @param options.collection {Collection}
+   *     collection to load.
+   * @param options.url {String}
+   *     url containing collection data in geojson format.
+   */
+  _this.loadCollection = function (options) {
+    var collection,
+        url;
+
+    collection = options.collection;
+    url = options.url;
+
+    collection.loaded = false;
+    Xhr.ajax({
+      url: url,
+      success: function (data) {
+        collection.error = false;
+        collection.loaded = true;
+        if (typeof options.filter === 'function') {
+          collection.reset(data.features.filter(options.filter));
+        } else {
+          collection.reset(data.features);
+        }
+      },
+      error: function (err) {
+        collection.error = err;
+        collection.loaded = true;
+        collection.reset([]);
+      }
+    });
+  };
+
+  /**
+   * Called after collections have loaded.
+   */
+  _this.onCollectionLoad = function () {
+    if (_this.elements.loaded && _this.observatories.loaded) {
+      _onConfigChange();
+    }
   };
 
   /**
@@ -215,6 +267,10 @@ var TimeseriesApp = function (options) {
     }
 
     _timeseriesEl.classList.add('loading');
+    _this.config.set({
+      starttime: starttime,
+      endtime: endtime
+    }, {silent: true});
 
     _timeseriesFactory.getTimeseries({
       elements: channel,
@@ -251,7 +307,7 @@ var TimeseriesApp = function (options) {
     }
 
     _timeseriesEl.classList.remove('loading');
-    _timeseries.reset([]);
+    _this.timeseries.reset([]);
   };
 
   /**
@@ -264,13 +320,20 @@ var TimeseriesApp = function (options) {
     var timeseries = response.getTimeseries();
     // copy metadata from observatory to timeseries
     timeseries.forEach(function (t) {
-      var metadata = t.get('metadata'),
-          observatory = _observatories.get(metadata.observatory);
+      var coords,
+          metadata,
+          observatory,
+          props;
+
+      metadata = t.get('metadata');
+      observatory = _this.observatories.get(metadata.observatory);
       if (observatory !== null) {
+        coords = observatory.geometry.coordinates;
+        props = observatory.properties;
         Util.extend(metadata, {
-          name: observatory.get('name'),
-          latitude: observatory.get('latitude'),
-          longitude: observatory.get('longitude')
+          name: props.name,
+          latitude: coords[1],
+          longitude: coords[0]
         });
       }
     });
@@ -297,7 +360,7 @@ var TimeseriesApp = function (options) {
       return 0;
     });
     // update collection
-    _timeseries.reset(timeseries);
+    _this.timeseries.reset(timeseries);
     // done loading
     _timeseriesEl.classList.remove('loading');
   };
@@ -313,10 +376,10 @@ var TimeseriesApp = function (options) {
     _configView = null;
     _descriptionEl = null;
     _observatories = null;
-    _timeseries = null;
     _timeseriesEl = null;
     _timeseriesFactory = null;
     _timeseriesView = null;
+    _this = null;
   }, _this.destroy);
 
 

@@ -72,8 +72,8 @@ var TimeseriesManager = function (options) {
         observatorys;
 
     // get current configuration
-    elements = _this.config.get('element');
-    observatorys = _this.config.get('observatory');
+    elements = _this.config.get('elements') || [];
+    observatorys = _this.config.get('observatorys') || [];
 
     // create models
     models = [];
@@ -129,7 +129,7 @@ var TimeseriesManager = function (options) {
       changes = _this.config.get();
     }
 
-    if ('element' in changes || 'observatory' in changes) {
+    if ('elements' in changes || 'observatorys' in changes) {
       // update timeseries collection, then fetch data
       _this.createTimeseries();
       _this.fetchData();
@@ -235,19 +235,45 @@ var TimeseriesManager = function (options) {
    *     }
    */
   _this.sortByObservatoryLatitudeDescending = function (a, b) {
-    var aLat,
-        bLat;
+    var aEl,
+        aId,
+        aLat,
+        aObs,
+        bEl,
+        bId,
+        bLat,
+        bObs;
 
-    aLat = a.get('observatory').geometry.coords[1];
-    bLat = b.get('observatory').geometry.coords[1];
 
+    aObs = a.get('observatory');
+    bObs = b.get('observatory');
+
+    if (!aObs || !bObs) {
+      return 0;
+    }
+
+    aLat = aObs.geometry.coordinates[1];
+    bLat = bObs.geometry.coordinates[1];
     if (aLat < bLat) {
       return 1;
     } else if (aLat > bLat) {
       return -1;
-    } else {
+    }
+
+    aEl = a.get('element');
+    bEl = b.get('element');
+    if (!aEl || !bEl) {
       return 0;
     }
+
+    aId = aEl.id;
+    bId = bEl.id;
+    if (aId < bId) {
+      return -1;
+    } else if (aId > bId) {
+      return 1;
+    }
+    return 0;
   };
 
 
