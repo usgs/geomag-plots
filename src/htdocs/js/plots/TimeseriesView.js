@@ -71,6 +71,7 @@ var TimeseriesView = function (options) {
       yAxisTicks: _yAxisTicks
     });
 
+    _timeseries.on('change', _this.render);
     _this.render();
   };
 
@@ -120,6 +121,7 @@ var TimeseriesView = function (options) {
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
+    _timeseries.off('change', _this.render);
     _trace.destroy();
 
     _trace = null;
