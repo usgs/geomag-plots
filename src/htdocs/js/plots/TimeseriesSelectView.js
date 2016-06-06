@@ -1,6 +1,7 @@
 'use strict';
 
 var Collection = require('mvc/Collection'),
+    CompactSelectView = require('plots/CompactSelectView'),
     ScaleView = require('plots/ScaleView'),
     Util = require('util/Util'),
     View = require('mvc/View');
@@ -35,14 +36,16 @@ var TimeseriesSelectView = function (options) {
   var _this,
       _initialize,
       // variables
-      _channels,
-      _channelEl,
       _config,
+      _elements,
+      _elementsEl,
+      _elementsView,
       _endTime,
       _endTimeError,
       _endTimeErrorLabel,
       _observatories,
-      _observatoryEl,
+      _observatoriesEl,
+      _observatoriesView,
       _scaleView,
       _startTime,
       _startTimeError,
@@ -55,8 +58,6 @@ var TimeseriesSelectView = function (options) {
       _timeUpdate,
       // methods
       _formatDate,
-      _onChannelClick,
-      _onObservatoryClick,
       _onTimeChange,
       _parseDate,
       _setTimeError,
@@ -65,25 +66,23 @@ var TimeseriesSelectView = function (options) {
       _validateEndTime,
       _validateStartTime;
 
-  _this = View(options);
 
+  _this = View(options);
 
   _initialize = function (options) {
     var el;
 
     options = Util.extend({}, DEFAULTS, options);
-    _channels = options.channels;
     _config = options.config;
+    _elements = options.elements || Collection();
     _observatories = options.observatories || Collection();
     _this.plotModel = options.plotModel;
 
     el = _this.el;
     el.classList.add('timeseries-selectview');
     el.innerHTML =
-        '<h2>Channel</h2>' +
-        '<div class="timeseries-channel"></div>' +
-        '<h2>Observatory</h2>' +
-        '<div class="timeseries-observatory"></div>' +
+        '<div class="timeseries-elements"></div>' +
+        '<div class="timeseries-observatories"></div>' +
         '<h2>Time</h2>' +
         '<div class="timeseries-time">' +
           '<input type="radio" name="timemode" id="time-realtime" ' +
@@ -112,34 +111,49 @@ var TimeseriesSelectView = function (options) {
           '<div class="scale-view"></div>' +
         '</div>';
 
-    _channelEl = el.querySelector('.timeseries-channel');
+    _elementsEl = el.querySelector('.timeseries-elements');
+
     _endTime = el.querySelector('#time-endtime');
     _endTimeError = document.createElement('span');
     _endTimeError.classList.add('usa-input-error-message');
     _endTimeErrorLabel = el.querySelector('.endtime-error-label');
-    _observatoryEl = el.querySelector('.timeseries-observatory');
+
+    _observatoriesEl = el.querySelector('.timeseries-observatories');
+
     _timeEl = el.querySelector('.timeseries-time');
     _timeRealtime = el.querySelector('#time-realtime');
     _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
+
     _startTime = el.querySelector('#time-starttime');
     _startTimeError = document.createElement('span');
     _startTimeError.classList.add('usa-input-error-message');
     _startTimeErrorLabel = el.querySelector('.starttime-error-label');
+
     _timeUpdate = el.querySelector('.time-input > button');
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
-    _observatories.on('reset', _this.render);
 
-    _channelEl.addEventListener('click', _onChannelClick);
-    _observatoryEl.addEventListener('click', _onObservatoryClick);
     _timeRealtime.addEventListener('change', _onTimeChange);
     _timePastday.addEventListener('change', _onTimeChange);
     _timeCustom.addEventListener('change', _onTimeChange);
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
     _timeUpdate.addEventListener('click', _onTimeChange);
+
+    _elementsView = CompactSelectView({
+      collection: _elements,
+      el: _elementsEl,
+      title: 'Channel'
+    });
+
+    _observatoriesView = CompactSelectView({
+      collection: _observatories,
+      el: _observatoriesEl,
+      title: 'Observatory'
+    });
+
     _scaleView = ScaleView({
       el: _this.el.querySelector('.scale-view'),
       model: _this.plotModel
@@ -148,6 +162,7 @@ var TimeseriesSelectView = function (options) {
     // initial render
     _this.render();
   };
+
 
   /**
    * Format a date object.
@@ -160,34 +175,6 @@ var TimeseriesSelectView = function (options) {
       return '';
     }
     return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
-  };
-
-  /**
-   * Channel element delegated click handler.
-   */
-  _onChannelClick = function (e) {
-    var id = e.target.getAttribute('data-id');
-    e.preventDefault();
-    if (id) {
-      _config.set({
-        channel: id,
-        observatory: null
-      });
-    }
-  };
-
-  /**
-   * Observatory element delegated click handler.
-   */
-  _onObservatoryClick = function (e) {
-    var id = e.target.getAttribute('data-id');
-    e.preventDefault();
-    if (id) {
-      _config.set({
-        channel: null,
-        observatory: id
-      });
-    }
   };
 
   /**
@@ -368,17 +355,17 @@ var TimeseriesSelectView = function (options) {
     }
   };
 
+
   /**
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
+    _elementsView.destroy();
     _scaleView.destroy();
+    _observatoriesView.destroy();
 
     _config.off('change', _this.render);
-    _observatories.off('reset', _this.render);
 
-    _channelEl.removeEventListener('click', _onChannelClick);
-    _observatoryEl.removeEventListener('click', _onObservatoryClick);
     _timeRealtime.removeEventListener('change', _onTimeChange);
     _timePastday.removeEventListener('change', _onTimeChange);
     _timeCustom.removeEventListener('change', _onTimeChange);
@@ -388,14 +375,16 @@ var TimeseriesSelectView = function (options) {
 
 
     // variables
-    _channels = null;
-    _channelEl = null;
     _config = null;
+    _elements = null;
+    _elementsEl = null;
+    _elementsView = null;
     _endTime = null;
     _endTimeError = null;
     _endTimeErrorLabel = null;
     _observatories = null;
-    _observatoryEl = null;
+    _observatoriesEl = null;
+    _observatoriesView = null;
     _scaleView = null;
     _startTime = null;
     _startTimeError = null;
@@ -411,8 +400,6 @@ var TimeseriesSelectView = function (options) {
 
     // methods
     _formatDate = null;
-    _onChannelClick = null;
-    _onObservatoryClick = null;
     _onTimeChange = null;
     _parseDate = null;
     _setTimeError = null;
@@ -429,25 +416,8 @@ var TimeseriesSelectView = function (options) {
    */
   _this.render = function () {
     var endTime = _config.get('endtime'),
-        selectedChannel = _config.get('channel'),
-        selectedObservatory = _config.get('observatory'),
         startTime = _config.get('starttime'),
         timeMode = _config.get('timemode');
-
-    _channelEl.innerHTML = _channels.map(function (channel) {
-      return '<a href="#" data-id="' + channel + '"' +
-          (channel === selectedChannel ?
-              ' class="selected"' : '') +
-          '>' + channel + '</a>';
-    }).join('');
-
-    _observatoryEl.innerHTML = Object.keys(_observatories.getIds()).
-        map(function (observatory) {
-          return '<a href="#" data-id="' + observatory + '"' +
-              (observatory === selectedObservatory ?
-                  ' class="selected"' : '') +
-              '>' + observatory + '</a>';
-        }).join('');
 
     _endTime.value = _formatDate(endTime);
     _startTime.value = _formatDate(startTime);

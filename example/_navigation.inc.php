@@ -2,6 +2,7 @@
 
 echo navItem('/example.php', 'Examples');
 
+echo navItem('/CompactSelectViewExample.php', 'CompactSelectView');
 echo navItem('/D3TimeseriesViewExample.php', 'D3TimeseriesView');
 echo navItem('/ScaleViewExample.php', 'ScaleView');
 echo navItem('/TimeseriesCollectionViewExample.php', 'TimeseriesCollectionView');

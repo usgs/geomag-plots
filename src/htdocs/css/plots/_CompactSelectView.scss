@@ -1,0 +1,28 @@
+.compact-select-view-items {
+  border-left: 1px solid #ccc;
+  border-top: 1px solid #ccc;
+  overflow: hidden;
+}
+
+.compact-select-view-item {
+  color: #333;
+  background-color: #eee;
+  border-bottom: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+  float: left;
+  padding: 8px;
+  text-align: center;
+  text-decoration: none;
+  width: 33.33333%;
+
+  &:hover {
+    background-image: linear-gradient(0deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.5) 50%);
+    color: #000;
+  }
+
+  &.selected {
+    background-color: #333;
+    background-image: none;
+    color: #fff;
+  }
+}
