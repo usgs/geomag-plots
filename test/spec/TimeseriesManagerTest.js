@@ -80,8 +80,8 @@ describe('plots/TimeseriesManager', function () {
     it('creates timeseries and resets collection', function () {
       expect(manager.timeseries.data().length).to.equal(0);
       manager.config.set({
-        element: ['A', 'B'],
-        observatory: ['A']
+        elements: ['A', 'B'],
+        observatorys: ['A']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -94,15 +94,15 @@ describe('plots/TimeseriesManager', function () {
 
       expect(manager.timeseries.data().length).to.equal(0);
       manager.config.set({
-        element: ['A', 'B'],
-        observatory: ['A']
+        elements: ['A', 'B'],
+        observatorys: ['A']
       }, {silent: true});
       manager.createTimeseries();
 
       existing = manager.timeseries.get('A_A');
       manager.config.set({
-        element: ['A'],
-        observatory: ['A', 'B']
+        elements: ['A'],
+        observatorys: ['A', 'B']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -113,8 +113,8 @@ describe('plots/TimeseriesManager', function () {
 
     it('sorts by observatory latitude descending', function () {
       manager.config.set({
-        element: ['A'],
-        observatory: ['A', 'B']
+        elements: ['A'],
+        observatorys: ['A', 'B']
       }, {silent: true});
       manager.createTimeseries();
 
@@ -174,18 +174,18 @@ describe('plots/TimeseriesManager', function () {
 
     it('calls createTimeseries when element/observatory change', function () {
       manager.onConfigChange({
-        element: true
+        elements: true
       });
       expect(manager.createTimeseries.callCount).to.equal(1);
       expect(manager.fetchData.callCount).to.equal(1);
       manager.onConfigChange({
-        observatory: true
+        observatorys: true
       });
       expect(manager.createTimeseries.callCount).to.equal(2);
       expect(manager.fetchData.callCount).to.equal(2);
       manager.onConfigChange({
-        element: true,
-        observatory: true
+        elements: true,
+        observatorys: true
       });
       expect(manager.createTimeseries.callCount).to.equal(3);
       expect(manager.fetchData.callCount).to.equal(3);

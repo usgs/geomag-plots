@@ -72,8 +72,8 @@ var TimeseriesManager = function (options) {
         observatorys;
 
     // get current configuration
-    elements = _this.config.get('element');
-    observatorys = _this.config.get('observatory');
+    elements = _this.config.get('elements') || [];
+    observatorys = _this.config.get('observatorys') || [];
 
     // create models
     models = [];
@@ -129,7 +129,7 @@ var TimeseriesManager = function (options) {
       changes = _this.config.get();
     }
 
-    if ('element' in changes || 'observatory' in changes) {
+    if ('elements' in changes || 'observatorys' in changes) {
       // update timeseries collection, then fetch data
       _this.createTimeseries();
       _this.fetchData();
