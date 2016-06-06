@@ -129,12 +129,18 @@ var TimeseriesView = function (options) {
   }, _this.destroy);
 
   _this.render = function () {
-    var meta = _timeseries.get('metadata');
+    var element,
+        observatory;
+
+    element = _timeseries.get('element') || {};
+    observatory = _timeseries.get('observatory') || {};
 
     _metaView.innerHTML =
-        '<span class="observatory">' + meta.observatory + '</span>' +
-        '<span class="channel">' + meta.channel +
-          '<span class="units">(nT)</span>' +
+        '<span class="observatory">' + observatory.id + '</span>' +
+        '<span class="channel">' + element.id +
+          '<span class="units">' +
+            (element.properties ? element.properties.units : 'nT') +
+          '</span>' +
         '</span>';
 
     _trace.render();
