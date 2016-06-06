@@ -88,7 +88,7 @@ var ObservatoryFactory = function (options) {
    * Parse one observatory feature.
    *
    * @param feature {Object}
-   *        features from GeoJSON feed.
+   *        feature from GeoJSON feed.
    * @return {Observatory}
    *         parsed Observatory model.
    */
