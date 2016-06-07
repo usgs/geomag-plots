@@ -13,16 +13,13 @@ var Model = require('mvc/Model'),
  * @param options.values {Array<Number>}
  *        values of data points.
  *        null values represents data gaps.
- * @param options.metadata {Object}
- *        information about Timeseries.
  */
 var Timeseries = function (options) {
   var _this;
 
   _this = Model(Util.extend({
     times: null,
-    values: null,
-    metadata: null
+    values: null
   }, options));
 
 

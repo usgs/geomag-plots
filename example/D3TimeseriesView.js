@@ -13,8 +13,7 @@ Xhr.ajax({
   url: 'observatory_data.json',
   success: function (data) {
     TimeseriesResponse(data).getTimeseries().forEach(function (timeseries) {
-      var meta = timeseries.get('metadata'),
-          yAxisFormat,
+      var yAxisFormat,
           yAxisTicks,
           yExtent;
 
@@ -66,7 +65,6 @@ Xhr.ajax({
         data: timeseries,
         xAxisLabel: 'Time (UTC)',
         yAxisFormat: yAxisFormat,
-        yAxisLabel: meta.observatory + ' ' + meta.element + ' (nT)',
         yAxisTicks: yAxisTicks
       }).render();
     });
