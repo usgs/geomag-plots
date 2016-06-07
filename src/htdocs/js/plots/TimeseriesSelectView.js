@@ -1,7 +1,9 @@
 'use strict';
 
+
 var Collection = require('mvc/Collection'),
     CompactSelectView = require('plots/CompactSelectView'),
+    Formatter = require('util/Formatter'),
     ScaleView = require('plots/ScaleView'),
     Util = require('util/Util'),
     View = require('mvc/View');
@@ -36,6 +38,7 @@ var TimeseriesSelectView = function (options) {
   var _this,
       _initialize,
       // variables
+      _autoUpdateTimeout,
       _config,
       _elements,
       _elementsEl,
@@ -55,13 +58,18 @@ var TimeseriesSelectView = function (options) {
       _timeCustom,
       _timeEl,
       _timeError,
+      _timeNext,
+      _timePrevious,
       _timePastday,
       _timeRealtime,
-      _timeUpdate,
       // methods
-      _formatDate,
+      _onChannelClick,
+      _onModeChanged,
+      _onObservatoryClick,
       _onTimeChange,
+      _onTimeIncrement,
       _parseDate,
+      _roundUpToNearestNMinutes,
       _setTimeError,
       _timeOrder,
       _validateRange,
@@ -77,8 +85,10 @@ var TimeseriesSelectView = function (options) {
     options = Util.extend({}, DEFAULTS, options);
     _config = options.config;
     _elements = options.elements || Collection();
+
     _observatories = options.observatories || Collection();
     _this.plotModel = options.plotModel;
+    _autoUpdateTimeout = null;
 
     el = _this.el;
     el.classList.add('timeseries-selectview');
@@ -108,7 +118,14 @@ var TimeseriesSelectView = function (options) {
               'End Time (UTC)' +
               '<input type="text" id="time-endtime" name="time-endtime"/>' +
             '</label>' +
-            '<button>Update</button>' +
+          '</div>' +
+          '<div class="timeseries-increment">' +
+            '<button class="previous-button">' +
+              'Step Back' +
+            '</button>' +
+            '<button class="next-button">' +
+              'Step Forward' +
+            '</button>' +
           '</div>' +
           '<div class="scale-view"></div>' +
         '</div>';
@@ -127,24 +144,28 @@ var TimeseriesSelectView = function (options) {
     _timePastday = el.querySelector('#time-pastday');
     _timeCustom = el.querySelector('#time-custom');
 
+    _timeNext = el.querySelector('.next-button');
+    _timePrevious = el.querySelector('.previous-button');
+
     _startTime = el.querySelector('#time-starttime');
     _startTimeError = document.createElement('span');
     _startTimeError.classList.add('usa-input-error-message');
     _startTimeErrorLabel = el.querySelector('.starttime-error-label');
-
-    _timeUpdate = el.querySelector('.time-input > button');
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
     _elements.on('select', _onElementSelect);
     _observatories.on('select', _onObservatorySelect);
 
-    _timeRealtime.addEventListener('change', _onTimeChange);
-    _timePastday.addEventListener('change', _onTimeChange);
-    _timeCustom.addEventListener('change', _onTimeChange);
+    _timeRealtime.addEventListener('change', _onModeChanged);
+    _timePastday.addEventListener('change', _onModeChanged);
+    _timeCustom.addEventListener('change', _onModeChanged);
+
+    _timePrevious.addEventListener('click', _onTimeIncrement);
+    _timeNext.addEventListener('click', _onTimeIncrement);
+
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
-    _timeUpdate.addEventListener('click', _onTimeChange);
 
 
     _elementsView = CompactSelectView({
@@ -209,57 +230,63 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
-   * Format a date object.
-   *
-   * @param d {Date}
-   *        date to format.
+   * Channel element delegated click handler.
    */
-  _formatDate = function (d) {
-    if (!d || typeof d.toISOString !== 'function') {
-      return '';
+  _onChannelClick = function (e) {
+    var id = e.target.getAttribute('data-id');
+    e.preventDefault();
+    if (id) {
+      _config.set({
+        channel: id,
+        observatory: null
+      });
     }
-    return d.toISOString().replace('T', ' ').replace(/\.[\d]{3}Z/, '');
   };
 
   /**
-   * Time radio and text input change handler.
+   * Handles radio button changes for time mode.
+   *
+   * Note Custom doesn't actually cause a reset, it just turns off auto update.
    */
-  _onTimeChange = function (e) {
-    var endTime,
-        startTime;
-
-    if (_timeCustom.checked) {
-      _timeEl.classList.add('custom');
-      if (e.target === _timeCustom) {
-        // user selected custom, allow to edit times
-        return;
-      }
-
-      endTime = _parseDate(_endTime.value);
-      startTime = _parseDate(_startTime.value);
-
-      if (_validateStartTime(startTime) &&
-          _validateEndTime(endTime) &&
-          _timeOrder(startTime, endTime) &&
-          _validateRange(startTime, endTime)){
-        _config.set({
-          endtime: endTime,
-          starttime: startTime,
-          timemode: 'custom'
-        });
-      }
-    } else {
-      _timeEl.classList.remove('custom');
-      if (_timeRealtime.checked) {
-        _config.set({
-          timemode: 'realtime'
-        });
-      } else if (_timePastday.checked) {
-        _config.set({
-          timemode: 'pastday'
-        });
-      }
+  _onModeChanged = function (e) {
+    if (e.target === _timeRealtime) {
+      _this.setRealtime();
+    } else if (e.target === _timePastday) {
+      _this.setPastDay();
+    } else if (e.target === _timeCustom) {
+      _this.clearAutoUpdateTimeout();
     }
+  };
+
+  /**
+   * Observatory element delegated click handler.
+   */
+  _onObservatoryClick = function (e) {
+    var id = e.target.getAttribute('data-id');
+    e.preventDefault();
+    if (id) {
+      _config.set({
+        channel: null,
+        observatory: id
+      });
+    }
+  };
+
+  /**
+   * Time text input change handler.
+   */
+  _onTimeChange = function () {
+    if (!_timeCustom.checked) {
+      _timeCustom.checked = true;
+    }
+    _this.onTimeChange();
+  };
+
+  /**
+   * Event handler for when time is incremented.
+   */
+  _onTimeIncrement = function (e) {
+    _this.onTimeIncrement(e);
   };
 
   /**
@@ -277,6 +304,32 @@ var TimeseriesSelectView = function (options) {
     }
     dt = new Date(s.replace(' ', 'T').replace('Z', '') + 'Z');
     return dt;
+  };
+
+  /**
+   * Round a date up to the next N minute interval.
+   *
+   * @param dt {Date}
+   *        date to round.
+   * @param n {Integer}
+   *        default 5.
+   *        number of minutes to round to.
+   *        e.g. 1: round up to nearest minute.
+   *             5: round up to nearest 5 minutes.
+   * @return {Date} rounded date.
+   *         If dt is on a 5 minute interval, the return value is 5 minutes later.
+   */
+  _roundUpToNearestNMinutes = function (dt, n) {
+    var y = dt.getUTCFullYear(),
+        m = dt.getUTCMonth(),
+        d = dt.getUTCDate(),
+        h = dt.getUTCHours(),
+        i = dt.getUTCMinutes();
+
+    n = n || 5;
+    // round i
+    i = n * Math.floor((i + n) / n);
+    return new Date(Date.UTC(y, m, d, h, i));
   };
 
   /**
@@ -417,7 +470,6 @@ var TimeseriesSelectView = function (options) {
     _timeCustom.removeEventListener('change', _onTimeChange);
     _startTime.removeEventListener('change', _onTimeChange);
     _endTime.removeEventListener('change', _onTimeChange);
-    _timeUpdate.removeEventListener('click', _onTimeChange);
 
 
     // variables
@@ -440,15 +492,18 @@ var TimeseriesSelectView = function (options) {
     _timeCustom = null;
     _timeEl = null;
     _timeError = null;
+    _timeNext = null;
+    _timePrevious = null;
     _timePastday = null;
     _timeRealtime = null;
-    _timeUpdate = null;
     _validateEndTime = null;
     _validateStartTime = null;
 
     // methods
-    _formatDate = null;
+    _onChannelClick = null;
+    _onObservatoryClick = null;
     _onTimeChange = null;
+    _onTimeIncrement = null;
     _parseDate = null;
     _setTimeError = null;
     _timeOrder = null;
@@ -460,24 +515,157 @@ var TimeseriesSelectView = function (options) {
   }, _this.destroy);
 
   /**
-   * Update controls based on current model.
+   * Clear Auto Update Timeout
    */
-  _this.render = function () {
-    var endTime = _config.get('endtime'),
-        startTime = _config.get('starttime'),
-        timeMode = _config.get('timemode');
-
-    _endTime.value = _formatDate(endTime);
-    _startTime.value = _formatDate(startTime);
-    if (timeMode === 'realtime') {
-      _timeRealtime.checked = true;
-    } else if (timeMode === 'pastday') {
-      _timePastday.checked = true;
-    } else {
-      _timeCustom.checked = true;
+  _this.clearAutoUpdateTimeout = function () {
+    if (_autoUpdateTimeout !== null) {
+      clearTimeout(_autoUpdateTimeout);
+      _autoUpdateTimeout = null;
     }
   };
 
+  /**
+   * Event Handler for previous/next clicks.
+   *
+   * @params e (Event)
+   *    The event which called onTimeIncrement.
+   *    Used to determine whether to increment or decrement the time.
+   *
+   * @Notes
+   *    Time values are incremented/decremented by 1/2 the current time range.
+   */
+  _this.onTimeIncrement = function (e) {
+    var direction,
+        endtime,
+        increment,
+        starttime,
+        timemode;
+
+    endtime = _config.get('endtime');
+    starttime = _config.get('starttime');
+    timemode = _config.get('timemode');
+
+    _this.clearAutoUpdateTimeout();
+
+    if (!_timeCustom.checked) {
+      _timeCustom.checked = true;
+    }
+
+    if (e.target === _timeNext) {
+      direction = 1;
+    } else {
+      direction = -1;
+    }
+
+    increment = direction * ((endtime.getTime() - starttime.getTime()) / 2);
+
+    starttime = new Date(starttime.getTime() + increment);
+    endtime = new Date(endtime.getTime() + increment);
+
+    _config.set({
+      timemode: 'custom',
+      starttime: starttime,
+      endtime: endtime
+    });
+  };
+
+  /**
+   * Handles changes in time(s) inputs.
+   */
+  _this.onTimeChange = function () {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    if (_timeCustom.checked) {
+      endtime = _parseDate(_endTime.value);
+      starttime = _parseDate(_startTime.value);
+
+      if (_validateStartTime(starttime) &&
+          _validateEndTime(endtime) &&
+          _timeOrder(starttime, endtime) &&
+          _validateRange(starttime, endtime)){
+        _config.set({
+          endtime: endtime,
+          starttime: starttime,
+          timemode: 'custom'
+        });
+      }
+    }
+  };
+
+  /**
+   * Sets the config time to "Realtime"
+   *
+   * Realtime is defined as the current 15 minutes.
+   */
+  _this.setRealtime= function() {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    endtime = _roundUpToNearestNMinutes(new Date(), 1);
+    starttime = new Date(endtime.getTime() - 900000);
+
+    _config.set({
+      endtime: endtime,
+      starttime: starttime,
+      timemode: 'realtime'
+    });
+
+    _autoUpdateTimeout = setTimeout(_this.setRealtime, 30000);
+  };
+
+  /**
+   * Set the config time to the past day.
+   */
+  _this.setPastDay = function() {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    endtime = _roundUpToNearestNMinutes(new Date(), 5);
+    starttime = new Date(endtime.getTime() - 86400000);
+
+    _config.set({
+      endtime: endtime,
+      starttime: starttime,
+      timemode: 'pastday'
+    });
+
+    _autoUpdateTimeout = setTimeout(_this.setPastDay, 30000);
+  };
+
+  /**
+   * Update controls based on current model.
+   */
+  _this.render = function () {
+    var now,
+        endTime = _config.get('endtime'),
+        startTime = _config.get('starttime'),
+        timeMode = _config.get('timemode');
+
+    _endTime.value = Formatter.formatDate(endTime);
+    _startTime.value = Formatter.formatDate(startTime);
+    if (timeMode === 'realtime') {
+      _timeRealtime.checked = true;
+      _timeNext.disabled = true;
+    } else if (timeMode === 'pastday') {
+      _timePastday.checked = true;
+      _timeNext.disabled = true;
+    } else {
+      _timeCustom.checked = true;
+      now = new Date();
+      if (endTime > now) {
+        _timeNext.disabled = true;
+      } else {
+        _timeNext.disabled = false;
+      }
+    }
+  };
 
   _initialize(options);
   options = null;

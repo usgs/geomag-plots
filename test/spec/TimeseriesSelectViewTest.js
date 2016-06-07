@@ -85,17 +85,129 @@ describe('TimeSeriesSelectView', function () {
       _fireClickEvent(radio);
       expect(config.get('timemode')).to.equal('pastday');
       // custom
+      // Radio click doesn't set anything on custom.
+      // timemode should be what it was last set to.
       radio = view.el.querySelector('#time-custom');
       _fireClickEvent(radio);
-      // custom waits for start/end time to be entered
-      // phantomjs doesn't handle ISO dates, browsers do
-      view.el.querySelector('#time-starttime').value = '2015-01-01 00:00:00';
-      view.el.querySelector('#time-endtime').value = '2015-01-02 00:00:00';
-      _fireClickEvent(view.el.querySelector('.time-input > button'));
-      expect(view.el.querySelector('.time-error').innerHTML).to.equal('');
-      expect(config.get('timemode')).to.equal('custom');
+      expect(config.get('timemode')).to.equal('pastday');
     });
 
   });
+
+  describe('onTimeIncrement', function () {
+    it('sets starttime/endtime corretcly', function () {
+      var config,
+          e,
+          endtime,
+          starttime,
+          view;
+
+      config = Model({
+        starttime: new Date('2016-05-03T19:31:00Z'),
+        endtime: new Date('2016-05-04T19:31:00Z'),
+        timecode: 'pastday'
+      });
+
+      view = TimeseriesSelectView({config: config});
+
+      e = {};
+      e.target = view.el.querySelector('.previous-button');
+
+      view.onTimeIncrement(e);
+
+      starttime = new Date('2016-05-03T07:31:00Z');
+      endtime = new Date('2016-05-04T07:31:00Z');
+
+      expect(config.get('starttime').toString()).to.equal(
+          starttime.toString());
+    });
+  });
+
+  describe('setRealtime', function () {
+    it('sets startime and endtime to past day', function () {
+      var endtime,
+          starttime,
+          config,
+          view;
+
+      config = Model({
+        timemode: 'pastday'
+      });
+      view = TimeseriesSelectView({config: config});
+
+      view.setRealtime();
+
+      endtime = new Date();
+      starttime = new Date(endtime.getTime() - 900000);
+
+      expect(config.get('starttime').getTime()).to.be.closeTo(
+          starttime.getTime(), 61000);
+
+      view.destroy();
+    });
+
+
+  });
+
+  describe('setPastDay', function () {
+    it('sets startime and endtime to past day', function () {
+      var config,
+          endtime,
+          starttime,
+          view;
+
+      config = Model({
+        timemode: 'pastday'
+      });
+      view = TimeseriesSelectView({config: config});
+
+      view.setPastDay();
+
+      endtime = new Date();
+      starttime = new Date(endtime.getTime() - 86400000);
+
+      expect(config.get('starttime').getTime()).to.be.closeTo(
+          starttime.getTime(), 301000);
+
+      view.destroy();
+    });
+
+  });
+
+  describe('onTimeChange', function () {
+    var config,
+        view;
+
+    beforeEach (function () {
+      config = Model({
+        timemode: 'pastday'
+      });
+      view = TimeseriesSelectView({config: config});
+    });
+
+    afterEach (function () {
+      view.destroy();
+    });
+
+    it('sets starttime and endtime to custom time', function () {
+      var endtime,
+          starttime;
+
+      config.set({
+        timemode: 'custom'
+      });
+
+      starttime = new Date('2016-05-03T07:31:00Z');
+      endtime = new Date('2016-05-04T07:31:00Z');
+
+      view.el.querySelector('#time-starttime').value = starttime.toISOString();
+      view.el.querySelector('#time-endtime').value = endtime.toISOString();
+
+      view.onTimeChange();
+
+      expect(config.get('starttime').getTime()).to.equal(starttime.getTime());
+    });
+  });
+
 
 });

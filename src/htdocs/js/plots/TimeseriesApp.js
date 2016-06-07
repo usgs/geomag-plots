@@ -14,33 +14,6 @@ var Collection = require('mvc/Collection'),
     TimeseriesSelectView = require('plots/TimeseriesSelectView');
 
 
-/**
- * Round a date up to the next N minute interval.
- *
- * @param dt {Date}
- *        date to round.
- * @param n {Integer}
- *        default 5.
- *        number of minutes to round to.
- *        e.g. 1: round up to nearest minute.
- *             5: round up to nearest 5 minutes.
- * @return {Date} rounded date.
- *         If dt is on a 5 minute interval, the return value is 5 minutes later.
- */
-var __roundUpToNearestNMinutes = function (dt, n) {
-  var y = dt.getUTCFullYear(),
-      m = dt.getUTCMonth(),
-      d = dt.getUTCDate(),
-      h = dt.getUTCHours(),
-      i = dt.getUTCMinutes();
-
-  n = n || 5;
-  // round i
-  i = n * Math.floor((i + n) / n);
-  return new Date(Date.UTC(y, m, d, h, i));
-};
-
-
 var _DEFAULTS = {
   elementsMetaUrl: '/ws/edge/elements.json',
   obsMetaUrl: '/ws/edge/observatories.json',
@@ -74,15 +47,12 @@ var TimeseriesApp = function (options) {
   var _this,
       _initialize,
 
-      _autoUpdateTimeout,
       _configView,
       _descriptionEl,
       _observatories,
       _timeseriesEl,
       _timeseriesFactory,
       _timeseriesView,
-
-      _onAutoUpdate,
       _onConfigChange,
       _onTimeseriesError,
       _onTimeseriesLoad;
@@ -175,6 +145,10 @@ var TimeseriesApp = function (options) {
       },
       url: options.obsMetaUrl
     });
+
+    //Calling onTimeChange sets the time in config,
+    //which triggers _onConfigChange
+    _configView.setPastDay();
   };
 
   /**
@@ -229,13 +203,6 @@ var TimeseriesApp = function (options) {
   };
 
   /**
-   * Auto update displayed data.
-   */
-  _onAutoUpdate = function () {
-    _onConfigChange();
-  };
-
-  /**
    * Configuration model "change" listener.
    */
   _onConfigChange = function () {
@@ -243,37 +210,18 @@ var TimeseriesApp = function (options) {
         endtime,
         seconds,
         observatory,
-        starttime,
-        timemode,
-        autoUpdateTime = null;
+        starttime;
 
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
       OffCanvas.getOffCanvas().hide();
     }
 
-    if (_autoUpdateTimeout !== null) {
-      clearTimeout(_autoUpdateTimeout);
-      _autoUpdateTimeout = null;
-    }
-
     channel = _this.config.get('channel');
     observatory = _this.config.get('observatory');
-    timemode = _this.config.get('timemode');
 
-    if (timemode === 'realtime') {
-      // 15 minutes
-      endtime = __roundUpToNearestNMinutes(new Date(), 1);
-      starttime = new Date(endtime.getTime() - 900000);
-      autoUpdateTime = 300000;
-    } else if (timemode === 'pastday') {
-      endtime = __roundUpToNearestNMinutes(new Date(), 5);
-      starttime = new Date(endtime.getTime() - 86400000);
-      autoUpdateTime = 300000;
-    } else {
-      endtime = _this.config.get('endtime');
-      starttime = _this.config.get('starttime');
-    }
+    endtime = _this.config.get('endtime');
+    starttime = _this.config.get('starttime');
 
     if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
       seconds = true;
@@ -296,11 +244,6 @@ var TimeseriesApp = function (options) {
       errback: _onTimeseriesError,
       sampling_period: (seconds ? 1 : 60)
     });
-
-    // schedule auto update
-    if (autoUpdateTime !== null) {
-      _autoUpdateTimeout = setTimeout(_onAutoUpdate, autoUpdateTime);
-    }
   };
 
   /**
@@ -402,6 +345,5 @@ var TimeseriesApp = function (options) {
   options = null;
   return _this;
 };
-
 
 module.exports = TimeseriesApp;
