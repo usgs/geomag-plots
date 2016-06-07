@@ -62,12 +62,11 @@ var TimeseriesView = function (options) {
       height: _height,
       width: _width,
       paddingBottom: 25,
-      paddingLeft: 80,
+      paddingLeft: 90,
       paddingRight: 1,
       paddingTop: 1,
       xAxisLabel: '',
       yAxisFormat: _yAxisFormat,
-      // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
       yAxisTicks: _yAxisTicks,
       yAxisTooltip: _this.formatTooltipValue
     });
