@@ -7,6 +7,7 @@ var D3GraphView = require('plots/D3GraphView'),
 var expect = chai.expect;
 
 var changes,
+    model,
     plotModel;
 
 changes = {
@@ -17,6 +18,11 @@ changes = {
   ]
 
 };
+
+model = Model({
+  'xExtent': 9,
+  'yExtent': 8
+});
 
 plotModel = Model({
   'zoomScale': 1,
@@ -48,10 +54,26 @@ describe('D3GraphViewTest', function () {
       var view;
 
       view = D3GraphView({
+        model: model,
         plotModel: plotModel
       });
 
-      expect(view.getXExtent()).to.equal('');
+      expect(view.getXExtent()).to.equal(9);
+
+      view.destroy();
+    });
+  });
+
+  describe('getYExtent', function () {
+    it('returns yExtent', function () {
+      var view;
+
+      view = D3GraphView({
+        model: model,
+        plotModel: plotModel
+      });
+
+      expect(view.getYExtent()).to.equal(8);
 
       view.destroy();
     });
