@@ -78,7 +78,6 @@ var TimeseriesCollectionView = function (options) {
       view = TimeseriesView({
         plotModel: _this.model,
         el: li,
-        errorLoading: 'This should be removed',
         height: height,
         timeseries: timeseries,
         width: width

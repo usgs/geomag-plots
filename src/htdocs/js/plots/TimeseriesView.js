@@ -25,7 +25,6 @@ var TimeseriesView = function (options) {
   var _this,
       _initialize,
 
-      _errorLoading,
       _height,
       _metaViewEl,
       _onTimeseriesError,
@@ -43,7 +42,6 @@ var TimeseriesView = function (options) {
   _initialize = function (options) {
     var el;
 
-    _errorLoading = options.errorLoading || null;
     _height = options.height || 240;
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
@@ -78,6 +76,21 @@ var TimeseriesView = function (options) {
 
     _timeseries.on('change', _this.render);
     _this.render();
+  };
+
+  /**
+   * Errback for TimeseriesFactory.
+   */
+  _onTimeseriesError = function () {
+    var config;
+
+    config = _this.model.get();
+    if (config) {
+      _traceViewEl.innerHTML =
+        '<div class="alert error">' +
+          '<p>Failed to load timeseries data.</p>' +
+        '</div>';
+    }
   };
 
   /**
@@ -139,7 +152,6 @@ var TimeseriesView = function (options) {
     _timeseries.off('change', _this.render);
     _trace.destroy();
 
-    _errorLoading = null;
     _height = null;
     _metaViewEl = null;
     _onTimeseriesError = null;
@@ -182,28 +194,13 @@ var TimeseriesView = function (options) {
         '<span class="channel">' + elementDisplay + '</span>';
 
     // render D3TimeseriesView, or xhr request error
-    if (_errorLoading) {
+    if (_timeseries && _timeseries.get('error')) {
       _onTimeseriesError();
     } else {
       _trace.render();
     }
   };
 
-
-  /**
-   * Errback for TimeseriesFactory.
-   */
-  _onTimeseriesError = function () {
-    var config;
-
-    config = _this.model.get();
-    if (config) {
-      _traceViewEl.innerHTML =
-        '<div class="alert error">' +
-          '<p>Failed to load timeseries data.</p>' +
-        '</div>';
-    }
-  };
 
   _initialize(options);
   options = null;
