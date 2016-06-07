@@ -1,5 +1,6 @@
 .timeseries-view {
   position:relative;
+  margin: 1em 0 0;
 }
 
 .meta-view {
@@ -18,7 +19,13 @@
   }
 }
 
+.error-view.show,
 .trace-view {
   display: block;
-  margin-left:4em;
+  margin-left: 4em;
+}
+
+.error-view,
+.error-view.show + .trace-view {
+  display: none;
 }

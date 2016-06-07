@@ -25,6 +25,7 @@ var TimeseriesView = function (options) {
   var _this,
       _initialize,
 
+      _errorViewEl,
       _height,
       _metaViewEl,
       _onTimeseriesError,
@@ -52,8 +53,12 @@ var TimeseriesView = function (options) {
 
     el.innerHTML =
         '<div class="meta-view"></div>' +
+        '<div class="error-view alert error">' +
+          '<p>Failed to load timeseries data.</p>' +
+        '</div>' +
         '<div class="trace-view"></div>';
 
+    _errorViewEl = el.querySelector('.error-view');
     _metaViewEl = el.querySelector('.meta-view');
     _traceViewEl = el.querySelector('.trace-view');
 
@@ -76,21 +81,6 @@ var TimeseriesView = function (options) {
 
     _timeseries.on('change', _this.render);
     _this.render();
-  };
-
-  /**
-   * Errback for TimeseriesFactory.
-   */
-  _onTimeseriesError = function () {
-    var config;
-
-    config = _this.model.get();
-    if (config) {
-      _traceViewEl.innerHTML =
-        '<div class="alert error">' +
-          '<p>Failed to load timeseries data.</p>' +
-        '</div>';
-    }
   };
 
   /**
@@ -193,10 +183,11 @@ var TimeseriesView = function (options) {
         '<span class="observatory">' + observatory.id + '</span>' +
         '<span class="channel">' + elementDisplay + '</span>';
 
-    // render D3TimeseriesView, or xhr request error
+    // render D3TimeseriesView, or show error
     if (_timeseries && _timeseries.get('error')) {
-      _onTimeseriesError();
+      _errorViewEl.classList.add('show');
     } else {
+      _errorViewEl.classList.remove('show');
       _trace.render();
     }
   };
