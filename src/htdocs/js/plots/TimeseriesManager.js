@@ -100,9 +100,6 @@ var TimeseriesManager = function (options) {
       });
     });
 
-    // sort by observatory latitude descending
-    models.sort(_this.sortByObservatoryLatitudeDescending);
-
     // reset timeseries collection
     _this.timeseries.reset(models);
   };
@@ -218,62 +215,6 @@ var TimeseriesManager = function (options) {
 
     // destroy
     request.destroy();
-  };
-
-  /**
-   * Sort function for Timeseries objects.
-   *
-   * @param a {Timeseries}
-   *     first timeseries.
-   * @param b {Timeseries}
-   *     second timeseries.
-   * @return {Number}
-   *     {
-   *        1: if a latitude is <  b latitude;
-   *        0: if a latitude is == b latitude;
-   *       -1: if a latitude is <  b latitude
-   *     }
-   */
-  _this.sortByObservatoryLatitudeDescending = function (a, b) {
-    var aEl,
-        aId,
-        aLat,
-        aObs,
-        bEl,
-        bId,
-        bLat,
-        bObs;
-
-
-    aObs = a.get('observatory');
-    bObs = b.get('observatory');
-
-    if (!aObs || !bObs) {
-      return 0;
-    }
-
-    aLat = aObs.geometry.coordinates[1];
-    bLat = bObs.geometry.coordinates[1];
-    if (aLat < bLat) {
-      return 1;
-    } else if (aLat > bLat) {
-      return -1;
-    }
-
-    aEl = a.get('element');
-    bEl = b.get('element');
-    if (!aEl || !bEl) {
-      return 0;
-    }
-
-    aId = aEl.id;
-    bId = bEl.id;
-    if (aId < bId) {
-      return -1;
-    } else if (aId > bId) {
-      return 1;
-    }
-    return 0;
   };
 
 

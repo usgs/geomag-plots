@@ -70,4 +70,37 @@ describe('plots/TimeseriesApp', function () {
       expect(collection.data()[0].id).to.equal(3);
     });
   });
+
+  describe('sortByLatitudeDescending', function () {
+    it('sorts by geojson feature latitude descending', function () {
+      var app,
+          data;
+
+      app = TimeseriesApp();
+      data = [
+        {
+          id: 'c',
+          geometry: {
+            coordinates: [0, 5]
+          }
+        },
+        {
+          id: 'b',
+          geometry: {
+            coordinates: [0, 6]
+          }
+        },
+        {
+          id: 'a',
+          geometry: {
+            coordinates: [0, 4]
+          }
+        }
+      ];
+      data.sort(app.sortByLatitudeDescending);
+      expect(data[0].id).to.equal('b');
+      expect(data[1].id).to.equal('c');
+      expect(data[2].id).to.equal('a');
+    });
+  });
 });
