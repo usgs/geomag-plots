@@ -178,13 +178,11 @@ var TimeseriesSelectView = function (options) {
   _onElementSelect = function () {
     if (_observatories.getSelected()) {
       _observatories.deselect();
-      _config.set({
-        'observatories': null
-      }, {'silent': true});
     }
 
     // This set will trigger the render
     _config.set({
+      'observatories': _observatories.data().map(function (o) { return o.id; }),
       'elements': [_elements.getSelected().id]
     });
   };
@@ -201,13 +199,11 @@ var TimeseriesSelectView = function (options) {
     // only set to null if, not already null
     if (_elements.getSelected()) {
       _elements.deselect();
-      _config.set({
-        'elements': null
-      }, {'silent': true});
     }
 
     // This set will trigger the render
     _config.set({
+      'elements': _elements.data().map(function (e) { return e.id; }),
       'observatories': [_observatories.getSelected().id]
     });
   };
