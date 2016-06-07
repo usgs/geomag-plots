@@ -10,12 +10,6 @@ var Collection = require('mvc/Collection'),
 
 
 var DEFAULTS = {
-  // channels: [
-  //   'H',
-  //   'E',
-  //   'Z',
-  //   'F'
-  // ],
   observatories: null
 };
 
@@ -26,7 +20,6 @@ var DEFAULTS = {
  * @param options {Object}
  *        all options are passed to View.
  * @param options.elements {Array<String>}
- *        default ['H', 'E', 'Z', 'F'].
  *        element names.
  * @param options.config {Model}.
  *        configuration model to update.
