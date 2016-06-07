@@ -231,12 +231,20 @@ var CompactSelectView = function (options) {
   _this.updateRenderedItems = function () {
     _container.innerHTML = _this.collection.data().map(
       function (obj) {
-        var title;
+        var display,
+            title;
 
-        if (obj.properties && obj.properties.name) {
-          title = 'title="' + obj.properties.name + '" ';
+        if (obj.properties) {
+          title = obj.properties.name ?
+            'title= ' + obj.properties.name + ' ' :
+            '';
+
+          display = obj.properties.abbreviation ?
+            obj.properties.abbreviation :
+            obj.id;
         } else {
           title = '';
+          display = obj.id;
         }
 
         return [
@@ -244,7 +252,7 @@ var CompactSelectView = function (options) {
               title,
               'href="javascript:void(null);" ',
               'data-id="', obj.id, '">',
-            obj.id,
+            display,
           '</a>'
         ].join('');
       }
