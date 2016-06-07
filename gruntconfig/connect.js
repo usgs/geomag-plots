@@ -42,7 +42,8 @@ var connect = {
       host: OFFSITE_HOST,
       port: OFFSITE_PORT,
       headers: {
-        host: OFFSITE_HOST
+        host: OFFSITE_HOST,
+        'accept-encoding': 'identity'
       }
     }
   ],
