@@ -33,16 +33,16 @@ configEl = document.querySelector('#geomag-config');
 el = document.querySelector('#geomag-plots');
 
 app = TimeseriesApp({
-  channels: [
-    'H',
-    'E',
-    'Z',
-    'F',
-    'Dist',
-    'DeltaF'
-  ],
+  // channels: [
+  //   'H',
+  //   'E',
+  //   'Z',
+  //   'F',
+  //   'Dist',
+  //   'DeltaF'
+  // ],
   config: {
-    channel: ['H', 'E', 'Z', 'F'],
+    //channel: ['H', 'E', 'Z', 'F'],
     endtime: __getTime(0),
     timemode: 'pastday',
     starttime: __getTime(86400000 * 3)

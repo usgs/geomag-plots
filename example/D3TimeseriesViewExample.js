@@ -66,7 +66,7 @@ Xhr.ajax({
         data: timeseries,
         xAxisLabel: 'Time (UTC)',
         yAxisFormat: yAxisFormat,
-        yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)',
+        yAxisLabel: meta.observatory + ' ' + meta.example + ' (nT)',
         yAxisTicks: yAxisTicks
       }).render();
     });

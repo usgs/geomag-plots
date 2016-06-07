@@ -29,7 +29,7 @@ describe('TimeseriesCollectionView test suite.', function () {
           values: [1],
           metadata: {
             observatory: 'BOU',
-            channel: 'H',
+            element: 'H',
             nominal: 0
           }
         });

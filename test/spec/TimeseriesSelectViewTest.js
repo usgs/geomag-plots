@@ -37,7 +37,7 @@ describe('TimeSeriesSelectView', function () {
 
       config = Model({
         observatory: 'HON',
-        channel: 'E',
+        element: 'E',
         timemode: 'realtime'
       });
 
@@ -59,7 +59,7 @@ describe('TimeSeriesSelectView', function () {
     beforeEach(function () {
       config = Model({
         observatory: 'HON',
-        channel: 'E',
+        element: 'E',
         timemode: 'realtime'
       });
 

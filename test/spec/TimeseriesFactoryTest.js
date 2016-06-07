@@ -70,7 +70,7 @@ describe('TimeseriesFactory', function () {
           expect(timeseries.get('times').length).to.equal(1440);
           expect(timeseries.get('values').length).to.equal(1440);
           expect(timeseries.get('metadata').observatory).to.equal('BOU');
-          expect(timeseries.get('metadata').channel).to.equal('F');
+          expect(timeseries.get('metadata').element).to.equal('F');
         done();
         },
         errback: function (err) {

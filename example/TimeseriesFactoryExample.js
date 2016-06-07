@@ -7,7 +7,7 @@ var TimeseriesFactory = require('plots/TimeseriesFactory'),
 
 timeseriesFactory.getTimeseries({
   observatory:'BOU',
-  channel: null,
+  element: null,
   starttime: new Date(1429459810000),
   endtime: new Date(1429546200000),
   callback: function (response) {
