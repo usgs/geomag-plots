@@ -43,6 +43,20 @@ describe('D3GraphViewTest', function () {
     });
   });
 
+  describe('getXExtent', function () {
+    it('returns xExtent', function () {
+      var view;
+
+      view = D3GraphView({
+        plotModel: plotModel
+      });
+
+      expect(view.getXExtent()).to.equal('');
+
+      view.destroy();
+    });
+  });
+
   describe('renderZoom', function () {
     it('calls render', function () {
       var view;
