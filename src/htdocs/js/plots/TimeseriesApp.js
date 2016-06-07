@@ -218,13 +218,7 @@ var TimeseriesApp = function (options) {
    */
   _this.onCollectionLoad = function () {
     if (_this.elements.loaded && _this.observatories.loaded) {
-      // set default view
-      _this.config.set({
-        // "H" element
-        elements: ['H'],
-        // all observatories
-        observatories: Object.keys(_this.observatories.getIds())
-      });
+      _this.elements.selectById('H');
     }
   };
 
