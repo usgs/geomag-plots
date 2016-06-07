@@ -47,9 +47,12 @@ var TimeseriesManagerRequest = function (options) {
    * Abort request if still active.
    */
   _this.abort = function () {
+    var xhr;
+
     if (_this.xhr !== null) {
-      _this.xhr.abort();
+      xhr = _this.xhr;
       _this.xhr = null;
+      xhr.abort();
     }
   };
 
