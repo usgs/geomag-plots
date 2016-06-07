@@ -31,6 +31,16 @@ describe('D3GraphViewTest', function () {
     it('is defined', function () {
       expect(typeof D3GraphView).to.equal('function');
     });
+
+    it('can be destroyed', function () {
+      var view;
+
+      view = D3GraphView({
+        plotModel: plotModel
+      });
+
+      expect(view.destroy).to.not.throw(Error);
+    });
   });
 
   describe('renderZoom', function () {
