@@ -112,7 +112,7 @@ var TimeseriesApp = function (options) {
     });
 
     _this.plotModel = Model({
-      //TODO all the things
+      yExtentSize: null
     });
 
     _configView = TimeseriesSelectView({
