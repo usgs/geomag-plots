@@ -68,7 +68,8 @@ var TimeseriesView = function (options) {
       xAxisLabel: '',
       yAxisFormat: _yAxisFormat,
       // yAxisLabel: meta.observatory + ' ' + meta.channel + ' (nT)'
-      yAxisTicks: _yAxisTicks
+      yAxisTicks: _yAxisTicks,
+      yAxisTooltip: _this.formatTooltipValue
     });
 
     _timeseries.on('change', _this.render);
@@ -137,6 +138,16 @@ var TimeseriesView = function (options) {
     _trace = null;
     _this = null;
   }, _this.destroy);
+
+  _this.formatTooltipValue = function (value) {
+    var element,
+        units;
+
+    element = _timeseries.get('element') || {};
+    units = element.properties ? element.properties.units : 'nT';
+
+    return value + ' ' + units;
+  };
 
   _this.render = function () {
     var element,

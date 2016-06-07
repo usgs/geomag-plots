@@ -31,6 +31,10 @@ var __formatTooltipDate = function (d) {
   return d;
 };
 
+var __yAxisTooltip = function (v) {
+  return v;
+};
+
 /**
  * Display a Timeseries model.
  *
@@ -52,6 +56,7 @@ var D3TimeseriesView = function (options) {
       _timeseries,
       _x,
       _y,
+      _yAxisTooltip,
       // methods
       _defined,
       _gapStart,
@@ -61,15 +66,20 @@ var D3TimeseriesView = function (options) {
       _onMouseMove,
       _onMouseOut;
 
-  _this = D3GraphView(Util.extend({
+  options = Util.extend({
     height: 300,
     width: 960,
     xAxisFormat: __dateFormat,
     xAxisScale: d3.time.scale.utc()
-  }, options));
+  }, options);
+
+  _this = D3GraphView(options);
 
   _initialize = function () {
     var el = d3.select(_this.dataEl);
+
+    _yAxisTooltip = options.yAxisTooltip || __yAxisTooltip;
+
     // data gaps
     _gapsEl = el.append('g')
         .attr('class', 'gaps')
@@ -285,7 +295,7 @@ var D3TimeseriesView = function (options) {
         [
           {
             class: 'value',
-            text: y
+            text: _yAxisTooltip(y)
           },
           {
             class: 'time',
