@@ -39,8 +39,6 @@ var TimeseriesSelectView = function (options) {
       _initialize,
       // variables
       _autoUpdateTimeout,
-      _channels,
-      _channelEl,
       _config,
       _elements,
       _elementsEl,
@@ -154,9 +152,6 @@ var TimeseriesSelectView = function (options) {
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
-
-    _channelEl.addEventListener('click', _onChannelClick);
-    _observatoryEl.addEventListener('click', _onObservatoryClick);
 
     _timeRealtime.addEventListener('change', _onModeChanged);
     _timePastday.addEventListener('change', _onModeChanged);
@@ -602,25 +597,8 @@ var TimeseriesSelectView = function (options) {
   _this.render = function () {
     var now,
         endTime = _config.get('endtime'),
-        selectedChannel = _config.get('channel'),
-        selectedObservatory = _config.get('observatory'),
         startTime = _config.get('starttime'),
         timeMode = _config.get('timemode');
-
-    _channelEl.innerHTML = _channels.map(function (channel) {
-      return '<a href="#" data-id="' + channel + '"' +
-          (channel === selectedChannel ?
-              ' class="selected"' : '') +
-          '>' + channel + '</a>';
-    }).join('');
-
-    _observatoryEl.innerHTML = Object.keys(_observatories.getIds()).
-        map(function (observatory) {
-          return '<a href="#" data-id="' + observatory + '"' +
-              (observatory === selectedObservatory ?
-                  ' class="selected"' : '') +
-              '>' + observatory + '</a>';
-        }).join('');
 
     _endTime.value = Formatter.formatDate(endTime);
     _startTime.value = Formatter.formatDate(startTime);
