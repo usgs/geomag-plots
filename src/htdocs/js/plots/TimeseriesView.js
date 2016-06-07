@@ -87,14 +87,24 @@ var TimeseriesView = function (options) {
    * @see yAxisTicks
    */
   _yAxisFormat = function (y) {
-    var range;
+    var element,
+        range,
+        units;
+
+    element = _timeseries.get('element') || {};
+    if (element.properties) {
+      units = element.properties.units;
+    } else {
+      units = 'nT';
+    }
+
     if (y === _yExtent[0] || y === _yExtent[1]) {
       // display min/max
-      return y.toFixed(1);
+      return y.toFixed(1) + ' ' + units;
     } else {
       // display range in middle
       range = _yExtent[1] - _yExtent[0];
-      return '(' + range.toFixed(1) + ' nT)';
+      return '(' + range.toFixed(1) + ' ' + units + ')';
     }
   };
 
