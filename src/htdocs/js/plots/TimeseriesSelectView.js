@@ -63,18 +63,9 @@ var TimeseriesSelectView = function (options) {
       _timePastday,
       _timeRealtime,
       // methods
-      _onChannelClick,
       _onModeChanged,
-      _onObservatoryClick,
       _onTimeChange,
-      _onTimeIncrement,
-      _parseDate,
-      _roundUpToNearestNMinutes,
-      _setTimeError,
-      _timeOrder,
-      _validateRange,
-      _validateEndTime,
-      _validateStartTime;
+      _onTimeIncrement;
 
 
   _this = View(options);
@@ -190,57 +181,17 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
-   * Maintains the relationship between "elements" and "observatories" when
-   * an item is selected in the "element" collection.
-   *
-   * Sets the config model with the selected "element" id, and removes any
-   * selected "observatories".
+   * Calls _this.onElementSelect()
    */
   _onElementSelect = function () {
-    if (_observatories.getSelected()) {
-      _observatories.deselect();
-    }
-
-    // This set will trigger the render
-    _config.set({
-      'observatories': _observatories.data().map(function (o) { return o.id; }),
-      'elements': [_elements.getSelected().id]
-    });
+    _this.onElementSelect();
   };
 
-
   /**
-   * Maintains the relationship between "elements" and "observatories" when
-   * an item is selected in the "observatory" collection.
-   *
-   * Sets the config model with the selected "observatory" id, and removes any
-   * selected "observatories".
+   * Calls public function onObservatorySelect
    */
   _onObservatorySelect = function () {
-    // only set to null if, not already null
-    if (_elements.getSelected()) {
-      _elements.deselect();
-    }
-
-    // This set will trigger the render
-    _config.set({
-      'elements': _elements.data().map(function (e) { return e.id; }),
-      'observatories': [_observatories.getSelected().id]
-    });
-  };
-
-  /**
-   * Channel element delegated click handler.
-   */
-  _onChannelClick = function (e) {
-    var id = e.target.getAttribute('data-id');
-    e.preventDefault();
-    if (id) {
-      _config.set({
-        channel: id,
-        observatory: null
-      });
-    }
+    _this.onObservatorySelect();
   };
 
   /**
@@ -255,20 +206,6 @@ var TimeseriesSelectView = function (options) {
       _this.setPastDay();
     } else if (e.target === _timeCustom) {
       _this.clearAutoUpdateTimeout();
-    }
-  };
-
-  /**
-   * Observatory element delegated click handler.
-   */
-  _onObservatoryClick = function (e) {
-    var id = e.target.getAttribute('data-id');
-    e.preventDefault();
-    if (id) {
-      _config.set({
-        channel: null,
-        observatory: id
-      });
     }
   };
 
@@ -290,173 +227,10 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
-   * Parse a date string.
-   *
-   * @param s {String}
-   *        ISO8601ish string to parse as UTC.
-   * @return {Date}
-   *         parsed date, or null if unable to parse.
-   */
-  _parseDate = function (s) {
-    var dt;
-    if (!s) {
-      return null;
-    }
-    dt = new Date(s.replace(' ', 'T').replace('Z', '') + 'Z');
-    return dt;
-  };
-
-  /**
-   * Round a date up to the next N minute interval.
-   *
-   * @param dt {Date}
-   *        date to round.
-   * @param n {Integer}
-   *        default 5.
-   *        number of minutes to round to.
-   *        e.g. 1: round up to nearest minute.
-   *             5: round up to nearest 5 minutes.
-   * @return {Date} rounded date.
-   *         If dt is on a 5 minute interval, the return value is 5 minutes later.
-   */
-  _roundUpToNearestNMinutes = function (dt, n) {
-    var y = dt.getUTCFullYear(),
-        m = dt.getUTCMonth(),
-        d = dt.getUTCDate(),
-        h = dt.getUTCHours(),
-        i = dt.getUTCMinutes();
-
-    n = n || 5;
-    // round i
-    i = n * Math.floor((i + n) / n);
-    return new Date(Date.UTC(y, m, d, h, i));
-  };
-
-  /**
-   * Show/clear error message for time inputs.
-   *
-   * @param message {String}
-   *        error message, or null if no errors.
-   */
-  _setTimeError = function (message) {
-    if (message === null) {
-      _timeError.innerHTML = '';
-      _timeError.classList.remove('error');
-      _timeError.classList.remove('alert');
-    } else {
-      _timeError.innerHTML = message;
-      _timeError.classList.add('alert');
-      _timeError.classList.add('error');
-    }
-  };
-
-
-  /**
-   * Ensure that start time comes before end time. Swap them if needed.
-   * If start and end are identical (within 10 seconds), make the range
-   * between them 3 days.
-   *
-   * @param start {Date}
-   *        time entered in start field.
-   * @param end {Date}
-   *        time entered in end field.
-   * @return [{Date}, {Date}]
-   *         start time and end time in proper order.
-   */
-  _timeOrder = function(start, end) {
-    if (start > end) {
-      _setTimeError('Start Time must come before End Time.');
-      return false;
-    } else {
-      _setTimeError(null);
-      return true;
-    }
-
-  };
-
-  /**
-   * Validate a date-time string, or create a valid date-time.
-   *
-   * @param time {Date}
-   *        string that needs to be a valid date-time.
-   * @return {Boolean}
-   *         true if time is a valid date time.
-   */
-  _validateEndTime = function (time) {
-    if (time === null || !(time instanceof Date) || isNaN(+time)) {
-      _endTimeError.innerHTML = 'Please enter a valid time.';
-      _endTimeErrorLabel.classList.add('usa-input-error-label');
-      _endTimeErrorLabel.insertBefore(_endTimeError, _endTime);
-      return false;
-    } else {
-      var span;
-
-      _endTimeError.innerHTML = '';
-      _endTimeErrorLabel.classList.remove('usa-input-error-label');
-
-      span = _endTimeErrorLabel.querySelector('.usa-input-error-message');
-      if (span !== null) {
-        _endTimeErrorLabel.removeChild(span);
-      }
-
-      return true;
-    }
-  };
-
-  /**
-   * Validate a date-time string, or create a valid date-time.
-   *
-   * @param time {Date}
-   *        string that needs to be a valid date-time.
-   * @return {Boolean}
-   *         true if time is a valid date time.
-   */
-  _validateStartTime = function (time) {
-    if (time === null || !(time instanceof Date) || isNaN(+time)) {
-      _startTimeError.innerHTML = 'Please enter a valid time.';
-      _startTimeErrorLabel.classList.add('usa-input-error-label');
-      _startTimeErrorLabel.insertBefore(_startTimeError, _startTime);
-      return false;
-    } else {
-      var span;
-
-      _startTimeError.innerHTML = '';
-      _startTimeErrorLabel.classList.remove('usa-input-error-label');
-
-      span = _startTimeErrorLabel.querySelector('.usa-input-error-message');
-      if (span !== null) {
-        _startTimeErrorLabel.removeChild(span);
-      }
-
-      return true;
-    }
-  };
-
-  /**
-   * Ensure that the time range isn't greater than 1 month.
-   *
-   * @param start {Date}
-   *        time entered in start field.
-   * @param end {Date}
-   *        time entered in end field.
-   * @return {Boolean}
-   *         true if the range is less than 31 days.
-   */
-  _validateRange = function (start, end) {
-    if ((end-start) > 2678400000) {
-      _setTimeError('Please select less than 1 month of data.');
-      return false;
-    } else {
-      _setTimeError(null);
-      return true;
-    }
-  };
-
-
-  /**
    * Destroy this view.
    */
   _this.destroy = Util.compose(function () {
+    _this.clearAutoUpdateTimeout();
     _elementsView.destroy();
     _scaleView.destroy();
     _observatoriesView.destroy();
@@ -465,12 +239,15 @@ var TimeseriesSelectView = function (options) {
     _elements.off('select', _onElementSelect);
     _observatories.off('select', _onObservatorySelect);
 
-    _timeRealtime.removeEventListener('change', _onTimeChange);
-    _timePastday.removeEventListener('change', _onTimeChange);
-    _timeCustom.removeEventListener('change', _onTimeChange);
+    _timeRealtime.removeEventListener('change', _onModeChanged);
+    _timePastday.removeEventListener('change', _onModeChanged);
+    _timeCustom.removeEventListener('change', _onModeChanged);
+
+    _timePrevious.removeEventListener('click', _onTimeIncrement);
+    _timeNext.removeEventListener('click', _onTimeIncrement);
+
     _startTime.removeEventListener('change', _onTimeChange);
     _endTime.removeEventListener('change', _onTimeChange);
-
 
     // variables
     _config = null;
@@ -496,20 +273,10 @@ var TimeseriesSelectView = function (options) {
     _timePrevious = null;
     _timePastday = null;
     _timeRealtime = null;
-    _validateEndTime = null;
-    _validateStartTime = null;
 
     // methods
-    _onChannelClick = null;
-    _onObservatoryClick = null;
     _onTimeChange = null;
     _onTimeIncrement = null;
-    _parseDate = null;
-    _setTimeError = null;
-    _timeOrder = null;
-    _validateRange = null;
-    _validateEndTime = null;
-    _validateStartTime = null;
 
     _this = null;
   }, _this.destroy);
@@ -522,6 +289,45 @@ var TimeseriesSelectView = function (options) {
       clearTimeout(_autoUpdateTimeout);
       _autoUpdateTimeout = null;
     }
+  };
+
+  /**
+   * Maintains the relationship between "elements" and "observatories" when
+   * an item is selected in the "element" collection.
+   *
+   * Sets the config model with the selected "element" id, and removes any
+   * selected "observatories".
+   */
+  _this.onElementSelect = function () {
+    if (_observatories.getSelected()) {
+      _observatories.deselect();
+    }
+
+    // This set will trigger the render
+    _config.set({
+      'observatories': _observatories.data().map(function (o) { return o.id; }),
+      'elements': [_elements.getSelected().id]
+    });
+  };
+
+  /**
+   * Maintains the relationship between "elements" and "observatories" when
+   * an item is selected in the "observatory" collection.
+   *
+   * Sets the config model with the selected "observatory" id, and removes any
+   * selected "observatories".
+   */
+  _this.onObservatorySelect = function () {
+    // only set to null if, not already null
+    if (_elements.getSelected()) {
+      _elements.deselect();
+    }
+
+    // This set will trigger the render
+    _config.set({
+      'elements': _elements.data().map(function (e) { return e.id; }),
+      'observatories': [_observatories.getSelected().id]
+    });
   };
 
   /**
@@ -579,13 +385,13 @@ var TimeseriesSelectView = function (options) {
     _this.clearAutoUpdateTimeout();
 
     if (_timeCustom.checked) {
-      endtime = _parseDate(_endTime.value);
-      starttime = _parseDate(_startTime.value);
+      endtime = _this.parseDate(_endTime.value);
+      starttime = _this.parseDate(_startTime.value);
 
-      if (_validateStartTime(starttime) &&
-          _validateEndTime(endtime) &&
-          _timeOrder(starttime, endtime) &&
-          _validateRange(starttime, endtime)){
+      if (_this.validateStartTime(starttime) &&
+          _this.validateEndTime(endtime) &&
+          _this.timeOrder(starttime, endtime) &&
+          _this.validateRange(starttime, endtime)){
         _config.set({
           endtime: endtime,
           starttime: starttime,
@@ -596,26 +402,21 @@ var TimeseriesSelectView = function (options) {
   };
 
   /**
-   * Sets the config time to "Realtime"
+   * Parse a date string.
    *
-   * Realtime is defined as the current 15 minutes.
+   * @param s {String}
+   *        ISO8601ish string to parse as UTC.
+   * @return {Date}
+   *         parsed date, or null if unable to parse.
    */
-  _this.setRealtime= function() {
-    var endtime,
-        starttime;
+  _this.parseDate = function (s) {
+    var dt;
 
-    _this.clearAutoUpdateTimeout();
-
-    endtime = _roundUpToNearestNMinutes(new Date(), 1);
-    starttime = new Date(endtime.getTime() - 900000);
-
-    _config.set({
-      endtime: endtime,
-      starttime: starttime,
-      timemode: 'realtime'
-    });
-
-    _autoUpdateTimeout = setTimeout(_this.setRealtime, 30000);
+    if (!s) {
+      return null;
+    }
+    dt = new Date(s.replace(' ', 'T').replace('Z', '') + 'Z');
+    return dt;
   };
 
   /**
@@ -627,7 +428,7 @@ var TimeseriesSelectView = function (options) {
 
     _this.clearAutoUpdateTimeout();
 
-    endtime = _roundUpToNearestNMinutes(new Date(), 5);
+    endtime = _this.roundUpToNearestNMinutes(new Date(), 5);
     starttime = new Date(endtime.getTime() - 86400000);
 
     _config.set({
@@ -639,14 +440,18 @@ var TimeseriesSelectView = function (options) {
     _autoUpdateTimeout = setTimeout(_this.setPastDay, 30000);
   };
 
-  /**
+    /**
    * Update controls based on current model.
    */
   _this.render = function () {
-    var now,
-        endTime = _config.get('endtime'),
-        startTime = _config.get('starttime'),
-        timeMode = _config.get('timemode');
+    var endTime,
+        now,
+        startTime,
+        timeMode;
+
+    endTime = _config.get('endtime');
+    startTime = _config.get('starttime');
+    timeMode = _config.get('timemode');
 
     _endTime.value = Formatter.formatDate(endTime);
     _startTime.value = Formatter.formatDate(startTime);
@@ -664,6 +469,180 @@ var TimeseriesSelectView = function (options) {
       } else {
         _timeNext.disabled = false;
       }
+    }
+  };
+
+  /**
+   * Round a date up to the next N minute interval.
+   *
+   * @param dt {Date}
+   *        date to round.
+   * @param n {Integer}
+   *        default 5.
+   *        number of minutes to round to.
+   *        e.g. 1: round up to nearest minute.
+   *             5: round up to nearest 5 minutes.
+   * @return {Date} rounded date.
+   *         If dt is on a 5 minute interval, the return value is 5 minutes later.
+   */
+  _this.roundUpToNearestNMinutes = function (dt, n) {
+    var y,
+        m,
+        d,
+        h,
+        i;
+
+    y = dt.getUTCFullYear();
+    m = dt.getUTCMonth();
+    d = dt.getUTCDate();
+    h = dt.getUTCHours();
+    i = dt.getUTCMinutes();
+
+    n = n || 5;
+    // round i
+    i = n * Math.floor((i + n) / n);
+    return new Date(Date.UTC(y, m, d, h, i));
+  };
+
+
+  /**
+   * Sets the config time to "Realtime"
+   *
+   * Realtime is defined as the current 15 minutes.
+   */
+  _this.setRealtime= function() {
+    var endtime,
+        starttime;
+
+    _this.clearAutoUpdateTimeout();
+
+    endtime = _this.roundUpToNearestNMinutes(new Date(), 1);
+    starttime = new Date(endtime.getTime() - 900000);
+
+    _config.set({
+      endtime: endtime,
+      starttime: starttime,
+      timemode: 'realtime'
+    });
+
+    _autoUpdateTimeout = setTimeout(_this.setRealtime, 30000);
+  };
+
+  /**
+   * Show/clear error message for time inputs.
+   *
+   * @param message {String}
+   *        error message, or null if no errors.
+   */
+  _this.setTimeError = function (message) {
+    if (message === null) {
+      _timeError.innerHTML = '';
+      _timeError.classList.remove('error');
+      _timeError.classList.remove('alert');
+    } else {
+      _timeError.innerHTML = message;
+      _timeError.classList.add('alert');
+      _timeError.classList.add('error');
+    }
+  };
+
+  /**
+   * Ensure that start time comes before end time. Swap them if needed.
+   * If start and end are identical (within 10 seconds), make the range
+   * between them 3 days.
+   *
+   * @param start {Date}
+   *        time entered in start field.
+   * @param end {Date}
+   *        time entered in end field.
+   * @return [{Date}, {Date}]
+   *         start time and end time in proper order.
+   */
+  _this.timeOrder = function(start, end) {
+    if (start > end) {
+      _this.setTimeError('Start Time must come before End Time.');
+      return false;
+    } else {
+      _this.setTimeError(null);
+      return true;
+    }
+  };
+
+  /**
+   * Validate a date-time string, or create a valid date-time.
+   *
+   * @param time {Date}
+   *        string that needs to be a valid date-time.
+   * @return {Boolean}
+   *         true if time is a valid date time.
+   */
+  _this.validateEndTime = function (time) {
+    if (time === null || !(time instanceof Date) || isNaN(+time)) {
+      _endTimeError.innerHTML = 'Please enter a valid time.';
+      _endTimeErrorLabel.classList.add('usa-input-error-label');
+      _endTimeErrorLabel.insertBefore(_endTimeError, _endTime);
+      return false;
+    } else {
+      var span;
+
+      _endTimeError.innerHTML = '';
+      _endTimeErrorLabel.classList.remove('usa-input-error-label');
+
+      span = _endTimeErrorLabel.querySelector('.usa-input-error-message');
+      if (span !== null) {
+        _endTimeErrorLabel.removeChild(span);
+      }
+
+      return true;
+    }
+  };
+
+  /**
+   * Validate a date-time string, or create a valid date-time.
+   *
+   * @param time {Date}
+   *        string that needs to be a valid date-time.
+   * @return {Boolean}
+   *         true if time is a valid date time.
+   */
+  _this.validateStartTime = function (time) {
+    if (time === null || !(time instanceof Date) || isNaN(+time)) {
+      _startTimeError.innerHTML = 'Please enter a valid time.';
+      _startTimeErrorLabel.classList.add('usa-input-error-label');
+      _startTimeErrorLabel.insertBefore(_startTimeError, _startTime);
+      return false;
+    } else {
+      var span;
+
+      _startTimeError.innerHTML = '';
+      _startTimeErrorLabel.classList.remove('usa-input-error-label');
+
+      span = _startTimeErrorLabel.querySelector('.usa-input-error-message');
+      if (span !== null) {
+        _startTimeErrorLabel.removeChild(span);
+      }
+
+      return true;
+    }
+  };
+
+  /**
+   * Ensure that the time range isn't greater than 1 month.
+   *
+   * @param start {Date}
+   *        time entered in start field.
+   * @param end {Date}
+   *        time entered in end field.
+   * @return {Boolean}
+   *         true if the range is less than 31 days.
+   */
+  _this.validateRange = function (start, end) {
+    if ((end-start) > 2678400000) {
+      _this.setTimeError('Please select less than 1 month of data.');
+      return false;
+    } else {
+      _this.setTimeError(null);
+      return true;
     }
   };
 
