@@ -52,10 +52,7 @@ var TimeseriesApp = function (options) {
       _observatories,
       _timeseriesEl,
       _timeseriesFactory,
-      _timeseriesView,
-      _onConfigChange,
-      _onTimeseriesError,
-      _onTimeseriesLoad;
+      _timeseriesView;
 
   _this = View(options);
 
@@ -146,8 +143,10 @@ var TimeseriesApp = function (options) {
       url: options.obsMetaUrl
     });
 
-    //Calling onTimeChange sets the time in config,
-    //which triggers _onConfigChange
+    _this.config.on('change', _this.onConfigChange);
+
+    //Calling setPastDay sets the time in config,
+    //which triggers TimeseriesManager
     _configView.setPastDay();
   };
 
@@ -199,129 +198,18 @@ var TimeseriesApp = function (options) {
   /**
    * Configuration model "change" listener.
    */
-  _onConfigChange = function () {
-    var channel,
-        endtime,
-        seconds,
-        observatory,
-        starttime;
-
+  _this.onConfigChange = function () {
     if (typeof OffCanvas === 'object') {
       // hide offcanvas
       OffCanvas.getOffCanvas().hide();
     }
-
-    channel = _this.config.get('channel');
-    observatory = _this.config.get('observatory');
-
-    endtime = _this.config.get('endtime');
-    starttime = _this.config.get('starttime');
-
-    if ((endtime.getTime() - starttime.getTime()) <= 1800000) {
-      seconds = true;
-    } else {
-      seconds = false;
-    }
-
-    _timeseriesEl.classList.add('loading');
-    _this.config.set({
-      starttime: starttime,
-      endtime: endtime
-    }, {silent: true});
-
-    _timeseriesFactory.getTimeseries({
-      elements: channel,
-      id: observatory,
-      endtime: endtime,
-      starttime: starttime,
-      callback: _onTimeseriesLoad,
-      errback: _onTimeseriesError,
-      sampling_period: (seconds ? 1 : 60)
-    });
-  };
-
-  /**
-   * Errback for TimeseriesFactory.
-   */
-  _onTimeseriesError = function () {
-    var config,
-        el;
-
-    el = _this.el.querySelector('.view');
-    config = _this.config.get();
-    if (config) {
-      el.innerHTML =
-        '<p class="alert error">Failed to load data for, ' +
-          (config.channel ?
-              'channel: ' + config.channel :
-              'observatory: ' +config.observatory) +
-        '</p>';
-    }
-
-    _timeseriesEl.classList.remove('loading');
-    _this.timeseries.reset([]);
-  };
-
-  /**
-   * Callback for TimeseriesFactory.
-   *
-   * @param response {TimeseriesResponse}
-   *        timeseries webservice response.
-   */
-  _onTimeseriesLoad = function (response) {
-    var timeseries = response.getTimeseries();
-    // copy metadata from observatory to timeseries
-    timeseries.forEach(function (t) {
-      var coords,
-          metadata,
-          observatory,
-          props;
-
-      metadata = t.get('metadata');
-      observatory = _this.observatories.get(metadata.observatory);
-      if (observatory !== null) {
-        coords = observatory.geometry.coordinates;
-        props = observatory.properties;
-        Util.extend(metadata, {
-          name: props.name,
-          latitude: coords[1],
-          longitude: coords[0]
-        });
-      }
-    });
-    // sort by latitude
-    timeseries.sort(function (a, b) {
-      var aMeta = a.get('metadata'),
-          bMeta = b.get('metadata'),
-          aKey,
-          bKey;
-      // sort by latitude if available
-      aKey = aMeta.latitude;
-      bKey = bMeta.latitude;
-      if (aKey && bKey) {
-        return bKey - aKey;
-      }
-      // otherwise observatory code
-      aKey = aMeta.observatory;
-      bKey = bMeta.observatory;
-      if (aKey < bKey) {
-        return -1;
-      } else if (bKey < aKey) {
-        return 1;
-      }
-      return 0;
-    });
-    // update collection
-    _this.timeseries.reset(timeseries);
-    // done loading
-    _timeseriesEl.classList.remove('loading');
   };
 
   /**
    * Destroy this application.
    */
   _this.destroy = Util.compose(function () {
-    _this.config.off('change', _onConfigChange);
+    _this.config.off('change', _this.onConfigChange);
     _configView.destroy();
     _timeseriesView.destroy();
 
