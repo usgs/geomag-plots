@@ -37,19 +37,11 @@ var TimeseriesResponse = function (options) {
     });
 
     _this.get('values').forEach(function (element) {
-      var metadata;
-
-      metadata = element.metadata;
-
       timeseries.push(
         Timeseries({
           id: _ID_SEQUENCE++,
           times: times,
-          values: element.values,
-          metadata: {
-            observatory: metadata.station,
-            element: metadata.element
-          }
+          values: element.values
         })
       );
     });
