@@ -29,6 +29,7 @@ var TimeseriesView = function (options) {
       _height,
       _metaViewEl,
       _onTimeseriesError,
+      _plotModel,
       _timeseries,
       _trace,
       _traceViewEl,
@@ -46,7 +47,7 @@ var TimeseriesView = function (options) {
     _height = options.height || 240;
     _timeseries = options.timeseries;
     _width = options.width || 960;   // 480 looks better for mobile
-    _this.model = options.plotModel || Model();
+    _plotModel = options.plotModel || Model();
 
     el = _this.el;
     el.classList.add('timeseries-view');
@@ -63,7 +64,7 @@ var TimeseriesView = function (options) {
     _traceViewEl = el.querySelector('.trace-view');
 
     _trace = D3TimeseriesView({
-      plotModel: _this.model,
+      plotModel: _plotModel,
       el: _traceViewEl,
       data: _timeseries,
       // title: meta.observatory,
@@ -145,6 +146,7 @@ var TimeseriesView = function (options) {
     _height = null;
     _metaViewEl = null;
     _onTimeseriesError = null;
+    _plotModel = null;
     _timeseries = null;
     _trace = null;
     _traceViewEl = null;
