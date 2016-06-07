@@ -236,7 +236,7 @@ var CompactSelectView = function (options) {
 
         if (obj.properties) {
           title = obj.properties.name ?
-            'title= ' + obj.properties.name + ' ' :
+            'title="' + obj.properties.name + '" ' :
             '';
 
           display = obj.properties.abbreviation ?
