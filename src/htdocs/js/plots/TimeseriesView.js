@@ -150,18 +150,19 @@ var TimeseriesView = function (options) {
 
   _this.render = function () {
     var element,
+        elementDisplay,
         observatory;
 
     element = _timeseries.get('element') || {};
     observatory = _timeseries.get('observatory') || {};
 
+    elementDisplay = (element.properties && element.properties.abbreviation) ?
+      element.properties.abbreviation :
+      element.id;
+
     _metaView.innerHTML =
         '<span class="observatory">' + observatory.id + '</span>' +
-        '<span class="channel">' + element.id +
-          '<span class="units">' +
-            (element.properties ? element.properties.units : 'nT') +
-          '</span>' +
-        '</span>';
+        '<span class="channel">' + elementDisplay + '</span>';
 
     _trace.render();
   };
