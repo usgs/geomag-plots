@@ -46,6 +46,8 @@ var TimeseriesSelectView = function (options) {
       _observatories,
       _observatoriesEl,
       _observatoriesView,
+      _onElementSelect,
+      _onObservatorySelect,
       _scaleView,
       _startTime,
       _startTimeError,
@@ -134,6 +136,8 @@ var TimeseriesSelectView = function (options) {
     _timeError = el.querySelector('.time-input > .time-error');
 
     _config.on('change', _this.render);
+    _elements.on('select', _onElementSelect);
+    _observatories.on('select', _onObservatorySelect);
 
     _timeRealtime.addEventListener('change', _onTimeChange);
     _timePastday.addEventListener('change', _onTimeChange);
@@ -141,6 +145,7 @@ var TimeseriesSelectView = function (options) {
     _startTime.addEventListener('change', _onTimeChange);
     _endTime.addEventListener('change', _onTimeChange);
     _timeUpdate.addEventListener('click', _onTimeChange);
+
 
     _elementsView = CompactSelectView({
       collection: _elements,
@@ -163,6 +168,49 @@ var TimeseriesSelectView = function (options) {
     _this.render();
   };
 
+  /**
+   * Maintains the relationship between "elements" and "observatories" when
+   * an item is selected in the "element" collection.
+   *
+   * Sets the config model with the selected "element" id, and removes any
+   * selected "observatories".
+   */
+  _onElementSelect = function () {
+    if (_observatories.getSelected()) {
+      _observatories.deselect();
+      _config.set({
+        'observatories': null
+      }, {'silent': true});
+    }
+
+    // This set will trigger the render
+    _config.set({
+      'elements': [_elements.getSelected().id]
+    });
+  };
+
+
+  /**
+   * Maintains the relationship between "elements" and "observatories" when
+   * an item is selected in the "observatory" collection.
+   *
+   * Sets the config model with the selected "observatory" id, and removes any
+   * selected "observatories".
+   */
+  _onObservatorySelect = function () {
+    // only set to null if, not already null
+    if (_elements.getSelected()) {
+      _elements.deselect();
+      _config.set({
+        'elements': null
+      }, {'silent': true});
+    }
+
+    // This set will trigger the render
+    _config.set({
+      'observatories': [_observatories.getSelected().id]
+    });
+  };
 
   /**
    * Format a date object.
@@ -365,6 +413,8 @@ var TimeseriesSelectView = function (options) {
     _observatoriesView.destroy();
 
     _config.off('change', _this.render);
+    _elements.off('select', _onElementSelect);
+    _observatories.off('select', _onObservatorySelect);
 
     _timeRealtime.removeEventListener('change', _onTimeChange);
     _timePastday.removeEventListener('change', _onTimeChange);
@@ -385,6 +435,8 @@ var TimeseriesSelectView = function (options) {
     _observatories = null;
     _observatoriesEl = null;
     _observatoriesView = null;
+    _onElementSelect = null;
+    _onObservatorySelect = null;
     _scaleView = null;
     _startTime = null;
     _startTimeError = null;
