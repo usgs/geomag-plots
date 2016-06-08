@@ -86,7 +86,7 @@ var TimeseriesSelectView = function (options) {
     el.innerHTML =
         '<div class="timeseries-elements"></div>' +
         '<div class="timeseries-observatories"></div>' +
-        '<h2>Time</h2>' +
+        '<h3>Time</h3>' +
         '<div class="timeseries-time">' +
           '<input type="radio" name="timemode" id="time-realtime" ' +
             'value="realtime" />' +
@@ -110,7 +110,7 @@ var TimeseriesSelectView = function (options) {
               '<input type="text" id="time-endtime" name="time-endtime"/>' +
             '</label>' +
           '</div>' +
-          '<div class="timeseries-increment">' +
+          '<div class="timeseries-increment button-group">' +
             '<button class="previous-button">' +
               'Step Back' +
             '</button>' +
