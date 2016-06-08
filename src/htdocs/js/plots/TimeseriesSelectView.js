@@ -323,6 +323,15 @@ var TimeseriesSelectView = function (options) {
       _elements.deselect();
     }
 
+    // special case, only display "Dist" when "USGS" is selected
+    if (_observatories.getSelected().id === 'USGS') {
+      _config.set({
+        'elements': ['MSD'],
+        'observatories': ['USGS']
+      });
+      return;
+    }
+
     // This set will trigger the render
     _config.set({
       'elements': _elements.data().map(function (e) { return e.id; }),
