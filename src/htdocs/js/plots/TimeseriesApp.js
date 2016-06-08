@@ -147,6 +147,7 @@ var TimeseriesApp = function (options) {
     });
 
     _this.config.on('change', _this.onConfigChange);
+    _this.plotModel.on('change', _this.onConfigChange);
 
     //Calling setPastDay sets the time in config,
     //which triggers TimeseriesManager
@@ -223,6 +224,7 @@ var TimeseriesApp = function (options) {
    */
   _this.destroy = Util.compose(function () {
     _this.config.off('change', _this.onConfigChange);
+    _this.plotModel.off('change', _this.onConfigChange);
     _configView.destroy();
     _timeseriesView.destroy();
 
