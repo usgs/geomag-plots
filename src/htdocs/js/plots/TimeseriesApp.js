@@ -1,4 +1,4 @@
-s/* global OffCanvas */
+/* global OffCanvas */
 'use strict';
 
 
