@@ -13,9 +13,15 @@
 
 
   > .observatory,
-  > .channel {
+  > .element {
     display: block;
     line-height: 1;
+  }
+
+  > .element > .units {
+    display: inline-block;
+    font-size: .8em;
+    margin-left: 4px;
   }
 }
 

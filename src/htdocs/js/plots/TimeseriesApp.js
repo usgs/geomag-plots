@@ -26,8 +26,8 @@ var _DEFAULTS = {
  *
  * @param options {Object}
  *        all options are passed to View.
- * @param options.channels {Array}
- *        channels to display, passed to ChannelSelectView.
+ * @param options.elements {Array}
+ *        elements to display, passed to CompactSelectView.
  * @param options.config {Model}
  *        configuration options.
  * @param options.configEl {DOMElement}
@@ -85,7 +85,6 @@ var TimeseriesApp = function (options) {
     viewEl = el.querySelector('.view');
 
     _this.config = Model(Util.extend({
-      channel: ['H', 'E', 'Z', 'F'],
       elements: null,
       endtime: null,
       observatories: null,
@@ -115,7 +114,6 @@ var TimeseriesApp = function (options) {
     });
 
     _configView = TimeseriesSelectView({
-      channels: options.channels || ['H', 'E', 'Z', 'F'],
       config: _this.config,
       el: configEl,
       elements: _this.elements,

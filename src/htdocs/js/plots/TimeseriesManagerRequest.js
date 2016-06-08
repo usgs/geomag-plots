@@ -91,7 +91,6 @@ var TimeseriesManagerRequest = function (options) {
     _this.timeseries.set({
       // make sure "error" is truthy
       error: err || 'Error fetching data',
-      metadata: {},
       times: [],
       values: []
     });
@@ -106,14 +105,11 @@ var TimeseriesManagerRequest = function (options) {
    *     the response.
    */
   _this.onLoad = function (response) {
-    var metadata,
-        times,
+    var times,
         values;
 
     // request is complete
     _this.xhr = null;
-
-    metadata = {};
 
     times = response.get('times').map(function (t) {
       return new Date(Date.parse(t));
@@ -122,7 +118,6 @@ var TimeseriesManagerRequest = function (options) {
     values = response.get('values');
     if (values && values.length > 0) {
       values = values[0];
-      metadata = values.metadata;
       values = values.values;
     } else {
       values = [];
@@ -130,7 +125,6 @@ var TimeseriesManagerRequest = function (options) {
 
     _this.timeseries.set({
       error: false,
-      metadata: metadata,
       times: times,
       values: values
     });

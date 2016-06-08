@@ -64,7 +64,7 @@ var TimeseriesFactory = function (options) {
         errback;
 
     if (options.hasOwnProperty('observatory') ||
-        options.hasOwnProperty('channel') ||
+        options.hasOwnProperty('element') ||
         options.hasOwnProperty('seconds')) {
       data = _this.parseTimeseriesOptionsLegacy(options);
     } else {
@@ -92,7 +92,7 @@ var TimeseriesFactory = function (options) {
    * each configuration option.
    *
    * @param options.elements {String|Array}
-   *     The elements (channels) to fetch
+   *     The elements (elements) to fetch
    * @param options.endtime {Date}
    *     The end of the time window of interest
    * @param options.id {String}
@@ -152,9 +152,9 @@ var TimeseriesFactory = function (options) {
    * @param options.observatory {String}
    *      default null
    *      observatory to request or null for all
-   * @param options.channel {String}
+   * @param options.elements {String}
    *      default null
-   *      channel to request or null for all
+   *      elements to request or null for all
    * @param options.starttime {Date}
    *      first requested sample
    * @param options.endtime {Date}
@@ -174,7 +174,7 @@ var TimeseriesFactory = function (options) {
     var starttime = options.starttime || new Date(),
         endtime = options.endtime || new Date(),
         observatory = options.observatory || null,
-        channel = options.channel || null,
+        elements = options.elements || null,
         seconds = options.seconds || false,
         data = {};
 
@@ -200,11 +200,11 @@ var TimeseriesFactory = function (options) {
       data.id = observatory;
     }
 
-    if (channel !== null) {
-      if (Array.isArray(channel)) {
-        data.elements = channel.join(',');
+    if (elements !== null) {
+      if (Array.isArray(elements)) {
+        data.elements = elements.join(',');
       } else {
-        data.elements = channel;
+        data.elements = elements;
       }
     }
 

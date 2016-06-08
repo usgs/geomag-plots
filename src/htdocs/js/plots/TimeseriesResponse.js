@@ -36,20 +36,12 @@ var TimeseriesResponse = function (options) {
       return new Date(Date.parse(t));
     });
 
-    _this.get('values').forEach(function (channel) {
-      var metadata;
-
-      metadata = channel.metadata;
-
+    _this.get('values').forEach(function (element) {
       timeseries.push(
         Timeseries({
           id: _ID_SEQUENCE++,
           times: times,
-          values: channel.values,
-          metadata: {
-            observatory: metadata.station,
-            channel: metadata.element
-          }
+          values: element.values
         })
       );
     });

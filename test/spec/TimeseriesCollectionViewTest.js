@@ -26,12 +26,7 @@ describe('TimeseriesCollectionView test suite.', function () {
         timeseries = Timeseries({
           id: 0,
           times: [1],
-          values: [1],
-          metadata: {
-            observatory: 'BOU',
-            channel: 'H',
-            nominal: 0
-          }
+          values: [1]
         });
 
     collection.add(timeseries);

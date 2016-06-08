@@ -1471,7 +1471,6 @@
         "element": "X",
         "network": "NT",
         "station": "BOU",
-        "channel": "MVX",
         "location": "R0",
         "flag": "FL"
       },
@@ -2924,7 +2923,6 @@
         "element": "Y",
         "network": "NT",
         "station": "BOU",
-        "channel": "MVY",
         "location": "R0",
         "flag": "FL"
       },
@@ -4377,7 +4375,6 @@
         "element": "Z",
         "network": "NT",
         "station": "BOU",
-        "channel": "MVZ",
         "location": "R0",
         "flag": "F"
       },
@@ -5830,7 +5827,6 @@
         "element": "F",
         "network": "NT",
         "station": "BOU",
-        "channel": "MSF",
         "location": "R0",
         "flag": "F"
       },
