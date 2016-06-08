@@ -49,6 +49,8 @@ var TimeseriesApp = function (options) {
 
       _configView,
       _descriptionEl,
+      _formatErrorMessage,
+      _model,
       _observatories,
       _timeseriesEl,
       _timeseriesFactory,
@@ -226,6 +228,8 @@ var TimeseriesApp = function (options) {
 
     _configView = null;
     _descriptionEl = null;
+    _formatErrorMessage = null;
+    _model = null;
     _observatories = null;
     _timeseriesEl = null;
     _timeseriesFactory = null;
