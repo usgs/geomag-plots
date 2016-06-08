@@ -272,7 +272,7 @@ var D3TimeseriesView = function (options) {
       x = _data.times[i];
       y = _data.values[i];
 
-      if (!y) {
+      if (y === null) {
         // gap or out of plot
         i = d3.bisector(_gapStart).left(_gaps, x) - 1;
         if (i >= 0) {
