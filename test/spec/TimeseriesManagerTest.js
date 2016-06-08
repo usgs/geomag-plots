@@ -2,8 +2,7 @@
 'use strict';
 
 
-var Model = require('mvc/Model'),
-    TimeseriesManager = require('plots/TimeseriesManager');
+var TimeseriesManager = require('plots/TimeseriesManager');
 
 
 var expect = chai.expect;
@@ -109,17 +108,6 @@ describe('plots/TimeseriesManager', function () {
       expect(manager.timeseries.get('A_A')).to.equal(existing);
       expect(manager.timeseries.get('A_B')).to.equal(null);
       expect(manager.timeseries.get('B_A')).to.not.equal(null);
-    });
-
-    it('sorts by observatory latitude descending', function () {
-      manager.config.set({
-        elements: ['A'],
-        observatories: ['A', 'B']
-      }, {silent: true});
-      manager.createTimeseries();
-
-      expect(manager.timeseries.data()[0].id).to.equal('B_A');
-      expect(manager.timeseries.data()[1].id).to.equal('A_A');
     });
   });
 
@@ -296,34 +284,6 @@ describe('plots/TimeseriesManager', function () {
       manager.onFetchComplete(request);
       expect(manager.pendingRequests.length).to.equal(0);
       expect(request.destroy.calledOnce).to.equal(true);
-    });
-  });
-
-  describe('sortByObservatoryLatitudeDescending', function () {
-    it('sorts as expected', function () {
-      var lowerTimeseries,
-          func,
-          upperTimeseries;
-
-      lowerTimeseries = Model({
-        observatory: {
-          geometry: {
-            coordinates: [0, 1]
-          }
-        }
-      });
-      upperTimeseries = Model({
-        observatory: {
-          geometry: {
-            coordinates: [0, 2]
-          }
-        }
-      });
-      func = TimeseriesManager().sortByObservatoryLatitudeDescending;
-
-      expect(func(lowerTimeseries, upperTimeseries)).to.equal(1);
-      expect(func(upperTimeseries, lowerTimeseries)).to.equal(-1);
-      expect(func(lowerTimeseries, lowerTimeseries)).to.equal(0);
     });
   });
 

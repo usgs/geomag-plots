@@ -140,6 +140,7 @@ var TimeseriesApp = function (options) {
       filter: function (obs) {
         return obs.properties.agency === 'USGS';
       },
+      sort: _this.sortByLatitudeDescending,
       url: options.obsMetaUrl
     });
 
@@ -156,6 +157,10 @@ var TimeseriesApp = function (options) {
    * @param options {Object}
    * @param options.collection {Collection}
    *     collection to load.
+   * @param options.filter {Function}
+   *     optional filter function for features.
+   * @param options.sort {Function}
+   *     optional sort function for features.
    * @param options.url {String}
    *     url containing collection data in geojson format.
    */
@@ -170,13 +175,19 @@ var TimeseriesApp = function (options) {
     Xhr.ajax({
       url: url,
       success: function (data) {
+        var features;
+
+        features = data.features;
+        if (typeof options.filter === 'function') {
+          features = features.filter(options.filter);
+        }
+        if (typeof options.sort === 'function') {
+          features.sort(options.sort);
+        }
+
         collection.error = false;
         collection.loaded = true;
-        if (typeof options.filter === 'function') {
-          collection.reset(data.features.filter(options.filter));
-        } else {
-          collection.reset(data.features);
-        }
+        collection.reset(features);
       },
       error: function (err) {
         collection.error = err;
@@ -222,6 +233,41 @@ var TimeseriesApp = function (options) {
     _this = null;
   }, _this.destroy);
 
+
+  /**
+   * Sort function for Timeseries objects.
+   *
+   * @param a {Timeseries}
+   *     first timeseries.
+   * @param b {Timeseries}
+   *     second timeseries.
+   * @return {Number}
+   *     {
+   *        1: if a latitude is <  b latitude;
+   *        0: if a latitude is == b latitude;
+   *       -1: if a latitude is <  b latitude
+   *     }
+   */
+  _this.sortByLatitudeDescending = function (a, b) {
+    var aLat,
+        bLat;
+
+    if (!a.geometry || !a.geometry.coordinates ||
+        !b.geometry || !b.geometry.coordinates) {
+      // no latitudes to compare
+      return 0;
+    }
+
+    aLat = a.geometry.coordinates[1];
+    bLat = b.geometry.coordinates[1];
+    if (aLat < bLat) {
+      return 1;
+    } else if (aLat > bLat) {
+      return -1;
+    } else {
+      return 0;
+    }
+  };
 
   _initialize(options);
   options = null;
