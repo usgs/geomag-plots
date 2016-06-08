@@ -1,3 +1,4 @@
+/* global OffCanvas */
 'use strict';
 
 
@@ -175,6 +176,10 @@ var ScaleView = function (options) {
       }
 
       _this.model.set({yExtentSize: value});
+
+      if (typeof OffCanvas === 'object') {
+        OffCanvas.getOffCanvas().hide();
+      }
     }
   };
 
