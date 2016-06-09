@@ -1,6 +1,6 @@
 {
   "name": "geomag-plots",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Plots of timeseries data for geomagnetic observatories",
   "repository": {
     "type": "git",
@@ -35,7 +35,7 @@
     "grunt-mocha-phantomjs": "3.0.0",
     "grunt-postcss": "^0.7.0",
     "hazdev-template": "~0.2.4",
-    "hazdev-webutils": "usgs/hazdev-webutils",
+    "hazdev-webutils": "0.2.0",
     "ini": "^1.2.1",
     "mocha": "^2.1.0",
     "postcss-calc": "^5.0.0",
