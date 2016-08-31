@@ -9,7 +9,7 @@ if (!file_exists($CONFIG_INI_FILE)) {
 }
 
 $CONFIG = parse_ini_file($CONFIG_INI_FILE);
-
+$CONFIG = array_merge($CONFIG, $_SERVER);
 
 $MOUNT_PATH = $CONFIG['MOUNT_PATH'];
 $OBS_META_URL = $CONFIG['OBS_META_URL'];

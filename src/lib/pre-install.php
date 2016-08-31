@@ -29,15 +29,10 @@ if (!is_dir($CONF_DIR)) {
   mkdir($CONF_DIR, 0755, true);
 }
 
-// check for non-interactive mode
-foreach ($argv as $arg) {
-  if ($arg === '--non-interactive') {
-    define('NON_INTERACTIVE', true);
-  }
-}
-if (!defined('NON_INTERACTIVE')) {
-  define('NON_INTERACTIVE', false);
-}
+define('NON_INTERACTIVE',
+    isset($_SERVER['NON_INTERACTIVE'])
+        ? $_SERVER['NON_INTERACTIVE'] === 'true'
+        : false);
 
 
 // Interactively prompts user for config. Writes CONFIG_FILE_INI

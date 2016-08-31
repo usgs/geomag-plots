@@ -1,6 +1,7 @@
 'use strict';
 
-var config = require('./config');
+var config = require('./config'),
+    extend = require('extend');
 
 
 var MOUNT_PATH = config.ini.MOUNT_PATH,
@@ -14,9 +15,9 @@ var addMiddleware = function (connect, options, middlewares) {
     require('grunt-connect-proxy/lib/utils').proxyRequest,
     require('gateway')(options.base[0], {
       '.php': 'php-cgi',
-      'env': {
+      'env': extend({}, process.env, {
         'PHPRC': 'node_modules/hazdev-template/dist/conf/php.ini'
-      }
+      })
     })
   );
   return middlewares;
