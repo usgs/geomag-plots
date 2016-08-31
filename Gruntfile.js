@@ -28,16 +28,24 @@ module.exports = function (grunt) {
     'copy:test'
   ]);
 
-  grunt.registerTask('dist', [
+  grunt.registerTask('builddist', [
     'build',
     'clean:dist',
     'copy:dist',
     'postcss:dist',
-    'uglify',
+    'uglify'
+  ]);
+
+  grunt.registerTask('rundist', [
     'configureRewriteRules',
     'configureProxies:dist',
     'connect:template',
     'connect:dist'
+  ]);
+
+  grunt.registerTask('dist', [
+    'builddist',
+    'rundist'
   ]);
 
   grunt.registerTask('default', [

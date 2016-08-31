@@ -1,7 +1,8 @@
 'use strict';
 
 
-var fs = require('fs'),
+var extend = require('extend'),
+    fs = require('fs'),
     ini = require('ini');
 
 
@@ -12,6 +13,7 @@ var config,
 
 basePort = 8880;
 iniConfig = ini.parse(fs.readFileSync('./src/conf/config.ini', 'utf-8'));
+iniConfig = extend({}, iniConfig, process.env);
 packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
 
 
