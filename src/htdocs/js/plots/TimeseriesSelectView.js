@@ -161,6 +161,13 @@ var TimeseriesSelectView = function (options) {
     _observatoriesView = CompactSelectView({
       collection: _observatories,
       el: _observatoriesEl,
+      filter: function (obj) {
+        if (obj && obj.properties) {
+          return (obj.properties.agency === 'USGS');
+        } else {
+          return false;
+        }
+      },
       title: 'Observatory'
     });
 
