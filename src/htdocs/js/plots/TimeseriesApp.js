@@ -137,9 +137,6 @@ var TimeseriesApp = function (options) {
     });
     _this.loadCollection({
       collection: _this.observatories,
-      filter: function (obs) {
-        return obs.properties.agency === 'USGS';
-      },
       sort: _this.sortByLatitudeDescending,
       url: options.obsMetaUrl
     });

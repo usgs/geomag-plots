@@ -85,6 +85,10 @@ var TimeseriesManager = function (options) {
             model,
             observatory;
         observatory = _this.observatories.get(observatoryId);
+        if (observatory && observatory.properties &&
+            observatory.properties.agency !== 'USGS') {
+          return;
+        }
         id = observatoryId + '_' + elementId;
         model = _this.timeseries.get(id);
         if (model === null) {

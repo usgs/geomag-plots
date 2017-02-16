@@ -50,6 +50,8 @@ var CompactSelectView = function (options) {
   _initialize = function (options) {
     _this.collection = options.collection || Collection();
 
+    _this.filter = options.filter || null;
+
     _this.title = options.title;
     _this.titleTag = options.titleTag;
 
@@ -233,6 +235,12 @@ var CompactSelectView = function (options) {
       function (obj) {
         var display,
             title;
+
+        if (_this.filter !== null) {
+          if (!_this.filter(obj)) {
+            return '';
+          }
+        }
 
         if (obj.properties) {
           title = obj.properties.name ?
