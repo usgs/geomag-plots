@@ -12,6 +12,15 @@ if (!isset($TEMPLATE)) {
       .timeseries-observatories {
         display: none;
       }
+
+      .meta-view {
+        width: 5em;
+      }
+
+      .error-view.show,
+      .trace-view {
+        margin-left: 5em;
+      }
     </style>
   ';
   $FOOT = '
