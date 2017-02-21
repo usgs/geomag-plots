@@ -2,7 +2,7 @@
 if (!isset($TEMPLATE)) {
   include_once '../conf/config.inc.php';
 
-  $TITLE = 'Disturbance Storm Time (DST) Index';
+  $TITLE = 'Disturbance Storm Time (Dst) Index';
   $NAVIGATION = true;
 
   $HEAD = '

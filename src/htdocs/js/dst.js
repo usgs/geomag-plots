@@ -76,8 +76,8 @@ app.timeseriesManager.createTimeseries = function () {
         'type': 'Feature',
         'id': 'MSD',
         'properties': {
-          'abbreviation': 'DST3',
-          'name': '3 Station DST',
+          'abbreviation': 'Dst3-USGS',
+          'name': '3 Station Dst',
           'units': 'nT'
         },
         'geometry': null
@@ -92,8 +92,8 @@ app.timeseriesManager.createTimeseries = function () {
         'type': 'Feature',
         'id': 'MGD',
         'properties': {
-          'abbreviation': 'DST4',
-          'name': '4 Station DST',
+          'abbreviation': 'Dst-1min',
+          'name': '4 Station Dst',
           'units': 'nT'
         },
         'geometry': null
@@ -108,8 +108,8 @@ app.timeseriesManager.createTimeseries = function () {
         'type': 'Feature',
         'id': 'HGD',
         'properties': {
-          'abbreviation': 'DSTH',
-          'name': 'Hourly DST',
+          'abbreviation': 'Dst-1hr',
+          'name': 'Hourly Dst',
           'units': 'nT'
         },
         'geometry': null
