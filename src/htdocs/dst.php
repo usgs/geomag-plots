@@ -2,7 +2,7 @@
 if (!isset($TEMPLATE)) {
   include_once '../conf/config.inc.php';
 
-  $TITLE = 'Disturbance Storm Time (DST) Index';
+  $TITLE = 'Disturbance Storm Time (Dst) Index';
   $NAVIGATION = true;
 
   $HEAD = '
@@ -11,6 +11,15 @@ if (!isset($TEMPLATE)) {
       .timeseries-elements,
       .timeseries-observatories {
         display: none;
+      }
+
+      .meta-view {
+        width: 5em;
+      }
+
+      .error-view.show,
+      .trace-view {
+        margin-left: 5em;
       }
     </style>
   ';
