@@ -20,6 +20,20 @@ if (!isset($TEMPLATE)) {
 }
 ?>
 
+<div class="alert info">
+  <p>
+    We're working on an
+    <a href="/beta/plots/">
+      updated version of this application
+    </a>, and will replace the existing application in early 2020.
+
+    Please
+    <a href="mailto:gs-haz_dev_team_group@usgs.gov?subject=Beta+Geomagnetism+Plots">
+      email any comments or concerns
+    </a>.
+  </p>
+</div>
+
 <div id="geomag-plots">
   <noscript>
     <p>This application requires javascript.</p>
